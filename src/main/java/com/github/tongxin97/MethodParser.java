@@ -18,15 +18,15 @@ public class MethodParser {
     {
       CompilationUnit cu = StaticJavaParser.parse(new FileInputStream(args[0]));
 
-      List<MethodInfo> methodInfo = new ArrayList<>();
-      VoidVisitor<List<MethodInfo>> methodInfoCollector = new MethodInfoCollector();
-      methodInfoCollector.visit(cu, methodInfo);
-      methodInfo.forEach(info -> System.out.println("=====\n" + info));
+      List<Method> Method = new ArrayList<>();
+      VoidVisitor<List<Method>> MethodCollector = new MethodCollector();
+      MethodCollector.visit(cu, Method);
+      Method.forEach(info -> System.out.println("=====\n" + info));
     }
 
-  private static class MethodInfoCollector extends VoidVisitorAdapter<List<MethodInfo>> {
+  private static class MethodCollector extends VoidVisitorAdapter<List<Method>> {
     @Override
-    public void visit(MethodDeclaration md, List<MethodInfo> collector) {
+    public void visit(MethodDeclaration md, List<Method> collector) {
       super.visit(md, collector);
 
       // Skip if method is private
@@ -35,7 +35,7 @@ public class MethodParser {
         return;
       }
 
-      MethodInfo info = new MethodInfo();
+      Method info = new Method();
       info.Name = md.getNameAsString();
       for (Parameter p : md.getParameters()) {
         info.ParameterTypes.add(p.getType());

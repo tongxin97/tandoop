@@ -4,12 +4,12 @@ import com.github.javaparser.ast.type.Type;
 import java.util.List;
 import java.util.ArrayList;
 
-public class MethodInfo {
+public class Method {
   public String Name;
   public List<Type> ParameterTypes;
   public Type ReturnType;
 
-  public MethodInfo() {
+  public Method() {
     this.ParameterTypes = new ArrayList<>();
   }
 

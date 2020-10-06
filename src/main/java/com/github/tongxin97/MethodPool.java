@@ -13,14 +13,14 @@ import java.util.Random;
  */
 
 public class MethodPool {
-    private List<MethodInfo> methods;
+    private List<Method> methods;
     private Random rand;
 
     public MethodPool() {
         rand = new Random();
     }
 
-    public MethodInfo getRandomMethod() throws Exception {
+    public Method getRandomMethod() throws Exception {
         if (methods.isEmpty()) {
             throw new Exception("Method pool is empty.");
         }
@@ -29,7 +29,7 @@ public class MethodPool {
     }
 
     public void addMethods(String methodName) {
-        // TODO: create one methodInfo add add it to list @xint5
+        // TODO: @tongxin97 create one Method add add it to list
     }
 
 }
