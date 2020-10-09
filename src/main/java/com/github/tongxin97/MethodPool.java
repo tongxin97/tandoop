@@ -1,7 +1,5 @@
 package com.github.tongxin97;
 
-import com.github.tandoop.Method;
-
 import java.util.List;
 import java.util.Random;
 
@@ -30,6 +28,7 @@ public class MethodPool {
 
     public void addMethods(String methodName) {
         // TODO: @tongxin97 create one Method add add it to list
+        methods.add(new Method(methodName));
     }
 
 }

@@ -14,12 +14,13 @@ public class Tandoop {
     private HashMap<Type, ValuePool> valuePools;
     private MethodPool methodPool;
 
-    public Sequence GenerateSequence(Integer timeLimits) { // add arguments: contracts, filters, timeLimits
+    public Sequence generateSequence(Integer timeLimits) throws Exception { // add arguments: contracts, filters, timeLimits
         while (timeLimits > 0) {
             Method method = methodPool.getRandomMethod();
             // TODO: <seqs, vals> <- randomSeqsAndVals();
             // TODO: newSeqs <- extend(m, seqs, vals)
             --timeLimits;
         }
+        return new Sequence();
     }
 }
