@@ -1,5 +1,6 @@
 package com.github.tongxin97;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -11,24 +12,19 @@ import java.util.Random;
  */
 
 public class MethodPool {
-    private List<Method> methods;
+    public List<MethodInfo> MethodInfoList;
     private Random rand;
 
     public MethodPool() {
         rand = new Random();
+        MethodInfoList = new ArrayList<>();
     }
 
-    public Method getRandomMethod() throws Exception {
-        if (methods.isEmpty()) {
+    public MethodInfo getRandomMethod() throws Exception {
+        if (MethodInfoList.isEmpty()) {
             throw new Exception("Method pool is empty.");
         }
-        Integer i = rand.nextInt(methods.size() - 1);
-        return methods.get(i);
+        Integer i = rand.nextInt(MethodInfoList.size() - 1);
+        return MethodInfoList.get(i);
     }
-
-    public void addMethods(String methodName) {
-        // TODO: @tongxin97 create one Method add add it to list
-        methods.add(new Method(methodName));
-    }
-
 }
