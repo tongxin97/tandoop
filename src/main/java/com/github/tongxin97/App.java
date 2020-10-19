@@ -11,7 +11,17 @@ public class App
         System.out.println( "Hello World!" );
     }
 
+    public int testReturnInt() {
+        return 0;
+    }
+
     private void myPrivateMethod() {
         return;
+    }
+
+    private class Tmp {
+        public void tmpMethod() {
+            System.out.println("tmp method");
+        }
     }
 }
