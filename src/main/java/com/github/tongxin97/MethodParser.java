@@ -1,32 +1,70 @@
 package com.github.tongxin97;
 
-import com.github.javaparser.StaticJavaParser;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.visitor.VoidVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.ast.body.Parameter;
+import com.github.javaparser.ast.PackageDeclaration;
+import com.github.javaparser.StaticJavaParser;
+import com.github.javaparser.ast.Node;
 
+import java.util.List;
 import java.util.ArrayList;
 import java.io.FileInputStream;
-import java.util.List;
+import java.util.Optional;
 
 
 public class MethodParser {
-  public static void main(String[] args) throws Exception
-    {
-      CompilationUnit cu = StaticJavaParser.parse(new FileInputStream(args[0]));
+  private CompilationUnit CU;
 
-      List<Method> Method = new ArrayList<>();
-      VoidVisitor<List<Method>> MethodCollector = new MethodCollector();
-      MethodCollector.visit(cu, Method);
-      Method.forEach(info -> System.out.println("=====\n" + info));
+  public MethodParser(String filename) throws Exception {
+    this.CU = StaticJavaParser.parse(new FileInputStream(filename));
+  }
+
+  private String getPackageName() {
+    if (this.CU == null) {
+      return null;
+    }
+    Optional<PackageDeclaration> opt = this.CU.getPackageDeclaration();
+    if (opt.isPresent()) {
+      return opt.get().getNameAsString() + ".";
+    }
+    return null;
+  }
+
+  public void CollectMethodInfo(MethodPool methodPool) {
+    VoidVisitor<List<MethodInfo>> methodCollector = new MethodCollector();
+    methodCollector.visit(this.CU, methodPool.MethodInfoList);
+    for (MethodInfo info: methodPool.MethodInfoList) {
+      System.out.println("=====\n" + info);
+    }
+  }
+
+  private class MethodCollector extends VoidVisitorAdapter<List<MethodInfo>> {
+    private boolean isPrivateMethod(MethodDeclaration md) {
+      for (Modifier m : md.getModifiers()) {
+        if (m.getKeyword().equals(Modifier.Keyword.PRIVATE)) {
+          return true;
+        }
+      }
+      return false;
     }
 
-  private static class MethodCollector extends VoidVisitorAdapter<List<Method>> {
+    private boolean isPublicClass(ClassOrInterfaceDeclaration cd) {
+      for (Modifier m : cd.getModifiers()) {
+        if (m.getKeyword().equals(Modifier.Keyword.PUBLIC)) {
+          return true;
+        }
+      }
+      return false;
+    }
+
     @Override
-    public void visit(MethodDeclaration md, List<Method> collector) {
+    public void visit(MethodDeclaration md, List<MethodInfo> collector) {
       super.visit(md, collector);
 
       // Skip if method is private
@@ -35,22 +73,36 @@ public class MethodParser {
         return;
       }
 
-      Method info = new Method();
-      info.Name = md.getNameAsString();
+      String className = "";
+
+      Optional<Node> opt = md.getParentNode();
+      if (opt.isPresent()) {
+        TypeDeclaration t = (TypeDeclaration) opt.get();
+        // if parent node is not public class, skip this method
+        if (!(
+          t instanceof ClassOrInterfaceDeclaration &&
+          this.isPublicClass((ClassOrInterfaceDeclaration) t)
+        )) {
+          System.out.printf("Encountered method in private inner class: %s.%s\n", t.getNameAsString(), md.getNameAsString());
+          return;
+        }
+
+        // prepend package name to class name
+        String packageName = getPackageName();
+        if (packageName != null) {
+          className += packageName;
+        }
+        // append class name
+        className += t.getNameAsString();
+      }
+
+      MethodInfo info = new MethodInfo(md.getNameAsString(), null);
+      info.ClassName = className;
       for (Parameter p : md.getParameters()) {
         info.ParameterTypes.add(p.getType());
       }
       info.ReturnType = md.getType();
       collector.add(info);
-    }
-
-    private boolean isPrivateMethod(MethodDeclaration md) {
-      for (Modifier m : md.getModifiers()) {
-        if (m.getKeyword().equals(Modifier.Keyword.PRIVATE)) {
-          return true;
-        }
-      }
-      return false;
     }
   }
 }
