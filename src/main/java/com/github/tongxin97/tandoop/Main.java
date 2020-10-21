@@ -1,4 +1,4 @@
-package com.github.tongxin97;
+package com.github.tongxin97.tandoop;
 
 public class Main {
   public static void main(String[] args) throws Exception {

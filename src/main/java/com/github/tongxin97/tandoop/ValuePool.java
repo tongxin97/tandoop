@@ -1,4 +1,4 @@
-package com.github.tongxin97;
+package com.github.tongxin97.tandoop;
 
 import java.util.List;
 import java.util.Random;

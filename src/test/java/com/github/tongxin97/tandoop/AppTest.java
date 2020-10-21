@@ -1,4 +1,4 @@
-package com.github.tandoop;
+package com.github.tongxin97.tandoop;
 
 import static org.junit.Assert.assertTrue;
 

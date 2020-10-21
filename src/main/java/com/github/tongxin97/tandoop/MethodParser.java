@@ -1,4 +1,4 @@
-package com.github.tongxin97;
+package com.github.tongxin97.tandoop;
 
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;

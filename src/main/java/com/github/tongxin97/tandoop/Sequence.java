@@ -1,4 +1,5 @@
-package com.github.tongxin97;
+package com.github.tongxin97.tandoop;
+
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -18,7 +19,7 @@ public class Sequence {
     public Sequence() {}
 
     public void generateTest() throws Exception {
-        String sequence = "package com.github.tandoop;\n"
+        String sequence = "package com.github.tongxin97.tandoop;\n"
         		+ "\n"
         		+ "import static org.junit.Assert.assertTrue;\n"
         		+ "\n"
@@ -38,14 +39,13 @@ public class Sequence {
         		+ "        assertTrue( true );\n"
         		+ "    }\n"
         		+ "}\n";
-        String filename = "src/test/java/com/github/tandoop/AppTest.java";
+        String filename = "src/test/java/com/github/tongxin97/tandoop/AppTest.java";
         BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
         writer.write(sequence);
         writer.close();
     }
 
     public void runTest() {
-		JUnitCore.main("com.github.tandoop.AppTest");
-		// JUnitCore.run(com.github.tongxin97.AppTest.class);
+			JUnitCore.main("com.github.tongxin97.tandoop.AppTest");
     }
 }
