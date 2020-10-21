@@ -1,5 +1,7 @@
 package com.github.tongxin97.tandoop;
 
+import java.lang.StringBuilder;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -12,15 +14,25 @@ import java.util.Random;
 
 // TODO: use a common abstract class with MethodPool for getRandom
 public class TypedValuePool<T> {
+    private String type;
+    private T nullValue;
     private List<T> values;
     private Random rand;
 
-    public TypedValuePool() {
+    public TypedValuePool(String type, List<T> vals) {
         rand = new Random();
+        this.type = type;
+        this.nullValue = null;
+        if (vals != null) {
+            this.values = new ArrayList(vals);
+        }
     }
 
     public T getRandomValue() throws Exception {
         if (values.isEmpty()) {
+            if (this.type.equals("null")) {
+                return null;
+            }
             throw new Exception("Value pool is empty.");
         }
         Integer i = rand.nextInt(values.size() - 1);
@@ -31,4 +43,16 @@ public class TypedValuePool<T> {
         values.add(value);
     }
 
+    public String toString() {
+        if (this.type.equals("null")) {
+            return "null\n";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (T v: this.values) {
+            sb.append(v);
+            sb.append(",");
+        }
+        sb.append("\n");
+        return sb.toString();
+    }
 }
