@@ -2,9 +2,7 @@ package com.github.tongxin97.tandoop;
 
 public class Main {
   public static void main(String[] args) throws Exception {
-    MethodParser methodParser = new MethodParser(args[0]);
-    MethodPool methodPool = new MethodPool();
-    methodParser.CollectMethodInfo(methodPool);
+    Tandoop t = new Tandoop(args[0]);
 
     Sequence sequence = new Sequence();
     // sequence.generateTest();

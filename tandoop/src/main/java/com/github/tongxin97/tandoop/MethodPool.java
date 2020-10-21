@@ -27,4 +27,13 @@ public class MethodPool {
         Integer i = rand.nextInt(MethodInfoList.size() - 1);
         return MethodInfoList.get(i);
     }
+
+    @Override
+    public String toString() {
+        String out = "";
+        for (MethodInfo info: this.MethodInfoList) {
+            out += "=====\n" + info;
+        }
+        return out;
+    }
 }

@@ -10,11 +10,12 @@ import java.util.Random;
  * on 2020/10/5
  */
 
-public class ValuePool<T> {
+// TODO: use a common abstract class with MethodPool for getRandom
+public class TypedValuePool<T> {
     private List<T> values;
     private Random rand;
 
-    public ValuePool() {
+    public TypedValuePool() {
         rand = new Random();
     }
 

@@ -39,9 +39,6 @@ public class MethodParser {
   public void CollectMethodInfo(MethodPool methodPool) {
     VoidVisitor<List<MethodInfo>> methodCollector = new MethodCollector();
     methodCollector.visit(this.CU, methodPool.MethodInfoList);
-    for (MethodInfo info: methodPool.MethodInfoList) {
-      System.out.println("=====\n" + info);
-    }
   }
 
   private class MethodCollector extends VoidVisitorAdapter<List<MethodInfo>> {
