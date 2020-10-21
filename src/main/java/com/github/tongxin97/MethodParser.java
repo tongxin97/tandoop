@@ -31,7 +31,7 @@ public class MethodParser {
     }
     Optional<PackageDeclaration> opt = this.CU.getPackageDeclaration();
     if (opt.isPresent()) {
-      return opt.get().getNameAsString() + ".";
+      return opt.get().getNameAsString();
     }
     return null;
   }
@@ -90,7 +90,7 @@ public class MethodParser {
         // prepend package name to class name
         String packageName = getPackageName();
         if (packageName != null) {
-          className += packageName;
+          className += packageName + ".";
         }
         // append class name
         className += t.getNameAsString();
