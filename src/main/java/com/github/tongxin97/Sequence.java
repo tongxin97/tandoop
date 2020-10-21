@@ -45,6 +45,7 @@ public class Sequence {
     }
 
     public void runTest() {
-    	JUnitCore.main(AppTest.class);
+		JUnitCore.main("com.github.tandoop.AppTest");
+		// JUnitCore.run(com.github.tongxin97.AppTest.class);
     }
 }
