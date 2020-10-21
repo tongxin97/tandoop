@@ -37,15 +37,16 @@ public class Sequence {
         		+ "    public void shouldAnswerWithTrue()\n"
         		+ "    {\n"
         		+ "        assertTrue( true );\n"
+				+ "    }\n"
+        		+ "    @Test\n"
+        		+ "    public void shouldAnswerWithFalse()\n"
+        		+ "    {\n"
+        		+ "        assertTrue( !false );\n"
         		+ "    }\n"
         		+ "}\n";
-        String filename = "src/test/java/com/github/tongxin97/tandoop/AppTest.java";
+        String filename = "../app/src/test/java/com/github/tongxin97/app/AppTest.java";
         BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
         writer.write(sequence);
         writer.close();
-    }
-
-    public void runTest() {
-			JUnitCore.main("com.github.tongxin97.tandoop.AppTest");
     }
 }

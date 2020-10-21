@@ -7,7 +7,6 @@ public class Main {
     methodParser.CollectMethodInfo(methodPool);
 
     Sequence sequence = new Sequence();
-    sequence.generateTest();
-    sequence.runTest();
+    // sequence.generateTest();
   }
 }
