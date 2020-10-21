@@ -5,5 +5,9 @@ public class Main {
     MethodParser methodParser = new MethodParser(args[0]);
     MethodPool methodPool = new MethodPool();
     methodParser.CollectMethodInfo(methodPool);
+
+    Sequence sequence = new Sequence();
+    sequence.generateTest();
+    sequence.runTest();
   }
 }
