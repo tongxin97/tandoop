@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
+import java.io.File;
 
 /**
  * Main logic for Tandoop
@@ -27,8 +28,28 @@ public class Tandoop {
         this.methodPool = new MethodPool();
         this.valuePool = new HashMap<>();
 
-        // TODO traverse and parse a given directory
-        MethodParser methodParser = new MethodParser(projectDirectory);
+        // Note: need to use the directory of source code (e.g., ../joda-time/src/main)
+        // There are errors when trying to parse java test classes
+        walkThroughDirectory(new File(projectDirectory));
+    }
+
+    private void walkThroughDirectory(File dir) throws Exception {
+        System.out.println(dir.getPath());
+        File[] files = dir.listFiles();
+        for (File file: files) {
+            if (file.isDirectory()) {
+                walkThroughDirectory(file);
+            } else {
+                System.out.println(file.getPath());
+                if (file.getName().endsWith(".java")) {
+                    parseFile(file.getPath());
+                }
+            }
+        }
+    }
+
+    private void parseFile(String file) throws Exception {
+        MethodParser methodParser = new MethodParser(file);
         methodParser.CollectMethodInfo(this.methodPool);
         System.out.println("MethodPool:\n" + this.methodPool);
 
