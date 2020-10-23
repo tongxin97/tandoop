@@ -30,7 +30,7 @@ public class Sequence {
         		+ "    assertEquals(6, sum);\n"
         		+ "  }\n"
         		+ "}";
-        String filename = "../calculator/CalculatorTest.class";
+        String filename = "../calculator/CalculatorTest.java";
         BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
         writer.write(sequence);
         writer.close();
