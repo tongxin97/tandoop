@@ -1,5 +1,6 @@
 package com.github.tongxin97.tandoop;
 
+import java.lang.IllegalArgumentException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -20,11 +21,11 @@ public class MethodPool {
         MethodInfoList = new ArrayList<>();
     }
 
-    public MethodInfo getRandomMethod() throws Exception {
+    public MethodInfo getRandomMethod() throws IllegalArgumentException {
         if (MethodInfoList.isEmpty()) {
-            throw new Exception("Method pool is empty.");
+            throw new IllegalArgumentException("MethodPool is empty.");
         }
-        Integer i = rand.nextInt(MethodInfoList.size() - 1);
+        int i = rand.nextInt(MethodInfoList.size());
         return MethodInfoList.get(i);
     }
 

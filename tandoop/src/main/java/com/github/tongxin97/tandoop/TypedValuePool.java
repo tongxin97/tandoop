@@ -28,14 +28,14 @@ public class TypedValuePool<T> {
         }
     }
 
-    public T getRandomValue() throws Exception {
+    public T getRandomValue() {
         if (values.isEmpty()) {
             if (this.type.equals("null")) {
                 return null;
             }
-            throw new Exception("Value pool is empty.");
+            // ValuePool can't be empty
         }
-        Integer i = rand.nextInt(values.size() - 1);
+        Integer i = rand.nextInt(values.size());
         return values.get(i);
     }
 

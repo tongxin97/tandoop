@@ -95,10 +95,11 @@ public class MethodParser {
 
       MethodInfo info = new MethodInfo(md.getNameAsString(), null);
       info.ClassName = className;
+      // TODO: add package name to types?
       for (Parameter p : md.getParameters()) {
-        info.ParameterTypes.add(p.getType());
+        info.ParameterTypes.add(p.getType().toString());
       }
-      info.ReturnType = md.getType();
+      info.ReturnType = md.getType().toString();
       collector.add(info);
     }
   }

@@ -33,7 +33,9 @@ public class Tandoop {
         System.out.println("MethodPool:\n" + this.methodPool);
 
         this.initPrimitiveValuePool();
-        System.out.println(this.valuePool);
+        System.out.println("ValuePool:\n" + this.valuePool);
+
+        this.generateSequence(1);
     }
 
     private void initPrimitiveValuePool() {
@@ -54,12 +56,54 @@ public class Tandoop {
         // TODO add more initial primitive types
     }
 
-    public Sequence generateSequence(Integer timeLimits) throws Exception { // add arguments: contracts, filters, timeLimits
+    private void getRandomSeqsAndVals(List<Sequence> seqs, List<Object> vals, List<String> types) {
+        for (String type: types) {
+            if (this.valuePool.containsKey(type)) {
+                vals.add(this.valuePool.get(type).getRandomValue());
+            } else {
+                Object v = null;
+                // 3 possible choices
+                int r = Utils.getRandomInt(3);
+                switch(r) {
+                case 0: // use a value v from a sequence that is already in seqs
+                    for (Sequence s: seqs) {
+                        v = s.getReturnValOfType(type);
+                        if (v != null) {
+                            break;
+                        }
+                    }
+                    break;
+                case 1: // select a (possibly duplicate) sequence from nonErrorSeqs, add it to seqs, and use a value from it
+                    for (Sequence s: this.nonErrorSeqs) {
+                        v = s.getReturnValOfType(type);
+                        if (v != null) {
+                            seqs.add(s);
+                            break;
+                        }
+                        break;
+                    }
+                default: // use null
+                }
+                vals.add(v);
+            }
+        }
+    }
+
+    // TODO add arguments: contracts, filters, timeLimits
+    public Sequence generateSequence(int timeLimits) {
         while (timeLimits > 0) {
-            MethodInfo method = methodPool.getRandomMethod();
+            MethodInfo method;
+            try {
+                method = methodPool.getRandomMethod();
+            } catch (Exception e) {
+                System.err.println("Uncaught exception: " + e.getMessage());
+                break;
+            }
+            System.out.printf("Selected random method: %s.%s\n", method.ClassName, method.Name);
+            List<Sequence> seqs = new ArrayList<>();
+            List<Object> vals = new ArrayList<>();
+            this.getRandomSeqsAndVals(seqs, vals, method.getParameterTypes());
 
-
-            // TODO: <seqs, vals> <- randomSeqsAndVals();
             // TODO: newSeqs <- extend(m, seqs, vals)
             --timeLimits;
         }

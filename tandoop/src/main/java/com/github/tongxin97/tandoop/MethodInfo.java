@@ -7,8 +7,8 @@ import java.util.ArrayList;
 public class MethodInfo {
     public String ClassName;
     public String Name;
-    public List<Type> ParameterTypes;
-    public Type ReturnType;
+    public List<String> ParameterTypes;
+    public String ReturnType;
 
     public MethodInfo(String name, String className) {
         this.Name = name;
@@ -16,8 +16,8 @@ public class MethodInfo {
         this.ParameterTypes = new ArrayList<>();
     }
 
-    public List<Type> getParameterTypes() {
-        return ParameterTypes;
+    public List<String> getParameterTypes() {
+        return this.ParameterTypes;
     }
 
     @Override
