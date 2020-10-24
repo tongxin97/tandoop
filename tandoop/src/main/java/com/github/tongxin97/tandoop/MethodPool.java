@@ -30,7 +30,7 @@ public class MethodPool {
     public String toString() {
         String out = "";
         for (MethodInfo info: this.MethodInfoList) {
-            out += "=====\n" + info;
+            out += "\n=====\n" + info;
         }
         return out;
     }

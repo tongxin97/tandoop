@@ -58,7 +58,7 @@ public class Tandoop {
         System.out.println("MethodPool:\n" + this.methodPool);
 
         this.initPrimitiveValuePool();
-        System.out.println("ValuePool:\n" + this.valuePool);
+        // System.out.println("ValuePool:\n" + this.valuePool);
 
         this.generateSequence(1);
     }
@@ -91,6 +91,7 @@ public class Tandoop {
                 int r = Utils.getRandomInt(3);
                 switch(r) {
                 case 0: // use a value v from a sequence that is already in seqs
+                    // QUESTION: Shuffle seqs?
                     for (Sequence s: seqs) {
                         v = s.getReturnValOfType(type);
                         if (v != null) {
@@ -99,6 +100,7 @@ public class Tandoop {
                     }
                     break;
                 case 1: // select a (possibly duplicate) sequence from nonErrorSeqs, add it to seqs, and use a value from it
+                    // QUESTION: Shuffle nonErrorSeqs?
                     for (Sequence s: this.nonErrorSeqs) {
                         v = s.getReturnValOfType(type);
                         if (v != null) {
