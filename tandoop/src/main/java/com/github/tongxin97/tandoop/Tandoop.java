@@ -34,8 +34,12 @@ public class Tandoop {
     }
 
     private void walkThroughDirectory(File dir) throws Exception {
-        System.out.println(dir.getPath());
         File[] files = dir.listFiles();
+        if (files == null) {
+            System.err.printf("%s is not a directory.\n", dir.getPath());
+            return;
+        }
+        System.out.println(dir.getPath());
         for (File file: files) {
             if (file.isDirectory()) {
                 walkThroughDirectory(file);

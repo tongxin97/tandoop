@@ -3,7 +3,6 @@ package com.github.tongxin97.tandoop;
 import java.lang.StringBuilder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * The class that stores the whole pool of value
@@ -17,10 +16,8 @@ public class TypedValuePool<T> {
     private String type;
     private T nullValue;
     private List<T> values;
-    private Random rand;
 
     public TypedValuePool(String type, List<T> vals) {
-        rand = new Random();
         this.type = type;
         this.nullValue = null;
         if (vals != null) {
@@ -35,7 +32,7 @@ public class TypedValuePool<T> {
             }
             // ValuePool can't be empty
         }
-        Integer i = rand.nextInt(values.size());
+        int i = Utils.getRandomInt(values.size());
         return values.get(i);
     }
 

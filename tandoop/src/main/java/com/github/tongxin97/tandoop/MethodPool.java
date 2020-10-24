@@ -3,7 +3,6 @@ package com.github.tongxin97.tandoop;
 import java.lang.IllegalArgumentException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * The class that stores the whole pool of methods.
@@ -14,10 +13,8 @@ import java.util.Random;
 
 public class MethodPool {
     public List<MethodInfo> MethodInfoList;
-    private Random rand;
 
     public MethodPool() {
-        rand = new Random();
         MethodInfoList = new ArrayList<>();
     }
 
@@ -25,7 +22,7 @@ public class MethodPool {
         if (MethodInfoList.isEmpty()) {
             throw new IllegalArgumentException("MethodPool is empty.");
         }
-        int i = rand.nextInt(MethodInfoList.size());
+        int i = Utils.getRandomInt(MethodInfoList.size());
         return MethodInfoList.get(i);
     }
 
