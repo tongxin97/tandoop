@@ -1,6 +1,8 @@
 package com.github.tongxin97.tandoop;
 
+import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Modifier;
@@ -11,6 +13,7 @@ import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.NodeList;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -36,36 +39,64 @@ public class MethodParser {
     return null;
   }
 
+  private MethodInfo getConstructorInfo() {
+    for (TypeDeclaration td: this.CU.getTypes()) {
+        List<BodyDeclaration> bds = td.getMembers();
+        if(bds != null) {
+            for (BodyDeclaration bd: bds) {
+                if (
+                  bd instanceof ConstructorDeclaration
+                ) {
+                    ConstructorDeclaration cd = (ConstructorDeclaration) bd;
+                    String classNameWithPackage = this.getPackageName() + "." + cd.getNameAsString();
+                    MethodInfo info = new MethodInfo(cd.getNameAsString(), classNameWithPackage);
+                    info.ReturnType = classNameWithPackage;
+                    for (Parameter p : cd.getParameters()) {
+                      info.ParameterTypes.add(p.getType().toString());
+                    }
+                    return info;
+                }
+            }
+        }
+    }
+    return null;
+  }
+
+  private static boolean isPrivateMethod(MethodDeclaration md) {
+    for (Modifier m : md.getModifiers()) {
+      if (m.getKeyword().equals(Modifier.Keyword.PRIVATE)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private static boolean isPublicClass(ClassOrInterfaceDeclaration cd) {
+    for (Modifier m : cd.getModifiers()) {
+      if (m.getKeyword().equals(Modifier.Keyword.PUBLIC)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+
   public void CollectMethodInfo(MethodPool methodPool) {
     VoidVisitor<List<MethodInfo>> methodCollector = new MethodCollector();
+    MethodInfo constructorInfo = this.getConstructorInfo();
+    if (this.getConstructorInfo() != null) {
+      methodPool.MethodInfoList.add(constructorInfo);
+    }
     methodCollector.visit(this.CU, methodPool.MethodInfoList);
   }
 
   private class MethodCollector extends VoidVisitorAdapter<List<MethodInfo>> {
-    private boolean isPrivateMethod(MethodDeclaration md) {
-      for (Modifier m : md.getModifiers()) {
-        if (m.getKeyword().equals(Modifier.Keyword.PRIVATE)) {
-          return true;
-        }
-      }
-      return false;
-    }
-
-    private boolean isPublicClass(ClassOrInterfaceDeclaration cd) {
-      for (Modifier m : cd.getModifiers()) {
-        if (m.getKeyword().equals(Modifier.Keyword.PUBLIC)) {
-          return true;
-        }
-      }
-      return false;
-    }
-
     @Override
     public void visit(MethodDeclaration md, List<MethodInfo> collector) {
       super.visit(md, collector);
 
       // Skip if method is private
-      if (this.isPrivateMethod(md)) {
+      if (MethodParser.isPrivateMethod(md)) {
         System.out.println("Encountered private method: " + md.getNameAsString());
         return;
       }
@@ -78,7 +109,7 @@ public class MethodParser {
         // if parent node is not public class, skip this method
         if (!(
           t instanceof ClassOrInterfaceDeclaration &&
-          this.isPublicClass((ClassOrInterfaceDeclaration) t)
+          MethodParser.isPublicClass((ClassOrInterfaceDeclaration) t)
         )) {
           System.out.printf("Encountered method in private inner class: %s.%s\n", t.getNameAsString(), md.getNameAsString());
           return;
