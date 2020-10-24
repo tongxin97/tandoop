@@ -22,7 +22,7 @@ public class MethodPool {
         if (MethodInfoList.isEmpty()) {
             throw new IllegalArgumentException("MethodPool is empty.");
         }
-        int i = Utils.getRandomInt(MethodInfoList.size());
+        int i = Utils.GetRandomInt(MethodInfoList.size());
         return MethodInfoList.get(i);
     }
 

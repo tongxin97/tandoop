@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.io.File;
 
@@ -18,13 +19,13 @@ public class Tandoop {
     private Map<String, TypedValuePool> valuePool;
     private MethodPool methodPool;
 
-    private List<Sequence> errorSeqs;
-    private List<Sequence> nonErrorSeqs;
+    private Set<Sequence> errorSeqs;
+    private Set<Sequence> nonErrorSeqs;
 
     public Tandoop(String projectDirectory) throws Exception {
         // init error/non-error method sequences, and method/value pool
-        this.errorSeqs = new ArrayList<>();
-        this.nonErrorSeqs = new ArrayList<>();
+        this.errorSeqs = new HashSet<>();
+        this.nonErrorSeqs = new HashSet<>();
         this.methodPool = new MethodPool();
         this.valuePool = new HashMap<>();
 
@@ -81,39 +82,75 @@ public class Tandoop {
         // TODO add more initial primitive types
     }
 
-    private void getRandomSeqsAndVals(List<Sequence> seqs, List<Object> vals, List<String> types) {
+    private ValInfo getRandomExtensibleValFromSequences(List<Sequence> inputSeqs, List<Sequence> outputSeqs, String type) {
+        // filter inputSeqs by whether a seq has extensible values of the given type
+        List<Sequence> seqsWithGivenType = inputSeqs.stream()
+            .filter(s -> s.hasExtensibleValOfType(type))
+            .collect(Collectors.toList());
+
+        if (seqsWithGivenType.size() > 0) {
+            int i = Utils.GetRandomInt(seqsWithGivenType.size());
+            s = seqsWithGivenType[i];
+            outputSeqs.add(s); // add s to output seqs
+            return s.getRandomExtensibleValOfType(type);
+        }
+        return null;
+    }
+
+    private void getRandomSeqsAndVals(List<Sequence> seqs, List<ValInfo> vals, List<String> types) {
         for (String type: types) {
             if (this.valuePool.containsKey(type)) {
-                vals.add(this.valuePool.get(type).getRandomValue());
+                vals.add(new PrimitiveInfo(type, this.valuePool.get(type).getRandomValue()));
             } else {
-                Object v = null;
+                ValInfo v = null;
                 // 3 possible choices
-                int r = Utils.getRandomInt(3);
+                int r = Utils.GetRandomInt(3);
                 switch(r) {
                 case 0: // use a value v from a sequence that is already in seqs
-                    // QUESTION: Shuffle seqs?
-                    for (Sequence s: seqs) {
-                        v = s.getReturnValOfType(type);
-                        if (v != null) {
-                            break;
-                        }
-                    }
+                    v = this.getRandomExtensibleValFromSequences(seqs, seqs, type);
                     break;
                 case 1: // select a (possibly duplicate) sequence from nonErrorSeqs, add it to seqs, and use a value from it
-                    // QUESTION: Shuffle nonErrorSeqs?
-                    for (Sequence s: this.nonErrorSeqs) {
-                        v = s.getReturnValOfType(type);
-                        if (v != null) {
-                            seqs.add(s);
-                            break;
-                        }
-                        break;
-                    }
+                    v = this.getRandomExtensibleValFromSequences(this.nonErrorSeqs, seqs, type);
                 default: // use null
                 }
                 vals.add(v);
             }
         }
+    }
+
+    public Sequence extend(MethodInfo method, List<Sequence> seqs, List<ValInfo> vals) {
+        Sequence newSeq = new Sequence();
+        // merge seqs to one seq: methods, vals, and executable sequnce string
+        // Q: how to generate equivalent sequences & how to set modulo variable names?
+        for (Sequence seq: seqs) {
+            newSeq.methods.addAll(seq.Methods);
+            for (Map.Entry<string, List<List<ReturnVal>>> entry: seq.Vals.entrySet()) {
+                if (newSeq.containsKey(entry.getKey())) {
+                    newSeq.Vals.get(entry.getKey())[0].addAll(entry.getValue()[0]);
+                    newSeq.Vals.get(entry.getKey())[1].addAll(entry.getValue()[1]);
+                } else {
+                    newSeq.put(entry.getKey(), entry.getValue());
+                }
+            }
+            newSeq.ExcSeq += seq.ExcSeq;
+        }
+        // add new method to newSeq
+        newSeq.Methods.add(method);
+        VarInfo var = new VarInfo(method.ReturnType);
+        // TODO: set extensible flag and add new return Value to Vals. Q: Is new generated value extensible?
+        var.Extensible = true;
+        newSeq.Vals[0].add(var);
+        String sentence = method.ReturnType + ' ' + method.ReturnType + String.valueOf(var.Idx) + ' ';
+        sentence += method.Name + '(';
+        for (int i = 0; i < vals.size(); ++i) {
+            if (i > 0) {
+                sentence += ',';
+            }
+            // TODO: append primative values or variable names
+        }
+        sentence += ');\n'
+        newSeq.ExcSeq += sentence;
+        return newSeq;
     }
 
     // TODO add arguments: contracts, filters, timeLimits
@@ -128,7 +165,7 @@ public class Tandoop {
             }
             System.out.printf("Selected random method: %s.%s\n", method.ClassName, method.Name);
             List<Sequence> seqs = new ArrayList<>();
-            List<Object> vals = new ArrayList<>();
+            List<ReturnVal> vals = new ArrayList<>();
             this.getRandomSeqsAndVals(seqs, vals, method.getParameterTypes());
 
             // TODO: newSeqs <- extend(m, seqs, vals)

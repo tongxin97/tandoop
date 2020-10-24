@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 
+import java.lang.IllegalArgumentException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
@@ -22,23 +23,26 @@ import java.util.stream.Collectors;
 
 public class Sequence {
 	public List<MethodInfo> Methods;
-	public Map<String, List<ReturnVal>> returnVals;
+	// map type to list(list of extensible vals, list of non-extensible vals))
+	public Map<String, List<List<ValInfo>>> Vals;
+	public String ExcSeq;
 
 	public Sequence() {
 		this.Methods = new ArrayList<>();
-		this.returnVals = new HashMap<>();
+		this.Vals = new HashMap<>();
+		this.ExcSeq = "";
 	}
 
-	public Object getReturnValOfType(String type) {
-		if (this.returnVals.containsKey(type)) {
-			// get list of extensible values from this.returnVals
-			List<Object> extensibleVals = this.returnVals.get(type).stream()
-			.filter(v -> v.Extensible)
-			.map(v -> v.Val)
-			.collect(Collectors.toList());
-			return Utils.getRandomInNonEmptyList(extensibleVals);
+	public ValInfo getRandomExtensibleValOfType(String type) throws  {
+		if (!this.hasExtensibleValOfType(type)) {
+			throw new IllegalArgumentException("Sequence doesn't have extensible values of type " + type);
 		}
-		return null;
+		List<ValInfo> l = this.Vals.get(type)[0];
+		return l[Utils.GetRandomInt(l.size())];
+	}
+
+	public boolean hasExtensibleValOfType(String type) {
+		return this.Vals.containsKey(type) && this.Vals.get(type)[0] != null;
 	}
 
 	public void generateTest() throws Exception {
