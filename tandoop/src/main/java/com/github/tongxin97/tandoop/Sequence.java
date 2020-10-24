@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * The class that stores a sequence
@@ -33,16 +32,29 @@ public class Sequence {
 		this.ExcSeq = "";
 	}
 
-	public ValInfo getRandomExtensibleValOfType(String type) throws  {
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		return this.ExcSeq.equals(((Sequence)obj).ExcSeq);
+	}
+
+	@Override
+	public int hashCode() {
+		return this.ExcSeq.hashCode();
+	}
+
+	public ValInfo getRandomExtensibleValOfType(String type) throws IllegalArgumentException {
 		if (!this.hasExtensibleValOfType(type)) {
 			throw new IllegalArgumentException("Sequence doesn't have extensible values of type " + type);
 		}
-		List<ValInfo> l = this.Vals.get(type)[0];
-		return l[Utils.GetRandomInt(l.size())];
+		List<ValInfo> l = this.Vals.get(type).get(0);
+		return l.get(Utils.GetRandomInt(l.size()));
 	}
 
 	public boolean hasExtensibleValOfType(String type) {
-		return this.Vals.containsKey(type) && this.Vals.get(type)[0] != null;
+		return this.Vals.containsKey(type) && this.Vals.get(type).get(0) != null;
 	}
 
 	public void generateTest() throws Exception {

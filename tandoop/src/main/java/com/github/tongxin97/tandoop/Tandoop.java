@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.io.File;
+import java.util.stream.Collectors;
 
 /**
  * Main logic for Tandoop
@@ -90,7 +92,7 @@ public class Tandoop {
 
         if (seqsWithGivenType.size() > 0) {
             int i = Utils.GetRandomInt(seqsWithGivenType.size());
-            s = seqsWithGivenType[i];
+            Sequence s = seqsWithGivenType.get(i);
             outputSeqs.add(s); // add s to output seqs
             return s.getRandomExtensibleValOfType(type);
         }
@@ -110,7 +112,8 @@ public class Tandoop {
                     v = this.getRandomExtensibleValFromSequences(seqs, seqs, type);
                     break;
                 case 1: // select a (possibly duplicate) sequence from nonErrorSeqs, add it to seqs, and use a value from it
-                    v = this.getRandomExtensibleValFromSequences(this.nonErrorSeqs, seqs, type);
+                    List<Sequence> nonErrorSeqList = new ArrayList<>(this.nonErrorSeqs);
+                    v = this.getRandomExtensibleValFromSequences(nonErrorSeqList, seqs, type);
                 default: // use null
                 }
                 vals.add(v);
@@ -120,16 +123,16 @@ public class Tandoop {
 
     public Sequence extend(MethodInfo method, List<Sequence> seqs, List<ValInfo> vals) {
         Sequence newSeq = new Sequence();
-        // merge seqs to one seq: methods, vals, and executable sequnce string
+        // merge seqs to one seq: methods, vals, and executable sequence string
         // Q: how to generate equivalent sequences & how to set modulo variable names?
         for (Sequence seq: seqs) {
-            newSeq.methods.addAll(seq.Methods);
-            for (Map.Entry<string, List<List<ReturnVal>>> entry: seq.Vals.entrySet()) {
-                if (newSeq.containsKey(entry.getKey())) {
-                    newSeq.Vals.get(entry.getKey())[0].addAll(entry.getValue()[0]);
-                    newSeq.Vals.get(entry.getKey())[1].addAll(entry.getValue()[1]);
+            newSeq.Methods.addAll(seq.Methods);
+            for (Map.Entry<String, List<List<ValInfo>>> entry: seq.Vals.entrySet()) {
+                if (newSeq.Vals.containsKey(entry.getKey())) {
+                    newSeq.Vals.get(entry.getKey()).get(0).addAll(entry.getValue().get(0));
+                    newSeq.Vals.get(entry.getKey()).get(1).addAll(entry.getValue().get(1));
                 } else {
-                    newSeq.put(entry.getKey(), entry.getValue());
+                    newSeq.Vals.put(entry.getKey(), entry.getValue());
                 }
             }
             newSeq.ExcSeq += seq.ExcSeq;
@@ -139,16 +142,18 @@ public class Tandoop {
         VarInfo var = new VarInfo(method.ReturnType);
         // TODO: set extensible flag and add new return Value to Vals. Q: Is new generated value extensible?
         var.Extensible = true;
-        newSeq.Vals[0].add(var);
-        String sentence = method.ReturnType + ' ' + method.ReturnType + String.valueOf(var.Idx) + ' ';
-        sentence += method.Name + '(';
-        for (int i = 0; i < vals.size(); ++i) {
-            if (i > 0) {
+        newSeq.Vals.get(method.ReturnType).get(0).add(var);
+        // TODO: diffrent construction rule for Constructors
+        // eg. Type Type1 = p0.methodName(p1,p2,...);\n
+        String sentence = method.ReturnType + ' ' + var.getContent() + ' ';
+        sentence += vals.get(0).getContent() + '.' + method.Name + '(';
+        for (int i = 1; i < vals.size(); ++i) {
+            if (i > 1) {
                 sentence += ',';
             }
-            // TODO: append primative values or variable names
+            sentence += vals.get(i).getContent();
         }
-        sentence += ');\n'
+        sentence += ");\n";
         newSeq.ExcSeq += sentence;
         return newSeq;
     }
@@ -165,10 +170,24 @@ public class Tandoop {
             }
             System.out.printf("Selected random method: %s.%s\n", method.ClassName, method.Name);
             List<Sequence> seqs = new ArrayList<>();
-            List<ReturnVal> vals = new ArrayList<>();
-            this.getRandomSeqsAndVals(seqs, vals, method.getParameterTypes());
+            List<ValInfo> vals = new ArrayList<>();
+            List<String> types = method.getParameterTypes();
+            types.add(0, method.ClassName); // prepend class name to list since we need instance type
+            this.getRandomSeqsAndVals(seqs, vals, types);
+            if (vals.get(0) == null) { // sanity check: instance val can't be null
+                --timeLimits;
+                continue;
+            }
 
-            // TODO: newSeqs <- extend(m, seqs, vals)
+            Sequence newSeq = this.extend(method, seqs, vals);
+            // TODO: check if newSeq is duplicate
+            if (this.errorSeqs.contains(newSeq) || this.nonErrorSeqs.contains(newSeq)) {
+                continue;
+            }
+            // newSeq.generateTest()
+            // TODO execute newSeq
+            // TODO check contracts
+            // TODO apply filters and add to err/nonerr sets
             --timeLimits;
         }
         return new Sequence();
