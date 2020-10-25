@@ -119,6 +119,13 @@ public class Tandoop {
                 vals.add(v);
             }
         }
+        for (ValInfo val: vals) {
+            if (val == null) {
+                System.out.println("null");
+            } else {
+                System.out.println(val.getContent());
+            }
+        }
     }
 
     public Sequence extend(MethodInfo method, List<Sequence> seqs, List<ValInfo> vals) {
@@ -151,7 +158,11 @@ public class Tandoop {
             if (i > 1) {
                 sentence += ',';
             }
-            sentence += vals.get(i).getContent();
+            if (vals.get(i) == null) {
+                sentence += "null";
+            } else {
+                sentence += vals.get(i).getContent();
+            }
         }
         sentence += ");\n";
         newSeq.ExcSeq += sentence;
@@ -182,8 +193,10 @@ public class Tandoop {
             Sequence newSeq = this.extend(method, seqs, vals);
             // TODO: check if newSeq is duplicate
             if (this.errorSeqs.contains(newSeq) || this.nonErrorSeqs.contains(newSeq)) {
+                System.out.println("Duplicate: " + newSeq.ExcSeq);
                 continue;
             }
+            System.out.println(newSeq.ExcSeq);
             // newSeq.generateTest()
             // TODO execute newSeq
             // TODO check contracts
