@@ -48,9 +48,8 @@ public class MethodParser {
                   bd instanceof ConstructorDeclaration
                 ) {
                     ConstructorDeclaration cd = (ConstructorDeclaration) bd;
-                    String classNameWithPackage = this.getPackageName() + "." + cd.getNameAsString();
-                    MethodInfo info = new MethodInfo(cd.getNameAsString(), classNameWithPackage);
-                    info.ReturnType = classNameWithPackage;
+                    MethodInfo info = new MethodInfo(cd.getNameAsString(), cd.getNameAsString(), this.getPackageName());
+                    info.ReturnType = cd.getNameAsString();
                     for (Parameter p : cd.getParameters()) {
                       info.ParameterTypes.add(p.getType().toString());
                     }
@@ -101,8 +100,7 @@ public class MethodParser {
         return;
       }
 
-      String className = "";
-
+      String className = null;
       Optional<Node> opt = md.getParentNode();
       if (opt.isPresent()) {
         TypeDeclaration t = (TypeDeclaration) opt.get();
@@ -114,19 +112,10 @@ public class MethodParser {
           // System.out.printf("Encountered method in private inner class: %s.%s\n", t.getNameAsString(), md.getNameAsString());
           return;
         }
-
-        // prepend package name to class name
-        String packageName = getPackageName();
-        if (packageName != null) {
-          className += packageName + ".";
-        }
-        // append class name
-        className += t.getNameAsString();
+        className = t.getNameAsString();
       }
 
-      MethodInfo info = new MethodInfo(md.getNameAsString(), null);
-      info.ClassName = className;
-      // TODO: add package name to types?
+      MethodInfo info = new MethodInfo(md.getNameAsString(), className, getPackageName());
       for (Parameter p : md.getParameters()) {
         info.ParameterTypes.add(p.getType().toString());
       }

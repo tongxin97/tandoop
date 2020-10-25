@@ -147,12 +147,20 @@ public class Tandoop {
         // TODO: set extensible flag and add new return Value to Vals. Q: Is new generated value extensible?
         var.Extensible = true;
         newSeq.AddVal(method.ReturnType, var);
-        // TODO: diffrent construction rule for Constructors
-        // e.g. Type Type1 = p0.methodName(p1,p2,...);\n
-        String sentence = "    " + method.ReturnType + ' ' + var.getContent() + ' ';
-        sentence += vals.get(0).getContent() + '.' + method.Name + '(';
-        for (int i = 1; i < vals.size(); ++i) {
-            if (i > 1) {
+
+        // if method is constructor, sentence = Type Type1 = new methodName(p0,p1,...);\n
+        // otherwise, sentence = Type Type1 = p0.methodName(p1,p2,...);\n
+        String sentence = String.format("%s %s = ", method.ReturnType, var.getContent());
+        int start;
+        if (method.IsConstructor()) {
+            sentence += String.format("new %s(", method.Name);
+            start = 0;
+        } else {
+            sentence += String.format("%s.%s(", vals.get(0).getContent(), method.Name);
+            start = 1;
+        }
+        for (int i = start; i < vals.size(); ++i) {
+            if (i > start) {
                 sentence += ',';
             }
             if (vals.get(i) == null) {
@@ -162,6 +170,8 @@ public class Tandoop {
             }
         }
         sentence += ");\n";
+
+        System.out.println("sentence: " + sentence);
         newSeq.ExcSeq += sentence;
         return newSeq;
     }
