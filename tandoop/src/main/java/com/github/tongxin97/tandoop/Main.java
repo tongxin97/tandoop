@@ -22,8 +22,9 @@ public class Main {
       }
       // args: String testDir, String pkgName
       Tandoop tandoop = new Tandoop(
-        cmd.getOptionValue("test"), 
-        cmd.getOptionValue("pkg")
+        cmd.getOptionValue("pkg"),
+        cmd.getOptionValue("src"),
+        cmd.getOptionValue("test")
       );
       tandoop.generateSequence(20);
 

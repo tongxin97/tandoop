@@ -105,17 +105,18 @@ public class Sequence {
 		writer.close();
 	}
 
-	public void generateTest() throws Exception {
-		String preTestString = "import static org.junit.Assert.assertEquals;\n"
-				+ "import org.junit.Test;\n"
-				+ "\n"
-				+ "public class TandoopTest {\n"
-				+ "  @Test\n"
-				+ "  public void test() {\n";
+	public void generateTest(String pkgName, String testDir) throws Exception {
+		String preTestString = "package " + pkgName + "\n\n"
+			+ "import static org.junit.Assert.assertEquals;\n"
+			+ "import org.junit.Test;\n"
+			+ "\n"
+			+ "public class TandoopTest {\n"
+			+ "  @Test\n"
+			+ "  public void test() {\n";
 		String postTestString = "  }\n"
-				+ "}";
+			+ "}";
 		String testString = preTestString + this.ExcSeq + postTestString;
-		String filename = "../calculator/CalculatorTest.class";
+		String filename = testDir + "/TandoopTest.java";
 		BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
 		writer.write(testString);
 		writer.close();

@@ -23,17 +23,25 @@ public class Tandoop {
 
     private Set<Sequence> errorSeqs;
     private Set<Sequence> nonErrorSeqs;
+    
+    String srcDir;
+    String testDir;
+    String pkgName;
 
-    public Tandoop(String projectDirectory, String packageName) throws Exception {
+    public Tandoop(String pkgName, String srcDir, String testDir) throws Exception {
         // init error/non-error method sequences, and method/value pool
         this.errorSeqs = new LinkedHashSet<>();
         this.nonErrorSeqs = new LinkedHashSet<>();
         this.methodPool = new MethodPool();
         this.valuePool = new HashMap<>();
 
+        this.pkgName = pkgName;
+        this.srcDir = srcDir;
+        this.testDir = testDir;
+
         // Note: need to use the directory of source code (e.g., ../joda-time/src/main)
         // There are errors when trying to parse java test classes
-        walkThroughDirectory(new File(projectDirectory));
+        walkThroughDirectory(new File(srcDir));
     }
 
     private void walkThroughDirectory(File dir) throws Exception {
