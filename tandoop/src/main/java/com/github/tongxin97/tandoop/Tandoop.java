@@ -24,7 +24,7 @@ public class Tandoop {
     private Set<Sequence> errorSeqs;
     private Set<Sequence> nonErrorSeqs;
 
-    public Tandoop(String projectDirectory) throws Exception {
+    public Tandoop(String projectDirectory, String packageName) throws Exception {
         // init error/non-error method sequences, and method/value pool
         this.errorSeqs = new LinkedHashSet<>();
         this.nonErrorSeqs = new LinkedHashSet<>();
