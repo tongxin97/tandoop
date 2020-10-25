@@ -171,7 +171,7 @@ public class Tandoop {
         }
         sentence += ");\n";
 
-        System.out.println("sentence: " + sentence);
+        System.out.println("New Sentence: " + sentence);
         newSeq.ExcSeq += sentence;
         return newSeq;
     }
@@ -191,12 +191,13 @@ public class Tandoop {
             List<ValInfo> vals = new ArrayList<>();
             List<String> types = method.GetParameterTypes();
             if (!method.IsConstructor()) {
-                // prepend class name to list since we need instance type
+                // prepend class name to  types list since we need instance type when method is not constructor
                 types.add(0, method.ClassName);
             }
             this.getRandomSeqsAndVals(seqs, vals, types);
             System.out.printf("Seqs: %s, Vals %s\n", seqs, vals);
-            if (!method.IsConstructor() && vals.get(0) == null) { // sanity check: instance val can't be null
+            // sanity check: instance val (vals[0]) can't be null when method is not constructor
+            if (!method.IsConstructor() && vals.get(0) == null) {
                 --timeLimits;
                 System.out.println("Instance val is null");
                 continue;
@@ -214,6 +215,7 @@ public class Tandoop {
             // TODO check contracts
             // TODO apply filters and add to err/nonerr sets
             nonErrorSeqs.add(newSeq);
+            System.out.println("nonErrorSeqs: " + nonErrorSeqs);
             --timeLimits;
         }
         return new Sequence();
