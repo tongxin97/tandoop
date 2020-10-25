@@ -97,7 +97,7 @@ public class MethodParser {
 
       // Skip if method is private
       if (MethodParser.isPrivateMethod(md)) {
-        System.out.println("Encountered private method: " + md.getNameAsString());
+        // System.out.println("Encountered private method: " + md.getNameAsString());
         return;
       }
 
@@ -111,7 +111,7 @@ public class MethodParser {
           t instanceof ClassOrInterfaceDeclaration &&
           MethodParser.isPublicClass((ClassOrInterfaceDeclaration) t)
         )) {
-          System.out.printf("Encountered method in private inner class: %s.%s\n", t.getNameAsString(), md.getNameAsString());
+          // System.out.printf("Encountered method in private inner class: %s.%s\n", t.getNameAsString(), md.getNameAsString());
           return;
         }
 

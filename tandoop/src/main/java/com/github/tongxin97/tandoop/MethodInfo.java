@@ -16,12 +16,17 @@ public class MethodInfo {
         this.ParameterTypes = new ArrayList<>();
     }
 
-    public List<String> getParameterTypes() {
+    public List<String> GetParameterTypes() {
         return this.ParameterTypes;
+    }
+
+    public boolean IsConstructor() {
+        String last = this.ClassName.substring(this.ClassName.lastIndexOf('.') + 1);
+        return last.equals(this.Name);
     }
 
     @Override
     public String toString() {
-        return String.format("Class name: %s\nMethod name: %s\nParam types: %s\nReturn type:%s", this.ClassName, this.Name, this.ParameterTypes, this.ReturnType);
+        return String.format("Class name: %s\tMethod name: %s\tParam types: %s\tReturn type:%s", this.ClassName, this.Name, this.ParameterTypes, this.ReturnType);
     }
 }

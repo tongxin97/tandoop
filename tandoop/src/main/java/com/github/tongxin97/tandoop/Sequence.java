@@ -32,6 +32,31 @@ public class Sequence {
 		this.ExcSeq = "";
 	}
 
+	public void AddVal(String type, ValInfo v) {
+		int idx = v.Extensible? 0: 1;
+		if (!this.Vals.containsKey(type)) {
+			this.Vals.put(type, new ArrayList<>());
+			for (int i = 0; i < 2; i++) { // init extensible/non-extensible lists
+				this.Vals.get(type).add(new ArrayList<>());
+			}
+		}
+		this.Vals.get(type).get(idx).add(v);
+	}
+
+	public void AddVals(String type, List<ValInfo> vals) {
+		if (vals.size() == 0) {
+			return;
+		}
+		int idx = vals.get(0).Extensible? 0: 1;
+		if (!this.Vals.containsKey(type)) {
+			this.Vals.put(type, new ArrayList<>());
+			for (int i = 0; i < 2; i++) { // init extensible/non-extensible lists
+				this.Vals.get(type).add(new ArrayList<>());
+			}
+		}
+		this.Vals.get(type).get(idx).addAll(vals);
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) {
@@ -57,22 +82,38 @@ public class Sequence {
 		return this.Vals.containsKey(type) && this.Vals.get(type).get(0) != null;
 	}
 
+	public void generateCalculatorTest() throws Exception {
+		String sequence = "import static org.junit.Assert.assertEquals;\n"
+				+ "import org.junit.Test;\n"
+				+ "\n"
+				+ "public class CalculatorTest {\n"
+				+ "  @Test\n"
+				+ "  public void evaluatesExpression() {\n"
+				+ "    Calculator calculator = new Calculator();\n"
+				+ "    int sum = calculator.evaluate(\"1+2+3\");\n"
+				+ "    assertEquals(6, sum);\n"
+				+ "  }\n"
+				+ "}";
+		String filename = "../calculator/CalculatorTest.class";
+		BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
+		writer.write(sequence);
+		writer.close();
+	}
+
 	public void generateTest() throws Exception {
-			String sequence = "import static org.junit.Assert.assertEquals;\n"
-					+ "import org.junit.Test;\n"
-					+ "\n"
-					+ "public class CalculatorTest {\n"
-					+ "  @Test\n"
-					+ "  public void evaluatesExpression() {\n"
-					+ "    Calculator calculator = new Calculator();\n"
-					+ "    int sum = calculator.evaluate(\"1+2+3\");\n"
-					+ "    assertEquals(6, sum);\n"
-					+ "  }\n"
-					+ "}";
-			String filename = "../calculator/CalculatorTest.class";
-			BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
-			writer.write(sequence);
-			writer.close();
+		String preTestString = "import static org.junit.Assert.assertEquals;\n"
+				+ "import org.junit.Test;\n"
+				+ "\n"
+				+ "public class TandoopTest {\n"
+				+ "  @Test\n"
+				+ "  public void test() {\n";
+		String postTestString = "  }\n"
+				+ "}";
+		String testString = preTestString + this.ExcSeq + postTestString;
+		String filename = "../calculator/CalculatorTest.class";
+		BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
+		writer.write(testString);
+		writer.close();
 	}
 
 	public void runTest() {
