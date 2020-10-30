@@ -29,19 +29,21 @@ import com.github.tongxin97.tandoop.value.ValueInfo;
  */
 
 public class Sequence {
-	public List<MethodInfo> Methods;
+	public Set<MethodInfo> Methods;
 	// map type to list(list of extensible vals, list of non-extensible vals))
 	public Map<String, List<List<ValueInfo>>> Vals;
 	public String ExcSeq;
 	public String NewVar;
-	public Set<String> imports;
+	public Set<String> Imports;
+	public boolean InputParamWithNull;
 
 	public Sequence() {
-		this.Methods = new ArrayList<>();
+		this.Methods = new HashSet<>();
 		this.Vals = new HashMap<>();
 		this.ExcSeq = "";
 		this.NewVar = "";
-		this.imports = new HashSet<>();
+		this.Imports = new HashSet<>();
+		this.InputParamWithNull = false;
 	}
 
 	public void addVal(String type, ValueInfo v) {
@@ -69,8 +71,20 @@ public class Sequence {
 		this.Vals.get(type).get(idx).addAll(vals);
 	}
 
+	public void addMethod(MethodInfo method) {
+		this.Methods.add(method);
+	}
+
+	public void addMethods(Set<MethodInfo> methods) {
+		this.Methods.addAll(methods);
+	}
+
 	public void addImport(String newImport) {
-		this.imports.add(newImport);
+		this.Imports.add(newImport);
+	}
+
+	public void addImports(Set<String> oldImports) {
+		this.Imports.addAll(oldImports);
 	}
 
 	@Override
@@ -106,15 +120,10 @@ public class Sequence {
 	public void generateTest(String testDir) throws Exception {
 		StringBuilder testString = new StringBuilder("");
 		testString.append("import org.junit.Test;\n");
-		for (String s: this.imports) {
+		for (String s: this.Imports) {
 			testString.append(s);
 		}
-
-		String preTestString = "\n"
-		+ "public class TandoopTest {\n"
-		+ "  @Test\n"
-		+ "  public void test() {\n"
-		+ "    ";
+		testString.append("\npublic class TandoopTest {\n  @Test\n  public void test() {\n");
 
 		String contracts = "";
 		if (this.NewVar != "") {

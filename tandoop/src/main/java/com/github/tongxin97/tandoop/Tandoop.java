@@ -141,7 +141,8 @@ public class Tandoop {
         // merge seqs to one seq: methods, vals, and executable sequence string
         // Q: how to generate equivalent sequences & how to set modulo variable names?
         for (Sequence seq: seqs) {
-            newSeq.Methods.addAll(seq.Methods);
+            newSeq.addMethods(seq.Methods);
+            newSeq.addImports(seq.Imports);
             for (Map.Entry<String, List<List<ValueInfo>>> entry: seq.Vals.entrySet()) {
                 newSeq.addVals(entry.getKey(), entry.getValue().get(0));
                 newSeq.addVals(entry.getKey(), entry.getValue().get(1));
@@ -149,7 +150,7 @@ public class Tandoop {
             newSeq.ExcSeq += seq.ExcSeq;
         }
         // add new method to newSeq
-        newSeq.Methods.add(method);
+        newSeq.addMethod(method);
         VarInfo var = new VarInfo(method.ReturnType);
         // TODO: set extensible flag and add new return Value to Vals. Q: Is new generated value extensible?
         var.Extensible = true;
@@ -177,6 +178,7 @@ public class Tandoop {
             }
             if (vals.get(i) == null) {
                 b.append("null");
+                newSeq.InputParamsWithNull = true;
             } else {
                 b.append(vals.get(i).getContent());
             }
