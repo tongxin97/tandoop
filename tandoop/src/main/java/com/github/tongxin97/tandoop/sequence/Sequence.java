@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
 
 import com.github.tongxin97.tandoop.method.MethodInfo;
 import com.github.tongxin97.tandoop.util.Rand;
@@ -31,12 +33,15 @@ public class Sequence {
 	// map type to list(list of extensible vals, list of non-extensible vals))
 	public Map<String, List<List<ValueInfo>>> Vals;
 	public String ExcSeq;
-	public String newVar = "";
+	public String NewVar;
+	public Set<String> imports;
 
 	public Sequence() {
 		this.Methods = new ArrayList<>();
 		this.Vals = new HashMap<>();
 		this.ExcSeq = "";
+		this.NewVar = "";
+		this.imports = new HashSet<>();
 	}
 
 	public void addVal(String type, ValueInfo v) {
@@ -62,6 +67,10 @@ public class Sequence {
 			}
 		}
 		this.Vals.get(type).get(idx).addAll(vals);
+	}
+
+	public void addImport(String newImport) {
+		this.imports.add(newImport);
 	}
 
 	@Override
@@ -94,26 +103,36 @@ public class Sequence {
 		return this.Vals.containsKey(type) && this.Vals.get(type).get(0) != null;
 	}
 
-	public void generateTest(String pkgName, String testDir) throws Exception {
-		String preTestString = "package " + pkgName + ";\n\n"
-			+ "import static org.junit.Assert.assertEquals;\n"
-			+ "import org.junit.Test;\n"
-			+ "\n"
-			+ "public class TandoopTest {\n"
-			+ "  @Test\n"
-			+ "  public void test() {\n"
-			+ "    ";
-		String contracts = "";
-		if (this.newVar != "") {
-			contracts = "    boolean r = " + this.newVar +  ".equals(" + this.newVar + ")\n"
-				+ "    if (r == false) { return false; }";
+	public void generateTest(String testDir) throws Exception {
+		StringBuilder testString = new StringBuilder("");
+		testString.append("import org.junit.Test;\n");
+		for (String s: this.imports) {
+			testString.append(s);
 		}
-		String postTestString = "  }\n"
-			+ "}";
-		String testString = preTestString + this.ExcSeq + contracts + postTestString;
+
+		String preTestString = "\n"
+		+ "public class TandoopTest {\n"
+		+ "  @Test\n"
+		+ "  public void test() {\n"
+		+ "    ";
+
+		String contracts = "";
+		if (this.NewVar != "") {
+			contracts = "    boolean r = " + this.NewVar +  ".equals(" + this.NewVar + ");\n"
+				+ "    if (r == false) { throw new Exception(); }\n"
+				+ "    " + this.NewVar + ".hashcode();\n"
+				+ "    " + this.NewVar + ".toString();\n";
+		}
+		String postTestString = "  }\n}";
+
+		testString.append(preTestString);
+		testString.append(this.ExcSeq);
+		testString.append(contracts);
+		testString.append(postTestString);
+
 		String filename = testDir + "/TandoopTest.java";
 		BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
-		writer.write(testString);
+		writer.write(testString.toString());
 		writer.close();
 	}
 

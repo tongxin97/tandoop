@@ -10,7 +10,6 @@ public class Main {
   public static void main(String[] args) throws Exception {
     CommandLineParser parser = new DefaultParser();
     Options options = new Options();
-    options.addOption("pkg", "pkgName", true, "Package name");
     options.addOption("src", "srcDir", true, "Project src directory");
     options.addOption("test", "testDir", true, "Project test directory");
     options.addOption("prj", "projectDir", true, "Project directory");
@@ -18,9 +17,6 @@ public class Main {
     try {
       // parse cmdline arguments
       CommandLine cmd = parser.parse(options, args);
-      if (!cmd.hasOption("pkg")) {
-        System.err.println("Package name not provided.");
-      }
       if (!cmd.hasOption("src")) {
         System.err.println("Project src directory not provided.");
       }
@@ -31,7 +27,6 @@ public class Main {
         System.err.println("Project directory not provided.");
       }
       Tandoop tandoop = new Tandoop(
-        cmd.getOptionValue("pkg"),
         cmd.getOptionValue("src"),
         cmd.getOptionValue("test"),
         cmd.getOptionValue("prj")

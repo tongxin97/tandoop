@@ -1,5 +1,6 @@
 package com.github.tongxin97.tandoop;
 
+import java.lang.StringBuilder;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,17 +34,15 @@ public class Tandoop {
 
     String srcDir;
     String testDir;
-    String pkgName;
     String prjDir;
 
-    public Tandoop(String pkgName, String srcDir, String testDir, String prjDir) throws Exception {
+    public Tandoop(String srcDir, String testDir, String prjDir) throws Exception {
         // init error/non-error method sequences, and method/value pool
         this.errorSeqs = new LinkedHashSet<>();
         this.nonErrorSeqs = new LinkedHashSet<>();
         this.methodPool = new MethodPool();
         this.valuePool = new HashMap<>();
 
-        this.pkgName = pkgName;
         this.srcDir = srcDir;
         this.testDir = testDir;
         this.prjDir = prjDir;
@@ -135,15 +134,6 @@ public class Tandoop {
                 vals.add(v);
             }
         }
-        // System.out.printf("Values: ");
-        // for (ValueInfo val: vals) {
-        //     if (val == null) {
-        //         System.out.printf("null\t");
-        //     } else {
-        //         System.out.printf("%s\t", val.getContent());
-        //     }
-        //     System.out.println("");
-        // }
     }
 
     public Sequence extend(MethodInfo method, Set<Sequence> seqs, List<ValueInfo> vals) {
@@ -164,35 +154,37 @@ public class Tandoop {
         // TODO: set extensible flag and add new return Value to Vals. Q: Is new generated value extensible?
         var.Extensible = true;
         newSeq.addVal(method.ReturnType, var);
+        newSeq.addImport(String.format("import %s.%s;\n", method.PackageName, method.ClassName));
 
         // if method is constructor, sentence = Type Type1 = new methodName(p0,p1,...);\n
         // otherwise, sentence = Type Type1 = p0.methodName(p1,p2,...);\n
-        String sentence = "";
+        StringBuilder b = new StringBuilder();
         if (method.ReturnType != "void") {
-            sentence += String.format("%s %s = ", method.ReturnType, var.getContent());
+            b.append(String.format("%s %s = ", method.ReturnType, var.getContent()));
+            newSeq.NewVar = var.getContent();
         }
         int start;
         if (method.IsConstructor()) {
-            sentence += String.format("new %s(", method.Name);
+            b.append(String.format("new %s(", method.Name));
             start = 0;
         } else {
-            sentence += String.format("%s.%s(", vals.get(0).getContent(), method.Name);
+            b.append(String.format("%s.%s(", vals.get(0).getContent(), method.Name));
             start = 1;
         }
         for (int i = start; i < vals.size(); ++i) {
             if (i > start) {
-                sentence += ',';
+                b.append(',');
             }
             if (vals.get(i) == null) {
-                sentence += "null";
+                b.append("null");
             } else {
-                sentence += vals.get(i).getContent();
+                b.append(vals.get(i).getContent());
             }
         }
-        sentence += ");\n";
+        b.append(");\n");
 
-        System.out.println("New Sentence: " + sentence);
-        newSeq.ExcSeq += sentence;
+        System.out.println("New Sentence: " + b.toString());
+        newSeq.ExcSeq += b.toString();
         return newSeq;
     }
 
@@ -231,7 +223,7 @@ public class Tandoop {
             }
             // System.out.println(newSeq.ExcSeq);
 
-            newSeq.generateTest(this.pkgName, this.testDir);
+            newSeq.generateTest(this.testDir);
             int returnVal = newSeq.runTest(this.prjDir);
 
             // TODO check contracts
