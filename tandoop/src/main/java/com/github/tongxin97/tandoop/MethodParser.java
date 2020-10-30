@@ -39,24 +39,29 @@ public class MethodParser {
     return null;
   }
 
+  /**
+   * getConstructorInfo creates a MethodInfo instance for the constructor.
+   * @return MethodInfo if a public, non-abstract constructor exists; null otherwise.
+   */
   private MethodInfo getConstructorInfo() {
     for (TypeDeclaration td: this.CU.getTypes()) {
-        List<BodyDeclaration> bds = td.getMembers();
-        if(bds != null) {
-            for (BodyDeclaration bd: bds) {
-                if (
-                  bd instanceof ConstructorDeclaration
-                ) {
-                    ConstructorDeclaration cd = (ConstructorDeclaration) bd;
-                    MethodInfo info = new MethodInfo(cd.getNameAsString(), cd.getNameAsString(), this.getPackageName());
-                    info.ReturnType = cd.getNameAsString();
-                    for (Parameter p : cd.getParameters()) {
-                      info.ParameterTypes.add(p.getType().toString());
-                    }
-                    return info;
-                }
-            }
+      List<BodyDeclaration> bds = td.getMembers();
+      if(bds != null) {
+        for (BodyDeclaration bd: bds) {
+          if (bd instanceof ConstructorDeclaration) {
+              ConstructorDeclaration cd = (ConstructorDeclaration) bd;
+              if (isAbstractClass(cd)) {
+                return null;
+              }
+              MethodInfo info = new MethodInfo(cd.getNameAsString(), cd.getNameAsString(), this.getPackageName());
+              info.ReturnType = cd.getNameAsString();
+              for (Parameter p : cd.getParameters()) {
+                info.ParameterTypes.add(p.getType().toString());
+              }
+              return info;
+          }
         }
+      }
     }
     return null;
   }
@@ -78,14 +83,22 @@ public class MethodParser {
     }
     return false;
   }
-
+  private static boolean isAbstractClass(ConstructorDeclaration cd) {
+    for (Modifier m : cd.getModifiers()) {
+      if (m.getKeyword().equals(Modifier.Keyword.ABSTRACT)) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   public void CollectMethodInfo(MethodPool methodPool) {
     VoidVisitor<List<MethodInfo>> methodCollector = new MethodCollector();
     MethodInfo constructorInfo = this.getConstructorInfo();
-    if (this.getConstructorInfo() != null) {
-      methodPool.MethodInfoList.add(constructorInfo);
+    if (this.getConstructorInfo() == null) {
+      return; // skip if no constructor info
     }
+    methodPool.MethodInfoList.add(constructorInfo);
     methodCollector.visit(this.CU, methodPool.MethodInfoList);
   }
 

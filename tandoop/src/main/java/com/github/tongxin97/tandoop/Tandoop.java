@@ -23,7 +23,7 @@ public class Tandoop {
 
     private Set<Sequence> errorSeqs;
     private Set<Sequence> nonErrorSeqs;
-    
+
     String srcDir;
     String testDir;
     String pkgName;
@@ -160,7 +160,10 @@ public class Tandoop {
 
         // if method is constructor, sentence = Type Type1 = new methodName(p0,p1,...);\n
         // otherwise, sentence = Type Type1 = p0.methodName(p1,p2,...);\n
-        String sentence = String.format("    %s %s = ", method.ReturnType, var.getContent());
+        String sentence = "";
+        if (method.ReturnType != "void") {
+            sentence += String.format("%s %s = ", method.ReturnType, var.getContent());
+        }
         int start;
         if (method.IsConstructor()) {
             sentence += String.format("new %s(", method.Name);
@@ -181,7 +184,7 @@ public class Tandoop {
         }
         sentence += ");\n";
 
-        // System.out.println("New Sentence: " + sentence);
+        System.out.println("New Sentence: " + sentence);
         newSeq.ExcSeq += sentence;
         return newSeq;
     }
