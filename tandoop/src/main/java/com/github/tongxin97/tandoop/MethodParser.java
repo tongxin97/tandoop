@@ -28,6 +28,25 @@ public class MethodParser {
     this.CU = StaticJavaParser.parse(new FileInputStream(filename));
   }
 
+  public void CollectMethodInfo(MethodPool methodPool) {
+    try {
+      if (isAbstractClass()) {
+        return; // skip if class is abstract
+      }
+    } catch (Exception e) {
+      System.err.println("CollectMethodInfo exception: " + e.getMessage());
+      return;
+    }
+
+    VoidVisitor<List<MethodInfo>> methodCollector = new MethodCollector();
+    MethodInfo constructorInfo = this.getConstructorInfo();
+    if (constructorInfo == null) {
+      return; // skip if no constructor info
+    }
+    methodPool.MethodInfoList.add(constructorInfo);
+    methodCollector.visit(this.CU, methodPool.MethodInfoList);
+  }
+
   private String getPackageName() {
     if (this.CU == null) {
       return null;
@@ -41,7 +60,7 @@ public class MethodParser {
 
   /**
    * getConstructorInfo creates a MethodInfo instance for the constructor.
-   * @return MethodInfo if a public, non-abstract constructor exists; null otherwise.
+   * @return MethodInfo if a public constructor exists; null otherwise.
    */
   private MethodInfo getConstructorInfo() {
     for (TypeDeclaration td: this.CU.getTypes()) {
@@ -50,9 +69,6 @@ public class MethodParser {
         for (BodyDeclaration bd: bds) {
           if (bd instanceof ConstructorDeclaration) {
               ConstructorDeclaration cd = (ConstructorDeclaration) bd;
-              if (isAbstractClass(cd)) {
-                return null;
-              }
               MethodInfo info = new MethodInfo(cd.getNameAsString(), cd.getNameAsString(), this.getPackageName());
               info.ReturnType = cd.getNameAsString();
               for (Parameter p : cd.getParameters()) {
@@ -83,7 +99,7 @@ public class MethodParser {
     }
     return false;
   }
-  private static boolean isAbstractClass(ConstructorDeclaration cd) {
+  private static boolean isAbstractClass(ClassOrInterfaceDeclaration cd) {
     for (Modifier m : cd.getModifiers()) {
       if (m.getKeyword().equals(Modifier.Keyword.ABSTRACT)) {
         return true;
@@ -91,15 +107,16 @@ public class MethodParser {
     }
     return false;
   }
-
-  public void CollectMethodInfo(MethodPool methodPool) {
-    VoidVisitor<List<MethodInfo>> methodCollector = new MethodCollector();
-    MethodInfo constructorInfo = this.getConstructorInfo();
-    if (this.getConstructorInfo() == null) {
-      return; // skip if no constructor info
+  private boolean isAbstractClass() throws Exception {
+    if (this.CU == null) {
+      throw new Exception("Can't determine if class is abstract: this.CU is null.");
     }
-    methodPool.MethodInfoList.add(constructorInfo);
-    methodCollector.visit(this.CU, methodPool.MethodInfoList);
+    for (TypeDeclaration td: this.CU.getTypes()) {
+      if (td instanceof ClassOrInterfaceDeclaration) {
+        return isAbstractClass((ClassOrInterfaceDeclaration) td);
+      }
+    }
+    throw new Exception("Can't determine if class is abstract.");
   }
 
   private class MethodCollector extends VoidVisitorAdapter<List<MethodInfo>> {
