@@ -27,6 +27,7 @@ public class Sequence {
 	// map type to list(list of extensible vals, list of non-extensible vals))
 	public Map<String, List<List<ValInfo>>> Vals;
 	public String ExcSeq;
+	public String newVar = "";
 
 	public Sequence() {
 		this.Methods = new ArrayList<>();
@@ -123,28 +124,35 @@ public class Sequence {
 			+ "\n"
 			+ "public class TandoopTest {\n"
 			+ "  @Test\n"
-			+ "  public void test() {\n";
+			+ "  public void test() {\n"
+			+ "    ";
+		String contracts = "";
+		if (this.newVar != "") {
+			contracts = "    " + "\n";
+		}
 		String postTestString = "  }\n"
 			+ "}";
-		String testString = preTestString + this.ExcSeq + postTestString;
+		String testString = preTestString + this.ExcSeq + contracts + postTestString;
 		String filename = testDir + "/TandoopTest.java";
 		BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
 		writer.write(testString);
 		writer.close();
 	}
 
-	public void runTest(String prjDir) throws Exception {
+	public int runTest(String prjDir) throws Exception {
+		int returnVal = 1;
 		try {
 			String cmd = "cd " + prjDir + "; mvn test -Dtest=TandoopTest";
-			System.out.println("run: " + cmd);
 			Process p = Runtime.getRuntime().exec(cmd);
 			BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			String s;
             while ((s = br.readLine()) != null)
                 System.out.println("line: " + s);
 			p.waitFor();
-			System.out.println("Test exit value: " + p.exitValue());
+			returnVal = p.exitValue();
+			// System.out.println("Test exit value: " + p.exitValue());
 			p.destroy();
 		} catch (Exception e) {}
+		return returnVal;
 	}
 }

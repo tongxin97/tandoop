@@ -9,6 +9,9 @@ public class PrimitiveInfo extends ValInfo {
   }
 
   public String getContent() {
+    if (Val instanceof String) {
+      return String.format("\"%s\"", Val);
+    }
     return String.valueOf(Val);
   }
 }

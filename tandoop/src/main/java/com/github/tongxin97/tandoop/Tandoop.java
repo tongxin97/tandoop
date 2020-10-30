@@ -128,15 +128,6 @@ public class Tandoop {
                 vals.add(v);
             }
         }
-        // System.out.printf("Values: ");
-        // for (ValInfo val: vals) {
-        //     if (val == null) {
-        //         System.out.printf("null\t");
-        //     } else {
-        //         System.out.printf("%s\t", val.getContent());
-        //     }
-        //     System.out.println("");
-        // }
     }
 
     public Sequence extend(MethodInfo method, Set<Sequence> seqs, List<ValInfo> vals) {
@@ -163,6 +154,7 @@ public class Tandoop {
         String sentence = "";
         if (method.ReturnType != "void") {
             sentence += String.format("%s %s = ", method.ReturnType, var.getContent());
+            newSeq.newVar = var.getContent();
         }
         int start;
         if (method.IsConstructor()) {
@@ -224,11 +216,15 @@ public class Tandoop {
             }
             // System.out.println(newSeq.ExcSeq);
             newSeq.generateTest(this.pkgName, this.testDir);
-            newSeq.runTest(this.prjDir);
-            // TODO execute newSeq
+            int returnVal = newSeq.runTest(this.prjDir);
             // TODO check contracts
             // TODO apply filters and add to err/nonerr sets
-            nonErrorSeqs.add(newSeq);
+            if (returnVal == 0) {
+                nonErrorSeqs.add(newSeq);
+                // setExtensibleFlags(newSeq, filter, runtimevalues)
+            } else {
+                errorSeqs.add(newSeq);
+            }
             // System.out.println("nonErrorSeqs: " + nonErrorSeqs);
             --timeLimits;
         }
