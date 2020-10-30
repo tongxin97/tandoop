@@ -27,8 +27,9 @@ public class Tandoop {
     String srcDir;
     String testDir;
     String pkgName;
+    String prjDir;
 
-    public Tandoop(String pkgName, String srcDir, String testDir) throws Exception {
+    public Tandoop(String pkgName, String srcDir, String testDir, String prjDir) throws Exception {
         // init error/non-error method sequences, and method/value pool
         this.errorSeqs = new LinkedHashSet<>();
         this.nonErrorSeqs = new LinkedHashSet<>();
@@ -38,6 +39,7 @@ public class Tandoop {
         this.pkgName = pkgName;
         this.srcDir = srcDir;
         this.testDir = testDir;
+        this.prjDir = prjDir;
 
         // Note: need to use the directory of source code (e.g., ../joda-time/src/main)
         // There are errors when trying to parse java test classes
@@ -50,12 +52,12 @@ public class Tandoop {
             System.err.printf("%s is not a directory.\n", dir.getPath());
             return;
         }
-        System.out.println(dir.getPath());
+        // System.out.println(dir.getPath());
         for (File file: files) {
             if (file.isDirectory()) {
                 walkThroughDirectory(file);
             } else {
-                System.out.println(file.getPath());
+                // System.out.println(file.getPath());
                 if (file.getName().endsWith(".java")) {
                     parseFile(file.getPath());
                 }
@@ -158,7 +160,7 @@ public class Tandoop {
 
         // if method is constructor, sentence = Type Type1 = new methodName(p0,p1,...);\n
         // otherwise, sentence = Type Type1 = p0.methodName(p1,p2,...);\n
-        String sentence = String.format("%s %s = ", method.ReturnType, var.getContent());
+        String sentence = String.format("    %s %s = ", method.ReturnType, var.getContent());
         int start;
         if (method.IsConstructor()) {
             sentence += String.format("new %s(", method.Name);
@@ -179,13 +181,13 @@ public class Tandoop {
         }
         sentence += ");\n";
 
-        System.out.println("New Sentence: " + sentence);
+        // System.out.println("New Sentence: " + sentence);
         newSeq.ExcSeq += sentence;
         return newSeq;
     }
 
     // TODO add arguments: contracts, filters, timeLimits
-    public Sequence generateSequence(int timeLimits) {
+    public Sequence generateSequence(int timeLimits) throws Exception {
         while (timeLimits > 0) {
             MethodInfo method;
             try {
@@ -194,7 +196,7 @@ public class Tandoop {
                 System.err.println("Uncaught exception: " + e.getMessage());
                 break;
             }
-            System.out.printf("Selected random method: %s.%s\n", method.ClassName, method.Name);
+            // System.out.printf("Selected random method: %s.%s\n", method.ClassName, method.Name);
             Set<Sequence> seqs = new LinkedHashSet<>();
             List<ValInfo> vals = new ArrayList<>();
             List<String> types = method.GetParameterTypes();
@@ -203,27 +205,28 @@ public class Tandoop {
                 types.add(0, method.ClassName);
             }
             this.getRandomSeqsAndVals(seqs, vals, types);
-            System.out.printf("Seqs: %s, Vals %s\n", seqs, vals);
+            // System.out.printf("Seqs: %s, Vals %s\n", seqs, vals);
             // sanity check: instance val (vals[0]) can't be null when method is not constructor
             if (!method.IsConstructor() && vals.get(0) == null) {
                 --timeLimits;
-                System.out.println("Instance val is null");
+                // System.out.println("Instance val is null");
                 continue;
             }
 
             Sequence newSeq = this.extend(method, seqs, vals);
             // TODO: check if newSeq is duplicate
             if (this.errorSeqs.contains(newSeq) || this.nonErrorSeqs.contains(newSeq)) {
-                System.out.println("Duplicate: " + newSeq.ExcSeq);
+                // System.out.println("Duplicate: " + newSeq.ExcSeq);
                 continue;
             }
             // System.out.println(newSeq.ExcSeq);
-            // newSeq.generateTest()
+            newSeq.generateTest(this.pkgName, this.testDir);
+            newSeq.runTest(this.prjDir);
             // TODO execute newSeq
             // TODO check contracts
             // TODO apply filters and add to err/nonerr sets
             nonErrorSeqs.add(newSeq);
-            System.out.println("nonErrorSeqs: " + nonErrorSeqs);
+            // System.out.println("nonErrorSeqs: " + nonErrorSeqs);
             --timeLimits;
         }
         return new Sequence();

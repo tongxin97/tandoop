@@ -3,6 +3,8 @@ package com.github.tongxin97.tandoop;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -105,8 +107,17 @@ public class Sequence {
 		writer.close();
 	}
 
+	public void runCalculatorTest() {
+		/*
+		cd ../calculator
+		javac Calculator.java
+		javac -cp .:junit-4.13.1.jar:hamcrest-core-1.3.jar CalculatorTest.java
+		java -cp .:junit-4.13.1.jar:hamcrest-core-1.3.jar org.junit.runner.JUnitCore CalculatorTest
+		*/
+	}
+
 	public void generateTest(String pkgName, String testDir) throws Exception {
-		String preTestString = "package " + pkgName + "\n\n"
+		String preTestString = "package " + pkgName + ";\n\n"
 			+ "import static org.junit.Assert.assertEquals;\n"
 			+ "import org.junit.Test;\n"
 			+ "\n"
@@ -122,12 +133,18 @@ public class Sequence {
 		writer.close();
 	}
 
-	public void runTest() {
-		/*
-		cd ../calculator
-		javac Calculator.java
-		javac -cp .:junit-4.13.1.jar:hamcrest-core-1.3.jar CalculatorTest.java
-		java -cp .:junit-4.13.1.jar:hamcrest-core-1.3.jar org.junit.runner.JUnitCore CalculatorTest
-		*/
+	public void runTest(String prjDir) throws Exception {
+		try {
+			String cmd = "cd " + prjDir + "; mvn test -Dtest=TandoopTest";
+			System.out.println("run: " + cmd);
+			Process p = Runtime.getRuntime().exec(cmd);
+			BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			String s;
+            while ((s = br.readLine()) != null)
+                System.out.println("line: " + s);
+			p.waitFor();
+			System.out.println("Test exit value: " + p.exitValue());
+			p.destroy();
+		} catch (Exception e) {}
 	}
 }

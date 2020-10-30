@@ -13,6 +13,7 @@ public class Main {
     options.addOption("pkg", "pkgName", true, "Package name");
     options.addOption("src", "srcDir", true, "Project src directory");
     options.addOption("test", "testDir", true, "Project test directory");
+    options.addOption("prj", "projectDir", true, "Project directory");
 
     try {
       // parse cmdline arguments
@@ -26,13 +27,16 @@ public class Main {
       if (!cmd.hasOption("test")) {
         System.err.println("Project test directory not provided.");
       }
-      // args: String testDir, String pkgName
+      if (!cmd.hasOption("prj")) {
+        System.err.println("Project directory not provided.");
+      }
       Tandoop tandoop = new Tandoop(
         cmd.getOptionValue("pkg"),
         cmd.getOptionValue("src"),
-        cmd.getOptionValue("test")
+        cmd.getOptionValue("test"),
+        cmd.getOptionValue("prj")
       );
-      tandoop.generateSequence(20);
+      tandoop.generateSequence(1);
 
     } catch (ParseException e) {
       System.err.println( "Unexpected exception:" + e.getMessage() );
