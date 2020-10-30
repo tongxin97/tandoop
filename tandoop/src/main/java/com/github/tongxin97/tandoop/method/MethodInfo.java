@@ -1,4 +1,4 @@
-package com.github.tongxin97.tandoop;
+package com.github.tongxin97.tandoop.method;
 
 import com.github.javaparser.ast.type.Type;
 import java.util.List;

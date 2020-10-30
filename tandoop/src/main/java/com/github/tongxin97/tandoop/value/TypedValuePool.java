@@ -1,8 +1,10 @@
-package com.github.tongxin97.tandoop;
+package com.github.tongxin97.tandoop.value;
 
 import java.lang.StringBuilder;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.github.tongxin97.tandoop.util.Rand;
 
 /**
  * The class that stores the whole pool of value
@@ -32,7 +34,7 @@ public class TypedValuePool<T> {
             }
             // ValuePool can't be empty
         }
-        int i = Utils.GetRandomInt(values.size());
+        int i = Rand.getRandomInt(values.size());
         return values.get(i);
     }
 
@@ -44,12 +46,12 @@ public class TypedValuePool<T> {
         if (this.type.equals("null")) {
             return "null\n";
         }
-        StringBuilder sb = new StringBuilder();
+        StringBuilder b = new StringBuilder();
         for (T v: this.values) {
-            sb.append(v);
-            sb.append(",");
+            b.append(v);
+            b.append(",");
         }
-        sb.append("\n");
-        return sb.toString();
+        b.append("\n");
+        return b.toString();
     }
 }

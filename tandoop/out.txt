@@ -1,0 +1,97 @@
+[INFO] Scanning for projects...
+[INFO]
+[INFO] ----------------< com.github.tongxin97.tandoop:tandoop >----------------
+[INFO] Building tandoop 1.0-SNAPSHOT
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO]
+[INFO] --- exec-maven-plugin:3.0.0:java (default-cli) @ tandoop ---
+src/main/java/com/github/tongxin97/tandoop
+src/main/java/com/github/tongxin97/tandoop/MethodInfo.java
+Selected random method: MethodInfo.GetParameterTypes
+Seqs: [], Vals [null]
+Instance val is null
+src/main/java/com/github/tongxin97/tandoop/Sequence.java
+Selected random method: Sequence.toString
+Seqs: [], Vals [null]
+Instance val is null
+src/main/java/com/github/tongxin97/tandoop/MethodPool.java
+Selected random method: MethodPool.MethodPool
+Seqs: [], Vals []
+New Sentence: MethodPool MethodPool0 = new MethodPool();
+
+nonErrorSeqs: [MethodPool MethodPool0 = new MethodPool();
+]
+src/main/java/com/github/tongxin97/tandoop/PrimitiveInfo.java
+Selected random method: MethodPool.toString
+Seqs: [], Vals [null]
+Instance val is null
+src/main/java/com/github/tongxin97/tandoop/Utils.java
+Selected random method: Sequence.generateCalculatorTest
+Seqs: [], Vals [null]
+Instance val is null
+src/main/java/com/github/tongxin97/tandoop/MethodParser.java
+Selected random method: MethodInfo.IsConstructor
+Seqs: [], Vals [null]
+Instance val is null
+src/main/java/com/github/tongxin97/tandoop/VarInfo.java
+Selected random method: MethodInfo.toString
+Seqs: [], Vals [null]
+Instance val is null
+src/main/java/com/github/tongxin97/tandoop/ValueInfo.java
+Selected random method: PrimitiveInfo.getContent
+Seqs: [], Vals [null]
+Instance val is null
+src/main/java/com/github/tongxin97/tandoop/Main.java
+Selected random method: MethodPool.MethodPool
+Seqs: [], Vals []
+New Sentence: MethodPool MethodPool1 = new MethodPool();
+
+nonErrorSeqs: [MethodPool MethodPool0 = new MethodPool();
+, MethodPool MethodPool1 = new MethodPool();
+]
+src/main/java/com/github/tongxin97/tandoop/Tandoop.java
+Selected random method: VarInfo.VarInfo
+Seqs: [], Vals [com.github.tongxin97.tandoop.PrimitiveInfo@64b4a852]
+New Sentence: VarInfo VarInfo0 = new VarInfo();
+
+nonErrorSeqs: [MethodPool MethodPool0 = new MethodPool();
+, MethodPool MethodPool1 = new MethodPool();
+, VarInfo VarInfo0 = new VarInfo();
+]
+src/main/java/com/github/tongxin97/tandoop/TypedValuePool.java
+Selected random method: Sequence.hasExtensibleValOfType
+Seqs: [], Vals [null, com.github.tongxin97.tandoop.PrimitiveInfo@4002c132]
+Instance val is null
+Selected random method: MethodInfo.MethodInfo
+Seqs: [], Vals [com.github.tongxin97.tandoop.PrimitiveInfo@2a7be607, com.github.tongxin97.tandoop.PrimitiveInfo@2dab18, com.github.tongxin97.tandoop.PrimitiveInfo@1a23f189]
+New Sentence: MethodInfo MethodInfo0 = new MethodInfo(3.14,
+,a);
+
+nonErrorSeqs: [MethodPool MethodPool0 = new MethodPool();
+, MethodPool MethodPool1 = new MethodPool();
+, VarInfo VarInfo0 = new VarInfo();
+, MethodInfo MethodInfo0 = new MethodInfo(3.14,
+,a);
+]
+Selected random method: VarInfo.getContent
+Seqs: [VarInfo VarInfo0 = new VarInfo();
+], Vals [com.github.tongxin97.tandoop.VarInfo@4c7eb8ae]
+New Sentence: String String0 = VarInfo0.getContent();
+
+nonErrorSeqs: [MethodPool MethodPool0 = new MethodPool();
+, MethodPool MethodPool1 = new MethodPool();
+, VarInfo VarInfo0 = new VarInfo();
+, MethodInfo MethodInfo0 = new MethodInfo(3.14,
+,a);
+, VarInfo VarInfo0 = new VarInfo();
+String String0 = VarInfo0.getContent();
+]
+Selected random method: Sequence.runTest
+Seqs: [], Vals [null]
+Instance val is null
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  0.893 s
+[INFO] Finished at: 2020-10-25T12:41:25-05:00
+[INFO] ------------------------------------------------------------------------

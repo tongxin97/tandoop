@@ -7,6 +7,5 @@ public class TandoopTest {
   @Test
   public void test() {
     Sequence Sequence0 = new Sequence();
-    void void0 = Sequence0.generateTest(3.14,a);
   }
 }

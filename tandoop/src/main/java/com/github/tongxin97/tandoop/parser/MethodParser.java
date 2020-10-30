@@ -1,4 +1,4 @@
-package com.github.tongxin97.tandoop;
+package com.github.tongxin97.tandoop.parser;
 
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
@@ -11,6 +11,7 @@ import com.github.javaparser.ast.visitor.VoidVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.PackageDeclaration;
+import com.github.javaparser.ParseProblemException;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
@@ -20,6 +21,8 @@ import java.util.ArrayList;
 import java.io.FileInputStream;
 import java.util.Optional;
 
+import com.github.tongxin97.tandoop.method.MethodInfo;
+import com.github.tongxin97.tandoop.method.MethodPool;
 
 public class MethodParser {
   private CompilationUnit CU;

@@ -1,16 +1,16 @@
-package com.github.tongxin97.tandoop;
+package com.github.tongxin97.tandoop.util;
 
 import java.util.Random;
 import java.util.List;
 
-public class Utils {
+public class Rand {
   static Random rand = new Random();
 
-  public static int GetRandomInt(int upperBound) {
+  public static int getRandomInt(int upperBound) {
     return rand.nextInt(upperBound);
   }
   public static Object getRandomInNonEmptyList(List<Object> values) {
-    int i = Utils.GetRandomInt(values.size());
+    int i = getRandomInt(values.size());
     return values.get(i);
   }
 }

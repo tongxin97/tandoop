@@ -1,4 +1,4 @@
-package com.github.tongxin97.tandoop;
+package com.github.tongxin97.tandoop.sequence;
 
 
 import java.io.BufferedWriter;
@@ -15,6 +15,10 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.github.tongxin97.tandoop.method.MethodInfo;
+import com.github.tongxin97.tandoop.util.Rand;
+import com.github.tongxin97.tandoop.value.ValueInfo;
+
 /**
  * The class that stores a sequence
  *
@@ -25,7 +29,7 @@ import java.util.Map;
 public class Sequence {
 	public List<MethodInfo> Methods;
 	// map type to list(list of extensible vals, list of non-extensible vals))
-	public Map<String, List<List<ValInfo>>> Vals;
+	public Map<String, List<List<ValueInfo>>> Vals;
 	public String ExcSeq;
 	public String newVar = "";
 
@@ -35,7 +39,7 @@ public class Sequence {
 		this.ExcSeq = "";
 	}
 
-	public void AddVal(String type, ValInfo v) {
+	public void addVal(String type, ValueInfo v) {
 		int idx = v.Extensible? 0: 1;
 		if (!this.Vals.containsKey(type)) {
 			this.Vals.put(type, new ArrayList<>());
@@ -46,7 +50,7 @@ public class Sequence {
 		this.Vals.get(type).get(idx).add(v);
 	}
 
-	public void AddVals(String type, List<ValInfo> vals) {
+	public void addVals(String type, List<ValueInfo> vals) {
 		if (vals.size() == 0) {
 			return;
 		}
@@ -78,43 +82,16 @@ public class Sequence {
 		return this.ExcSeq.hashCode();
 	}
 
-	public ValInfo getRandomExtensibleValOfType(String type) throws IllegalArgumentException {
+	public ValueInfo getRandomExtensibleValOfType(String type) throws IllegalArgumentException {
 		if (!this.hasExtensibleValOfType(type)) {
 			throw new IllegalArgumentException("Sequence doesn't have extensible values of type " + type);
 		}
-		List<ValInfo> l = this.Vals.get(type).get(0);
-		return l.get(Utils.GetRandomInt(l.size()));
+		List<ValueInfo> l = this.Vals.get(type).get(0);
+		return l.get(Rand.getRandomInt(l.size()));
 	}
 
 	public boolean hasExtensibleValOfType(String type) {
 		return this.Vals.containsKey(type) && this.Vals.get(type).get(0) != null;
-	}
-
-	public void generateCalculatorTest() throws Exception {
-		String sequence = "import static org.junit.Assert.assertEquals;\n"
-				+ "import org.junit.Test;\n"
-				+ "\n"
-				+ "public class CalculatorTest {\n"
-				+ "  @Test\n"
-				+ "  public void evaluatesExpression() {\n"
-				+ "    Calculator calculator = new Calculator();\n"
-				+ "    int sum = calculator.evaluate(\"1+2+3\");\n"
-				+ "    assertEquals(6, sum);\n"
-				+ "  }\n"
-				+ "}";
-		String filename = "../calculator/CalculatorTest.class";
-		BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
-		writer.write(sequence);
-		writer.close();
-	}
-
-	public void runCalculatorTest() {
-		/*
-		cd ../calculator
-		javac Calculator.java
-		javac -cp .:junit-4.13.1.jar:hamcrest-core-1.3.jar CalculatorTest.java
-		java -cp .:junit-4.13.1.jar:hamcrest-core-1.3.jar org.junit.runner.JUnitCore CalculatorTest
-		*/
 	}
 
 	public void generateTest(String pkgName, String testDir) throws Exception {
@@ -128,7 +105,8 @@ public class Sequence {
 			+ "    ";
 		String contracts = "";
 		if (this.newVar != "") {
-			contracts = "    " + "\n";
+			contracts = "    boolean r = " + this.newVar +  ".equals(" + this.newVar + ")\n"
+				+ "    if (r == false) { return false; }";
 		}
 		String postTestString = "  }\n"
 			+ "}";

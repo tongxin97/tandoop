@@ -1,10 +1,10 @@
-package com.github.tongxin97.tandoop;
+package com.github.tongxin97.tandoop.value;
 
-public abstract class ValInfo {
+public abstract class ValueInfo {
   public String Type; // type name
   public boolean Extensible;
 
-  public ValInfo(String type) {
+  public ValueInfo(String type) {
     this.Type = type;
   }
 
