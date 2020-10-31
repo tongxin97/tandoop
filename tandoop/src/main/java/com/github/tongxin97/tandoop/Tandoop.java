@@ -161,7 +161,7 @@ public class Tandoop {
         // otherwise, sentence = Type Type1 = p0.methodName(p1,p2,...);\n
         StringBuilder b = new StringBuilder();
         if (method.ReturnType != "void") {
-            b.append(String.format("%s %s = ", method.ReturnType, var.getContent()));
+            b.append(String.format("      %s %s = ", method.ReturnType, var.getContent()));
             newSeq.NewVar = var.getContent();
         }
         int start;
@@ -231,7 +231,7 @@ public class Tandoop {
             // TODO check contracts
             // TODO apply filters and add to err/nonerr sets
 
-
+            System.out.println("Return Val: " + returnVal);
             if (returnVal == 0) {
                 nonErrorSeqs.add(newSeq);
                 // setExtensibleFlags(newSeq, filter, runtimevalues)

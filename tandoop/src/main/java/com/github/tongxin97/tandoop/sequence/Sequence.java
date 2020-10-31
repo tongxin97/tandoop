@@ -35,7 +35,7 @@ public class Sequence {
 	public String ExcSeq;
 	public String NewVar;
 	public Set<String> Imports;
-	public boolean InputParamWithNull;
+	public boolean InputParamsWithNull;
 
 	public Sequence() {
 		this.Methods = new HashSet<>();
@@ -43,7 +43,7 @@ public class Sequence {
 		this.ExcSeq = "";
 		this.NewVar = "";
 		this.Imports = new HashSet<>();
-		this.InputParamWithNull = false;
+		this.InputParamsWithNull = false;
 	}
 
 	public void addVal(String type, ValueInfo v) {
@@ -120,23 +120,24 @@ public class Sequence {
 	public void generateTest(String testDir) throws Exception {
 		StringBuilder testString = new StringBuilder("");
 		testString.append("import org.junit.Test;\n");
+		testString.append("import static org.junit.Assert.assertTrue;\n");
 		for (String s: this.Imports) {
 			testString.append(s);
 		}
-		testString.append("\npublic class TandoopTest {\n  @Test\n  public void test() {\n");
-
-		String contracts = "";
-		if (this.NewVar != "") {
-			contracts = "    boolean r = " + this.NewVar +  ".equals(" + this.NewVar + ");\n"
-				+ "    if (r == false) { throw new Exception(); }\n"
-				+ "    " + this.NewVar + ".hashcode();\n"
-				+ "    " + this.NewVar + ".toString();\n";
+		testString.append("\npublic class TandoopTest {\n  @Test\n  public void test() {\n    try {\n");
+		
+		StringBuilder postTestString = new StringBuilder("");
+		postTestString.append("      assertTrue(" + this.NewVar + ".equals(" + this.NewVar + "));\n");
+		postTestString.append("      " + this.NewVar + ".hashCode();\n");
+		postTestString.append("      " + this.NewVar + ".toString();\n");
+		postTestString.append("    }\n");
+		if (!this.InputParamsWithNull) {
+			postTestString.append("    catch (NullPointerException e) {}\n");
 		}
-		String postTestString = "  }\n}";
+		postTestString.append("    catch (Throwable t) { System.out.println(t.toString()); }\n");
+		postTestString.append("  }\n}");
 
-		testString.append(preTestString);
 		testString.append(this.ExcSeq);
-		testString.append(contracts);
 		testString.append(postTestString);
 
 		String filename = testDir + "/TandoopTest.java";
@@ -148,12 +149,13 @@ public class Sequence {
 	public int runTest(String prjDir) throws Exception {
 		int returnVal = 1;
 		try {
-			String cmd = "cd " + prjDir + "; mvn test -Dtest=TandoopTest";
+			String cmd = "cd " + prjDir + " && mvn test -Dtest=TandoopTest";
+			// System.out.println(cmd);
 			Process p = Runtime.getRuntime().exec(cmd);
-			BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			String s;
-            while ((s = br.readLine()) != null)
-                System.out.println("line: " + s);
+			// BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			// String s;
+            // while ((s = br.readLine()) != null)
+            //     System.out.println("line: " + s);
 			p.waitFor();
 			returnVal = p.exitValue();
 			// System.out.println("Test exit value: " + p.exitValue());
