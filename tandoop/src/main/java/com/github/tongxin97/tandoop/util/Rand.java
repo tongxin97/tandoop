@@ -7,7 +7,7 @@ public class Rand {
   static Random rand = new Random();
 
   public static int getRandomInt(int upperBound) {
-    return rand.nextInt(upperBound);
+    return rand.nextInt(upperBound); // upperBound is exclusive
   }
   public static Object getRandomInNonEmptyList(List<Object> values) {
     int i = getRandomInt(values.size());

@@ -32,6 +32,9 @@ public class Tandoop {
     private Set<Sequence> errorSeqs;
     private Set<Sequence> nonErrorSeqs;
 
+    private final int maxRepetition = 100;
+    private final double repetitionProb = 1;
+
     String srcDir;
     String testDir;
     String prjDir;
@@ -50,6 +53,9 @@ public class Tandoop {
         // Note: need to use the directory of source code (e.g., ../joda-time/src/main)
         // There are errors when trying to parse java test classes
         walkThroughDirectory(new File(srcDir));
+
+        this.initPrimitiveValuePool();
+        // System.out.println("ValuePool:\n" + this.valuePool);
     }
 
     private void walkThroughDirectory(File dir) throws Exception {
@@ -75,11 +81,6 @@ public class Tandoop {
         MethodParser methodParser = new MethodParser(file);
         methodParser.CollectMethodInfo(this.methodPool);
         // System.out.println("MethodPool:\n" + this.methodPool);
-
-        this.initPrimitiveValuePool();
-        // System.out.println("ValuePool:\n" + this.valuePool);
-
-        this.generateSequence(1);
     }
 
     private void initPrimitiveValuePool() {
@@ -136,27 +137,27 @@ public class Tandoop {
         }
     }
 
-    public Sequence extend(MethodInfo method, Set<Sequence> seqs, List<ValueInfo> vals) {
-        Sequence newSeq = new Sequence();
-        // merge seqs to one seq: methods, vals, and executable sequence string
-        // Q: how to generate equivalent sequences & how to set modulo variable names?
-        for (Sequence seq: seqs) {
-            newSeq.addMethods(seq.Methods);
-            newSeq.addImports(seq.Imports);
-            for (Map.Entry<String, List<List<ValueInfo>>> entry: seq.Vals.entrySet()) {
-                newSeq.addVals(entry.getKey(), entry.getValue().get(0));
-                newSeq.addVals(entry.getKey(), entry.getValue().get(1));
-            }
-            newSeq.ExcSeq += seq.ExcSeq;
+    /**
+     * Decides how many times to repeatedly append the new statement to the end of 
+     * the new sequence.
+     * @return the number of times to repeat.
+     */
+    private int getNumOfRepetition() {
+        int numRounds = (int) Math.round(1.0/this.repetitionProb); // 10 by default
+        int i = Rand.getRandomInt(numRounds);
+        if (i > 0) {
+            return 1; // do not repeat with (1-repetitionProb) probability
         }
-        // add new method to newSeq
-        newSeq.addMethod(method);
-        VarInfo var = new VarInfo(method.ReturnType);
-        // TODO: set extensible flag and add new return Value to Vals. Q: Is new generated value extensible?
-        var.Extensible = true;
-        newSeq.addVal(method.ReturnType, var);
-        newSeq.addImport(String.format("import %s.%s;\n", method.PackageName, method.ClassName));
+        // repeat [0, maxRepetition) times with repetitionProb
+        return Rand.getRandomInt(this.maxRepetition); 
+    }
 
+    /**
+     * Generate a new statement to append to the end of the new sequence. 
+     * The new statement may be repeated up to maxRepetition-1 times.
+     * @return the new statement as a string. 
+     */
+    private String genNewStatements(MethodInfo method, Sequence newSeq, VarInfo var, List<ValueInfo> vals) {
         // if method is constructor, sentence = Type Type1 = new methodName(p0,p1,...);\n
         // otherwise, sentence = Type Type1 = p0.methodName(p1,p2,...);\n
         StringBuilder b = new StringBuilder();
@@ -164,6 +165,8 @@ public class Tandoop {
             b.append(String.format("      %s %s = ", method.ReturnType, var.getContent()));
             newSeq.NewVar = var.getContent();
         }
+        String typeDeclaration = b.toString();
+
         int start;
         if (method.IsConstructor()) {
             b.append(String.format("new %s(", method.Name));
@@ -185,8 +188,52 @@ public class Tandoop {
         }
         b.append(");\n");
 
-        System.out.println("New Sentence: " + b.toString());
-        newSeq.ExcSeq += b.toString();
+        // skip constructor for statement repetition
+        if (method.IsConstructor()) {
+            return b.toString();
+        }
+
+        int repeat = this.getNumOfRepetition();
+        if (repeat == 0) {
+            return "";
+        }
+        if (repeat == 1) {
+            return b.toString();
+        }
+        // create string for repeated statement
+        StringBuilder repeatedStatement = new StringBuilder(typeDeclaration + "null;\n");
+        repeatedStatement.append(String.format("      for (int i=0; i<%d; i++) {\n", repeat));
+        String methodCall = b.toString().substring(typeDeclaration.length());
+        repeatedStatement.append(String.format("        %s = %s", var.getContent(), methodCall));
+        repeatedStatement.append("      }\n");
+
+        return repeatedStatement.toString();
+    }
+
+    public Sequence extend(MethodInfo method, Set<Sequence> seqs, List<ValueInfo> vals) {
+        Sequence newSeq = new Sequence();
+        // merge seqs to one seq: methods, vals, and executable sequence string
+        // Q: how to generate equivalent sequences & how to set modulo variable names?
+        for (Sequence seq: seqs) {
+            newSeq.addMethods(seq.Methods);
+            newSeq.addImports(seq.Imports);
+            for (Map.Entry<String, List<List<ValueInfo>>> entry: seq.Vals.entrySet()) {
+                newSeq.addVals(entry.getKey(), entry.getValue().get(0));
+                newSeq.addVals(entry.getKey(), entry.getValue().get(1));
+            }
+            newSeq.ExcSeq += seq.ExcSeq;
+        }
+        // add new method to newSeq
+        newSeq.addMethod(method);
+        VarInfo var = new VarInfo(method.ReturnType);
+        // TODO: set extensible flag and add new return Value to Vals. Q: Is new generated value extensible?
+        var.Extensible = true;
+        newSeq.addVal(method.ReturnType, var);
+        newSeq.addImport(String.format("import %s.%s;\n", method.PackageName, method.ClassName));
+
+        String newStatements = this.genNewStatements(method, newSeq, var, vals);
+        System.out.println("New statements:\n " + newStatements);
+        newSeq.ExcSeq += newStatements;
         return newSeq;
     }
 
