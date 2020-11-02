@@ -15,7 +15,8 @@ import java.io.File;
 import java.util.stream.Collectors;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.module.paranamer.ParanamerModule;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import com.fasterxml.jackson.annotation.JsonCreator;
 
 import com.github.tongxin97.tandoop.parser.MethodParser;
 import com.github.tongxin97.tandoop.method.MethodInfo;
@@ -94,24 +95,31 @@ public class Tandoop {
         FileChannel channel = FileChannel.open(f.toPath(), StandardOpenOption.READ, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
         // TODO: need to throw exception, if out of memory
         MappedByteBuffer mappedByteBuffer = channel.map(FileChannel.MapMode.READ_WRITE, 0, 4096);
+
+        var.Extensible = mappedByteBuffer.get() == 0x01;
+        System.out.println("extensible: " +  var.Extensible);
+        if (var.Extensible == false) {
+            return;
+        }
+
         byte[] bytes = new byte[4096];
         byte b;
-        for (int i = 0; (b = mappedByteBuffer.get()) != 0x00; ++i) {
+        for (int i = 0; i < 4096 && (b = mappedByteBuffer.get()) != 0x00; ++i) {
             bytes[i] = b;
         }
+        System.out.println(new String(bytes));
         // TODO: current extensible only checks filter exception
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new ParanamerModule());
+        // objectMapper.registerModule(new ParanamerModule());
+        objectMapper.registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES));
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.enable(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT);
 
         // Modify var to include runtime value and extensible flag, then add it to newSeq
         String fullType = method.getFullReturnType();
         var.Val = objectMapper.readValue(bytes, Class.forName(fullType));
         newSeq.addVal(fullType, var);
-        var.Extensible = mappedByteBuffer.get() == 0x01;
-
         System.out.println("object: " + var.Val);
-        System.out.println("extensible: " +  var.Extensible);
     }
 
     private void initPrimitiveValuePool() {

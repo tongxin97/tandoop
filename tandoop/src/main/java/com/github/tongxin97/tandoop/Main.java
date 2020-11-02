@@ -31,7 +31,7 @@ public class Main {
         cmd.getOptionValue("test"),
         cmd.getOptionValue("prj")
       );
-      tandoop.generateSequence(10);
+      tandoop.generateSequence(5);
 
     } catch (ParseException e) {
       System.err.println( "Unexpected exception:" + e.getMessage() );

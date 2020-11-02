@@ -129,21 +129,24 @@ public class Sequence {
 		testString.append("import java.nio.channels.FileChannel;\n");
 		testString.append("import java.nio.file.StandardOpenOption;\n");
 		testString.append("import com.fasterxml.jackson.databind.ObjectMapper;\n");
+		testString.append("import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;\n");
+		testString.append("import com.fasterxml.jackson.annotation.PropertyAccessor;\n");
+		testString.append("import com.fasterxml.jackson.databind.SerializationFeature;\n");
+
 		for (String s: this.Imports) {
 			testString.append(s);
 		}
 		testString.append("\npublic class TandoopTest {\n  @Test\n  public void test() {\n");
 		testString.append("    byte b = 0x01;\n");
 		testString.append("    File f = new File(\"../tandoop/sharedFile\");\n");
+		testString.append("    byte[] bytes = null;\n");
 		testString.append("    try {\n");
-		testString.append("      FileChannel channel = FileChannel.open(f.toPath(), StandardOpenOption.READ, StandardOpenOption.WRITE, StandardOpenOption.CREATE);\n");
-		testString.append("      MappedByteBuffer mappedByteBuffer = channel.map(FileChannel.MapMode.READ_WRITE, 0, 4096);\n");
 		testString.append("      try {\n");
-
 		testString.append(this.ExcSeq);
-		
+		testString.append("\n");
 		testString.append("        ObjectMapper objectMapper = new ObjectMapper();\n");
-		testString.append("        mappedByteBuffer.put(objectMapper.writeValueAsBytes(" + this.NewVar + "));\n");
+		testString.append("        objectMapper.setVisibility(objectMapper.getSerializationConfig().getDefaultVisibilityChecker().withFieldVisibility(Visibility.ANY).withGetterVisibility(Visibility.NONE).withSetterVisibility(Visibility.NONE).withCreatorVisibility(Visibility.NONE));\n");
+		testString.append("        bytes = objectMapper.writeValueAsBytes(" + this.NewVar + ");\n");
 		testString.append("        try {\n");
 		testString.append("          assertTrue(" + this.NewVar + ".equals(" + this.NewVar + "));\n");
 		testString.append("          " + this.NewVar + ".hashCode();\n");
@@ -153,8 +156,10 @@ public class Sequence {
 		testString.append("        System.err.println(t);\n");
 		testString.append("        b = 0x02;\n");
 		testString.append("      }\n");
-		testString.append("      mappedByteBuffer.put((byte) 0x00);\n");
+		testString.append("      FileChannel channel = FileChannel.open(f.toPath(), StandardOpenOption.READ, StandardOpenOption.WRITE, StandardOpenOption.CREATE);\n");
+		testString.append("      MappedByteBuffer mappedByteBuffer = channel.map(FileChannel.MapMode.READ_WRITE, 0, 4096);\n");
 		testString.append("      mappedByteBuffer.put(b);\n");
+		testString.append("      if (b == 0x01) { mappedByteBuffer.put(bytes); }\n");		
 		testString.append("    } catch (Exception e) { System.err.println(e); }\n");
 		testString.append("  }\n");
 		testString.append("}");
