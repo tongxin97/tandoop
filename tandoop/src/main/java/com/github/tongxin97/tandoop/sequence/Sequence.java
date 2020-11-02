@@ -117,23 +117,29 @@ public class Sequence {
 		return this.Vals.containsKey(type) && this.Vals.get(type).get(0) != null;
 	}
 
+	/**
+	 * Generate a test and writes it to testDir/TandoopTest.java
+	 * Add contract checking into the test itself.
+	 */
 	public void generateTest(String testDir) throws Exception {
 		StringBuilder testString = new StringBuilder("");
 		testString.append("import org.junit.Test;\n");
-		testString.append("import static org.junit.Assert.assertTrue;\n");
+		testString.append("import static org.junit.Assert.*;\n");
 		for (String s: this.Imports) {
 			testString.append(s);
 		}
 		testString.append("\npublic class TandoopTest {\n  @Test\n  public void test() {\n    try {\n");
 		
-		StringBuilder postTestString = new StringBuilder("");
-		postTestString.append("      assertTrue(" + this.NewVar + ".equals(" + this.NewVar + "));\n");
-		postTestString.append("      " + this.NewVar + ".hashCode();\n");
-		postTestString.append("      " + this.NewVar + ".toString();\n");
+		StringBuilder postTestString = new StringBuilder("      try {\n");
+		postTestString.append("        assertTrue(" + this.NewVar + ".equals(" + this.NewVar + "));\n");
+		postTestString.append("        " + this.NewVar + ".hashCode();\n");
+		postTestString.append("        " + this.NewVar + ".toString();\n");
+		postTestString.append("      } catch (Exception e) { fail(); }");
 		postTestString.append("    }\n");
-		if (!this.InputParamsWithNull) {
-			postTestString.append("    catch (NullPointerException e) {}\n");
-		}
+		// TODO: Check input params with null in runtime
+		// if (!this.InputParamsWithNull) {
+		// 	postTestString.append("    catch (NullPointerException e) { fail(); }\n");
+		// }
 		postTestString.append("    catch (Throwable t) { System.out.println(t.toString()); }\n");
 		postTestString.append("  }\n}");
 
@@ -149,13 +155,15 @@ public class Sequence {
 	public int runTest(String prjDir) throws Exception {
 		int returnVal = 1;
 		try {
-			String cmd = "cd " + prjDir + " && mvn test -Dtest=TandoopTest";
+			// String cmd = "cd " + prjDir + " && mvn test -Dtest=TandoopTest";
+			String cmd = "cd " + prjDir + " && mvn test -Dtest=TempTest";
 			// System.out.println(cmd);
 			Process p = Runtime.getRuntime().exec(cmd);
 			// BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			// String s;
-            // while ((s = br.readLine()) != null)
-            //     System.out.println("line: " + s);
+            // while ((s = br.readLine()) != null) {
+			// 	System.out.println("line: " + s);
+			// }
 			p.waitFor();
 			returnVal = p.exitValue();
 			// System.out.println("Test exit value: " + p.exitValue());

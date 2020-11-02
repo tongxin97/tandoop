@@ -1,6 +1,9 @@
 package com.github.tongxin97.tandoop;
 
 import java.lang.StringBuilder;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +13,8 @@ import java.util.Map;
 import java.util.Set;
 import java.io.File;
 import java.util.stream.Collectors;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 
 import com.github.tongxin97.tandoop.parser.MethodParser;
 import com.github.tongxin97.tandoop.method.MethodInfo;
@@ -81,6 +86,26 @@ public class Tandoop {
         MethodParser methodParser = new MethodParser(file);
         methodParser.CollectMethodInfo(this.methodPool);
         // System.out.println("MethodPool:\n" + this.methodPool);
+    }
+
+    private void getObjectFromTest() throws Exception {
+        File f = new File("sharedFile");
+        FileChannel channel = FileChannel.open(f.toPath(), StandardOpenOption.READ, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
+        // TODO: need to throw exception, if out of memory
+        MappedByteBuffer mappedByteBuffer = channel.map(FileChannel.MapMode.READ_WRITE, 0, 4096);
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        VarInfo VarInfo1 = new VarInfo("temp");
+        byte[] bytes = new byte[4096];
+        byte b;
+        for (int i = 0; (b = mappedByteBuffer.get()) != 0x00; ++i) {
+            bytes[i] = b;
+        }
+        // TODO: current extensible only checks fillter exception
+        int extensible = mappedByteBuffer.get() == 0x01? 1: (mappedByteBuffer.get() == 0x02? 2: 0);
+        VarInfo varInfo1 = objectMapper.readValue(bytes, VarInfo.class);
+        System.out.println("idx: " + varInfo1.Idx);
+        System.out.println("extensible: " + extensible);
     }
 
     private void initPrimitiveValuePool() {
@@ -274,13 +299,12 @@ public class Tandoop {
 
             newSeq.generateTest(this.testDir);
             int returnVal = newSeq.runTest(this.prjDir);
-
-            // TODO check contracts
-            // TODO apply filters and add to err/nonerr sets
+            getObjectFromTest();
 
             System.out.println("Return Val: " + returnVal);
             if (returnVal == 0) {
                 nonErrorSeqs.add(newSeq);
+                // TODO: apply filters and add to err/nonerr sets
                 // setExtensibleFlags(newSeq, filter, runtimevalues)
             } else {
                 errorSeqs.add(newSeq);

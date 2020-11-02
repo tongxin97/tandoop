@@ -1,0 +1,19 @@
+import org.junit.Test;
+import static org.junit.Assert.*;
+import com.github.tongxin97.tandoop.parser.MethodParser;
+
+public class TandoopTest {
+  @Test
+  public void test() {
+    try {
+      MethodParser MethodParser0 = new MethodParser("3.14");
+      try {
+        assertTrue(MethodParser0.equals(MethodParser0));
+        MethodParser0.hashCode();
+        MethodParser0.toString();
+      } catch (Exception e) { fail(); }
+    }
+    catch (NullPointerException e) { fail(); }
+    catch (Throwable t) { System.err.println(t); }
+  }
+}
