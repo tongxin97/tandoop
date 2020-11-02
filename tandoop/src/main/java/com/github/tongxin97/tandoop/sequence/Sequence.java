@@ -158,8 +158,10 @@ public class Sequence {
 		testString.append("      }\n");
 		testString.append("      FileChannel channel = FileChannel.open(f.toPath(), StandardOpenOption.READ, StandardOpenOption.WRITE, StandardOpenOption.CREATE);\n");
 		testString.append("      MappedByteBuffer mappedByteBuffer = channel.map(FileChannel.MapMode.READ_WRITE, 0, 4096);\n");
+		testString.append("			 if (!mappedByteBuffer.isLoaded()) { mappedByteBuffer.load();}\n");
 		testString.append("      mappedByteBuffer.put(b);\n");
 		testString.append("      if (b == 0x01) { mappedByteBuffer.put(bytes); }\n");		
+		testString.append("      mappedByteBuffer.put((byte) 0x00);\n");		
 		testString.append("    } catch (Exception e) { System.err.println(e); }\n");
 		testString.append("  }\n");
 		testString.append("}");
@@ -181,11 +183,10 @@ public class Sequence {
             // while ((s = br.readLine()) != null) {
 			// 	System.out.println("line: " + s);
 			// }
-			p.waitFor();
-			returnVal = p.exitValue();
-			// System.out.println("Test exit value: " + p.exitValue());
-			p.destroy();
-		} catch (Exception e) {}
+			returnVal = p.waitFor();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
 		return returnVal;
 	}
 }

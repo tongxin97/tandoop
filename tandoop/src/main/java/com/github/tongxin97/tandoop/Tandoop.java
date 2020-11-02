@@ -95,6 +95,9 @@ public class Tandoop {
         FileChannel channel = FileChannel.open(f.toPath(), StandardOpenOption.READ, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
         // TODO: need to throw exception, if out of memory
         MappedByteBuffer mappedByteBuffer = channel.map(FileChannel.MapMode.READ_WRITE, 0, 4096);
+        if (!mappedByteBuffer.isLoaded()) {
+            mappedByteBuffer.load();
+        }
 
         var.Extensible = mappedByteBuffer.get() == 0x01;
         System.out.println("extensible: " +  var.Extensible);
