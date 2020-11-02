@@ -122,29 +122,42 @@ public class Sequence {
 	 * Add contract checking into the test itself.
 	 */
 	public void generateTest(String testDir) throws Exception {
-		StringBuilder testString = new StringBuilder("");
-		testString.append("import org.junit.Test;\n");
+		StringBuilder testString = new StringBuilder("import org.junit.Test;\n");
 		testString.append("import static org.junit.Assert.*;\n");
+		testString.append("import java.io.File;\n");
+		testString.append("import java.nio.MappedByteBuffer;\n");
+		testString.append("import java.nio.channels.FileChannel;\n");
+		testString.append("import java.nio.file.StandardOpenOption;\n");
+		testString.append("import com.fasterxml.jackson.databind.ObjectMapper;\n");
 		for (String s: this.Imports) {
 			testString.append(s);
 		}
-		testString.append("\npublic class TandoopTest {\n  @Test\n  public void test() {\n    try {\n");
-		
-		StringBuilder postTestString = new StringBuilder("      try {\n");
-		postTestString.append("        assertTrue(" + this.NewVar + ".equals(" + this.NewVar + "));\n");
-		postTestString.append("        " + this.NewVar + ".hashCode();\n");
-		postTestString.append("        " + this.NewVar + ".toString();\n");
-		postTestString.append("      } catch (Exception e) { fail(); }");
-		postTestString.append("    }\n");
-		// TODO: Check input params with null in runtime
-		// if (!this.InputParamsWithNull) {
-		// 	postTestString.append("    catch (NullPointerException e) { fail(); }\n");
-		// }
-		postTestString.append("    catch (Throwable t) { System.out.println(t.toString()); }\n");
-		postTestString.append("  }\n}");
+		testString.append("\npublic class TandoopTest {\n  @Test\n  public void test() {\n");
+		testString.append("    byte b = 0x01;\n");
+		testString.append("    File f = new File(\"../tandoop/sharedFile\");\n");
+		testString.append("    try {\n");
+		testString.append("      FileChannel channel = FileChannel.open(f.toPath(), StandardOpenOption.READ, StandardOpenOption.WRITE, StandardOpenOption.CREATE);\n");
+		testString.append("      MappedByteBuffer mappedByteBuffer = channel.map(FileChannel.MapMode.READ_WRITE, 0, 4096);\n");
+		testString.append("      try {\n");
 
 		testString.append(this.ExcSeq);
-		testString.append(postTestString);
+		
+		testString.append("        ObjectMapper objectMapper = new ObjectMapper();\n");
+		testString.append("        mappedByteBuffer.put(objectMapper.writeValueAsBytes(" + this.NewVar + "));\n");
+		testString.append("        try {\n");
+		testString.append("          assertTrue(" + this.NewVar + ".equals(" + this.NewVar + "));\n");
+		testString.append("          " + this.NewVar + ".hashCode();\n");
+		testString.append("          " + this.NewVar + ".toString();\n");
+		testString.append("        } catch (Exception e) { fail(); }\n");
+		testString.append("      } catch (Throwable t) { \n");
+		testString.append("        System.err.println(t);\n");
+		testString.append("        b = 0x02;\n");
+		testString.append("      }\n");
+		testString.append("      mappedByteBuffer.put((byte) 0x00);\n");
+		testString.append("      mappedByteBuffer.put(b);\n");
+		testString.append("    } catch (Exception e) { System.err.println(e); }\n");
+		testString.append("  }\n");
+		testString.append("}");
 
 		String filename = testDir + "/TandoopTest.java";
 		BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
@@ -155,9 +168,8 @@ public class Sequence {
 	public int runTest(String prjDir) throws Exception {
 		int returnVal = 1;
 		try {
-			// String cmd = "cd " + prjDir + " && mvn test -Dtest=TandoopTest";
-			String cmd = "cd " + prjDir + " && mvn test -Dtest=TempTest";
-			// System.out.println(cmd);
+			String cmd = "cd " + prjDir + " && mvn test -Dtest=TandoopTest";
+			System.out.println(cmd);
 			Process p = Runtime.getRuntime().exec(cmd);
 			// BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			// String s;

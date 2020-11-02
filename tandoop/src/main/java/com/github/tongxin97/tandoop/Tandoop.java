@@ -15,6 +15,7 @@ import java.io.File;
 import java.util.stream.Collectors;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.module.paranamer.ParanamerModule;
 
 import com.github.tongxin97.tandoop.parser.MethodParser;
 import com.github.tongxin97.tandoop.method.MethodInfo;
@@ -88,24 +89,29 @@ public class Tandoop {
         // System.out.println("MethodPool:\n" + this.methodPool);
     }
 
-    private void getObjectFromTest() throws Exception {
+    private void getObjectFromTest(Sequence newSeq, MethodInfo method, VarInfo var) throws Exception {
         File f = new File("sharedFile");
         FileChannel channel = FileChannel.open(f.toPath(), StandardOpenOption.READ, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
         // TODO: need to throw exception, if out of memory
         MappedByteBuffer mappedByteBuffer = channel.map(FileChannel.MapMode.READ_WRITE, 0, 4096);
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        VarInfo VarInfo1 = new VarInfo("temp");
         byte[] bytes = new byte[4096];
         byte b;
         for (int i = 0; (b = mappedByteBuffer.get()) != 0x00; ++i) {
             bytes[i] = b;
         }
-        // TODO: current extensible only checks fillter exception
-        int extensible = mappedByteBuffer.get() == 0x01? 1: (mappedByteBuffer.get() == 0x02? 2: 0);
-        VarInfo varInfo1 = objectMapper.readValue(bytes, VarInfo.class);
-        System.out.println("idx: " + varInfo1.Idx);
-        System.out.println("extensible: " + extensible);
+        // TODO: current extensible only checks filter exception
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new ParanamerModule());
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        // Modify var to include runtime value and extensible flag, then add it to newSeq
+        String fullType = method.getFullReturnType();
+        var.Val = objectMapper.readValue(bytes, Class.forName(fullType));
+        newSeq.addVal(fullType, var);
+        var.Extensible = mappedByteBuffer.get() == 0x01;
+
+        System.out.println("object: " + var.Val);
+        System.out.println("extensible: " +  var.Extensible);
     }
 
     private void initPrimitiveValuePool() {
@@ -144,7 +150,7 @@ public class Tandoop {
     private void getRandomSeqsAndVals(Set<Sequence> seqs, List<ValueInfo> vals, List<String> types) {
         for (String type: types) {
             if (this.valuePool.containsKey(type)) {
-                vals.add(new PrimitiveInfo(type, this.valuePool.get(type).getRandomValue()));
+                vals.add(new ValueInfo(type, this.valuePool.get(type).getRandomValue()));
             } else {
                 ValueInfo v = null;
                 // 3 possible choices
@@ -187,7 +193,7 @@ public class Tandoop {
         // otherwise, sentence = Type Type1 = p0.methodName(p1,p2,...);\n
         StringBuilder b = new StringBuilder();
         if (method.ReturnType != "void") {
-            b.append(String.format("      %s %s = ", method.ReturnType, var.getContent()));
+            b.append(String.format("        %s %s = ", method.ReturnType, var.getContent()));
             newSeq.NewVar = var.getContent();
         }
         String typeDeclaration = b.toString();
@@ -235,7 +241,7 @@ public class Tandoop {
         return repeatedStatement.toString();
     }
 
-    public Sequence extend(MethodInfo method, Set<Sequence> seqs, List<ValueInfo> vals) {
+    public Sequence extend(MethodInfo method, VarInfo var, Set<Sequence> seqs, List<ValueInfo> vals) {
         Sequence newSeq = new Sequence();
         // merge seqs to one seq: methods, vals, and executable sequence string
         // Q: how to generate equivalent sequences & how to set modulo variable names?
@@ -250,10 +256,7 @@ public class Tandoop {
         }
         // add new method to newSeq
         newSeq.addMethod(method);
-        VarInfo var = new VarInfo(method.ReturnType);
-        // TODO: set extensible flag and add new return Value to Vals. Q: Is new generated value extensible?
-        var.Extensible = true;
-        newSeq.addVal(method.ReturnType, var);
+        // add import statements to newSeq
         newSeq.addImport(String.format("import %s.%s;\n", method.PackageName, method.ClassName));
 
         String newStatements = this.genNewStatements(method, newSeq, var, vals);
@@ -289,7 +292,8 @@ public class Tandoop {
                 continue;
             }
 
-            Sequence newSeq = this.extend(method, seqs, vals);
+            VarInfo var = new VarInfo(method.ReturnType);
+            Sequence newSeq = this.extend(method, var, seqs, vals);
             // Check if newSeq is duplicate
             if (this.errorSeqs.contains(newSeq) || this.nonErrorSeqs.contains(newSeq)) {
                 // System.out.println("Duplicate: " + newSeq.ExcSeq);
@@ -299,7 +303,7 @@ public class Tandoop {
 
             newSeq.generateTest(this.testDir);
             int returnVal = newSeq.runTest(this.prjDir);
-            getObjectFromTest();
+            getObjectFromTest(newSeq, method, var);
 
             System.out.println("Return Val: " + returnVal);
             if (returnVal == 0) {

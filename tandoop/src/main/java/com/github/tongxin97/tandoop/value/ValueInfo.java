@@ -1,14 +1,31 @@
 package com.github.tongxin97.tandoop.value;
 
-public abstract class ValueInfo {
-  public String Type; // type name
-  public boolean Extensible;
+import org.apache.commons.text.StringEscapeUtils;
 
-  public ValueInfo () {}
+public class ValueInfo {
+  public String Type; // type name
+  public Object Val; // runtime value
+  public boolean Extensible;
 
   public ValueInfo(String type) {
     this.Type = type;
   }
 
-  abstract public String getContent();
+  public ValueInfo(String type, Object val) {
+    this.Type = type;
+    this.Val = val;
+  }
+
+  public ValueInfo(String type, Object val, boolean extensible) {
+    this.Type = type;
+    this.Val = val;
+    this.Extensible = extensible;
+  }
+
+  public String getContent() {
+    if (this.Val instanceof String) {
+      return String.format("\"%s\"", StringEscapeUtils.escapeJava((String) Val));
+    }
+    return String.valueOf(this.Val);
+  }
 }

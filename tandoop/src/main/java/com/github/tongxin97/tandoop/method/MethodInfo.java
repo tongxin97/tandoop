@@ -30,6 +30,10 @@ public class MethodInfo {
         return this.ClassName.equals(this.Name);
     }
 
+    public String getFullReturnType() {
+        return this.PackageName + '.' + this.ReturnType;
+    }
+
     @Override
     public String toString() {
         return String.format("Class name: %s\tMethod name: %s\tParam types: %s\tReturn type:%s", this.ClassName, this.Name, this.ParameterTypes, this.ReturnType);
