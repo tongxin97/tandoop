@@ -1,9 +1,6 @@
 package com.github.tongxin97.tandoop;
 
 import java.lang.StringBuilder;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,12 +8,11 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import java.io.File;
+import java.io.*;
 import java.util.stream.Collectors;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import com.fasterxml.jackson.annotation.JsonCreator;
+import java.nio.charset.StandardCharsets;
+import com.google.gson.*;
+import com.google.gson.stream.JsonReader;
 
 import com.github.tongxin97.tandoop.parser.MethodParser;
 import com.github.tongxin97.tandoop.method.MethodInfo;
@@ -91,38 +87,22 @@ public class Tandoop {
     }
 
     private void getObjectFromTest(Sequence newSeq, MethodInfo method, VarInfo var) throws Exception {
-        File f = new File("sharedFile");
-        FileChannel channel = FileChannel.open(f.toPath(), StandardOpenOption.READ, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
-        // TODO: need to throw exception, if out of memory
-        MappedByteBuffer mappedByteBuffer = channel.map(FileChannel.MapMode.READ_WRITE, 0, 4096);
-        if (!mappedByteBuffer.isLoaded()) {
-            mappedByteBuffer.load();
-        }
-
-        var.Extensible = mappedByteBuffer.get() == 0x01;
-        System.out.println("extensible: " +  var.Extensible);
-        if (var.Extensible == false) {
-            return;
-        }
-
-        byte[] bytes = new byte[4096];
-        byte b;
-        for (int i = 0; i < 4096 && (b = mappedByteBuffer.get()) != 0x00; ++i) {
-            bytes[i] = b;
-        }
-        System.out.println(new String(bytes));
-        // TODO: current extensible only checks filter exception
-        ObjectMapper objectMapper = new ObjectMapper();
-        // objectMapper.registerModule(new ParanamerModule());
-        objectMapper.registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES));
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        objectMapper.enable(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT);
-
-        // Modify var to include runtime value and extensible flag, then add it to newSeq
+        JsonReader reader = new JsonReader(new FileReader("../tandoop/testOutput.json"));
         String fullType = method.getFullReturnType();
-        var.Val = objectMapper.readValue(bytes, Class.forName(fullType));
-        newSeq.addVal(fullType, var);
-        System.out.println("object: " + var.Val);
+        try {
+            var.Val = new Gson().fromJson(reader, Class.forName(fullType));
+            System.out.println("object: " + var.Val);
+            newSeq.addVal(fullType, var);
+        } catch (JsonIOException e) {
+            System.err.println("JsonIOException: " + e);
+        } catch (JsonSyntaxException e) {
+            System.err.println("JsonSyntaxException: " + e);
+        }
+
+        // var.Extensible = var.Val != null;
+        // System.out.println("extensible: " +  var.Extensible);
+
+        // TODO: current extensible only checks exception
     }
 
     private void initPrimitiveValuePool() {
@@ -180,7 +160,7 @@ public class Tandoop {
     }
 
     /**
-     * Decides how many times to repeatedly append the new statement to the end of 
+     * Decides how many times to repeatedly append the new statement to the end of
      * the new sequence.
      * @return the number of times to repeat.
      */
@@ -191,13 +171,13 @@ public class Tandoop {
             return 1; // do not repeat with (1-repetitionProb) probability
         }
         // repeat [0, maxRepetition) times with repetitionProb
-        return Rand.getRandomInt(this.maxRepetition); 
+        return Rand.getRandomInt(this.maxRepetition);
     }
 
     /**
-     * Generate a new statement to append to the end of the new sequence. 
+     * Generate a new statement to append to the end of the new sequence.
      * The new statement may be repeated up to maxRepetition-1 times.
-     * @return the new statement as a string. 
+     * @return the new statement as a string.
      */
     private String genNewStatements(MethodInfo method, Sequence newSeq, VarInfo var, List<ValueInfo> vals) {
         // if method is constructor, sentence = Type Type1 = new methodName(p0,p1,...);\n

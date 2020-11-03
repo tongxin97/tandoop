@@ -1,10 +1,7 @@
 package com.github.tongxin97.tandoop.sequence;
 
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.*;
 
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -124,45 +121,41 @@ public class Sequence {
 	public void generateTest(String testDir) throws Exception {
 		StringBuilder testString = new StringBuilder("import org.junit.Test;\n");
 		testString.append("import static org.junit.Assert.*;\n");
-		testString.append("import java.io.File;\n");
-		testString.append("import java.nio.MappedByteBuffer;\n");
-		testString.append("import java.nio.channels.FileChannel;\n");
-		testString.append("import java.nio.file.StandardOpenOption;\n");
-		testString.append("import com.fasterxml.jackson.databind.ObjectMapper;\n");
-		testString.append("import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;\n");
-		testString.append("import com.fasterxml.jackson.annotation.PropertyAccessor;\n");
-		testString.append("import com.fasterxml.jackson.databind.SerializationFeature;\n");
+		testString.append("import java.io.*;\n");
+		testString.append("import com.google.gson.Gson;\n");
 
 		for (String s: this.Imports) {
 			testString.append(s);
 		}
 		testString.append("\npublic class TandoopTest {\n  @Test\n  public void test() {\n");
-		testString.append("    byte b = 0x01;\n");
-		testString.append("    File f = new File(\"../tandoop/sharedFile\");\n");
-		testString.append("    byte[] bytes = null;\n");
+		testString.append("    boolean extensible = true;\n");
+		testString.append("    String output = \"\";\n");
 		testString.append("    try {\n");
 		testString.append("      try {\n");
 		testString.append(this.ExcSeq);
 		testString.append("\n");
-		testString.append("        ObjectMapper objectMapper = new ObjectMapper();\n");
-		testString.append("        objectMapper.setVisibility(objectMapper.getSerializationConfig().getDefaultVisibilityChecker().withFieldVisibility(Visibility.ANY).withGetterVisibility(Visibility.NONE).withSetterVisibility(Visibility.NONE).withCreatorVisibility(Visibility.NONE));\n");
-		testString.append("        bytes = objectMapper.writeValueAsBytes(" + this.NewVar + ");\n");
 		testString.append("        try {\n");
 		testString.append("          assertTrue(" + this.NewVar + ".equals(" + this.NewVar + "));\n");
 		testString.append("          " + this.NewVar + ".hashCode();\n");
 		testString.append("          " + this.NewVar + ".toString();\n");
-		testString.append("        } catch (Exception e) { fail(); }\n");
+		testString.append("        } catch (Exception e) {\n");
+		testString.append("					 System.err.println(\"e1: \" + e);\n");
+		testString.append("					 fail();");
+		testString.append("				 }\n");
+		testString.append("        output = new Gson().toJson(" + this.NewVar + ");\n");
+		testString.append("        System.out.println(output);\n");
 		testString.append("      } catch (Throwable t) { \n");
-		testString.append("        System.err.println(t);\n");
-		testString.append("        b = 0x02;\n");
+		testString.append("        System.err.println(\"e2: \" + t);\n");
+		testString.append("        extensible = false;\n");
 		testString.append("      }\n");
-		testString.append("      FileChannel channel = FileChannel.open(f.toPath(), StandardOpenOption.READ, StandardOpenOption.WRITE, StandardOpenOption.CREATE);\n");
-		testString.append("      MappedByteBuffer mappedByteBuffer = channel.map(FileChannel.MapMode.READ_WRITE, 0, 4096);\n");
-		testString.append("			 if (!mappedByteBuffer.isLoaded()) { mappedByteBuffer.load();}\n");
-		testString.append("      mappedByteBuffer.put(b);\n");
-		testString.append("      if (b == 0x01) { mappedByteBuffer.put(bytes); }\n");		
-		testString.append("      mappedByteBuffer.put((byte) 0x00);\n");		
-		testString.append("    } catch (Exception e) { System.err.println(e); }\n");
+		testString.append("      File f = new File(\"../tandoop/testOutput.json\");\n");
+		testString.append("      f.createNewFile();\n");
+		testString.append("      if (!extensible) { return; }\n");
+		testString.append("			PrintWriter p = new PrintWriter(new FileWriter(f));\n");
+		testString.append("      p.write(output);\n");
+		testString.append("      p.close();\n");
+		// testString.append("      f.close();\n");
+		testString.append("    } catch (Exception e) { System.err.println(\"e3: \" + e);}\n");
 		testString.append("  }\n");
 		testString.append("}");
 
@@ -175,12 +168,15 @@ public class Sequence {
 	public int runTest(String prjDir) throws Exception {
 		int returnVal = 1;
 		try {
-			String cmd = "cd " + prjDir + " && mvn test -Dtest=TandoopTest";
-			System.out.println(cmd);
-			Process p = Runtime.getRuntime().exec(cmd);
-			// BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			String cmd = "mvn test -Dtest=TandoopTest";
+			Process p = Runtime.getRuntime().exec(cmd, null, new File(prjDir));
+			// BufferedReader out = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			// BufferedReader err = new BufferedReader(new InputStreamReader(p.getErrorStream()));
 			// String s;
-            // while ((s = br.readLine()) != null) {
+        	// while ((s = out.readLine()) != null) {
+			// 	System.out.println("line: " + s);
+			// }
+			// while ((s = err.readLine()) != null) {
 			// 	System.out.println("line: " + s);
 			// }
 			returnVal = p.waitFor();
