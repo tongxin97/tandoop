@@ -91,18 +91,31 @@ public class Tandoop {
         String fullType = method.getFullReturnType();
         try {
             var.Val = new Gson().fromJson(reader, Class.forName(fullType));
-            System.out.println("object: " + var.Val);
-            newSeq.addVal(fullType, var);
         } catch (JsonIOException e) {
             System.err.println("JsonIOException: " + e);
+            return;
         } catch (JsonSyntaxException e) {
             System.err.println("JsonSyntaxException: " + e);
+            return;
         }
+        System.out.printf("object: %s\n", var.Val);
 
-        // var.Extensible = var.Val != null;
-        // System.out.println("extensible: " +  var.Extensible);
+        boolean isNull = var.Val == null;
+        boolean equalsToOldValue = this.valuePool.containsKey(fullType) && this.valuePool.get(fullType).contains(var.Val);
+        var.Extensible = !isNull && !equalsToOldValue;
 
-        // TODO: current extensible only checks exception
+        newSeq.addVal(fullType, var);
+
+        if (var.Extensible) {
+            if (this.valuePool.containsKey(fullType)) {
+                this.valuePool.get(fullType).addValue(var.Val);
+            } else {
+                this.valuePool.put(fullType, new TypedValuePool(fullType, Arrays.asList(var.Val)));
+            }
+            System.out.println("Added extensible val:" + this.valuePool.get(fullType));
+        } else {
+            System.out.printf("Non-extensible val: %s, isNull: %b, equalsToOldValue: %b\n ", var, isNull, equalsToOldValue);
+        }
     }
 
     private void initPrimitiveValuePool() {
@@ -239,9 +252,8 @@ public class Tandoop {
         for (Sequence seq: seqs) {
             newSeq.addMethods(seq.Methods);
             newSeq.addImports(seq.Imports);
-            for (Map.Entry<String, List<List<ValueInfo>>> entry: seq.Vals.entrySet()) {
-                newSeq.addVals(entry.getKey(), entry.getValue().get(0));
-                newSeq.addVals(entry.getKey(), entry.getValue().get(1));
+            for (Map.Entry<String, List<ValueInfo>> entry: seq.Vals.entrySet()) {
+                newSeq.addVals(entry.getKey(), entry.getValue());
             }
             newSeq.ExcSeq += seq.ExcSeq;
         }

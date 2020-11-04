@@ -27,8 +27,8 @@ import com.github.tongxin97.tandoop.value.ValueInfo;
 
 public class Sequence {
 	public Set<MethodInfo> Methods;
-	// map type to list(list of extensible vals, list of non-extensible vals))
-	public Map<String, List<List<ValueInfo>>> Vals;
+	// map type to list of extensible vals
+	public Map<String, List<ValueInfo>> Vals;
 	public String ExcSeq;
 	public String NewVar;
 	public Set<String> Imports;
@@ -44,28 +44,20 @@ public class Sequence {
 	}
 
 	public void addVal(String type, ValueInfo v) {
-		int idx = v.Extensible? 0: 1;
 		if (!this.Vals.containsKey(type)) {
 			this.Vals.put(type, new ArrayList<>());
-			for (int i = 0; i < 2; i++) { // init extensible/non-extensible lists
-				this.Vals.get(type).add(new ArrayList<>());
-			}
 		}
-		this.Vals.get(type).get(idx).add(v);
+		this.Vals.get(type).add(v);
 	}
 
 	public void addVals(String type, List<ValueInfo> vals) {
 		if (vals.size() == 0) {
 			return;
 		}
-		int idx = vals.get(0).Extensible? 0: 1;
 		if (!this.Vals.containsKey(type)) {
 			this.Vals.put(type, new ArrayList<>());
-			for (int i = 0; i < 2; i++) { // init extensible/non-extensible lists
-				this.Vals.get(type).add(new ArrayList<>());
-			}
 		}
-		this.Vals.get(type).get(idx).addAll(vals);
+		this.Vals.get(type).addAll(vals);
 	}
 
 	public void addMethod(MethodInfo method) {
@@ -106,7 +98,7 @@ public class Sequence {
 		if (!this.hasExtensibleValOfType(type)) {
 			throw new IllegalArgumentException("Sequence doesn't have extensible values of type " + type);
 		}
-		List<ValueInfo> l = this.Vals.get(type).get(0);
+		List<ValueInfo> l = this.Vals.get(type);
 		return l.get(Rand.getRandomInt(l.size()));
 	}
 

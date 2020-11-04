@@ -30,7 +30,7 @@ public class MethodPool {
 
     @Override
     public String toString() {
-        String out = "";
+        String out = "MethodPool:";
         for (MethodInfo info: this.MethodInfoList) {
             out += "\n=====\n" + info;
         }
