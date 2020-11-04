@@ -110,12 +110,12 @@ public class Tandoop {
         TypedValuePool intValuePool = new TypedValuePool("int", Arrays.asList(
             0, 1, -1, 1000, -1000, Integer.MAX_VALUE, Integer.MIN_VALUE
         ));
-        this.valuePool.put("int", intValuePool);
+        this.valuePool.put(int.class.getName(), intValuePool);
         // String type
         TypedValuePool stringValuePool = new TypedValuePool("String", Arrays.asList(
             "", "a", "abc", "0", "3.14", "\n"
         ));
-        this.valuePool.put("String", stringValuePool);
+        this.valuePool.put(String.class.getName(), stringValuePool);
         // null type
         TypedValuePool nullValueSingleton = new TypedValuePool("null", null);
         this.valuePool.put("null", nullValueSingleton);
