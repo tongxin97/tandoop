@@ -4,14 +4,13 @@ import java.lang.StringBuilder;
 import java.util.List;
 import java.util.ArrayList;
 import java.lang.IllegalArgumentException;
-import com.github.javaparser.resolution.types.ResolvedType;
 
 public class MethodInfo {
     public String PackageName;
     public String ClassName;
     public String Name;
-    public List<ResolvedType> ParameterTypes;
-    public ResolvedType ReturnType;
+    public List<String> parameterTypes;
+    public String returnType;
 
     public MethodInfo(String name, String className, String packageName) throws IllegalArgumentException {
         if (name == null || className == null || packageName == null) {
@@ -20,39 +19,52 @@ public class MethodInfo {
         this.Name = name;
         this.ClassName = className;
         this.PackageName = packageName;
-        this.ParameterTypes = new ArrayList<>();
+        this.parameterTypes = new ArrayList<>();
     }
 
-    public void addParameterType(ResolvedType t) {
-        this.ParameterTypes.add(t);
+    public void addParameterType(String t) {
+        this.parameterTypes.add(t);
     }
 
-    public void setReturnType(ResolvedType t) {
-        this.ReturnType = t;
+    public void setReturnType(String t) {
+        this.returnType = t;
     }
 
-    // public List<String> GetParameterTypes() {
-    //     return this.ParameterTypes;
-    // }
+    public String getReturnType() {
+        if (this.returnType == null) { // constructors don't have returnType
+            return this.PackageName + "." + this.ClassName;
+        }
+        return this.returnType;
+    }
+
+    public String getSimpleReturnType() {
+        if (this.returnType == null) { // constructors don't have returnType
+            return this.ClassName;
+        }
+        String s[] = this.returnType.split("\\.");
+        return s[s.length-1];
+    }
+
+    public List<String> GetParameterTypes() {
+        return this.parameterTypes;
+    }
 
     public boolean IsConstructor() {
         return this.ClassName.equals(this.Name);
-    }
-
-    public String getFullReturnType() {
-        return this.PackageName + '.' + this.ReturnType;
     }
 
     @Override
     public String toString() {
         StringBuilder b = new StringBuilder();
         b.append(String.format("Class name: %s\tMethod name: %s\n", this.ClassName, this.Name));
-        b.append("Param types: ");
-        for (ResolvedType t: this.ParameterTypes) {
-            b.append(t.describe() + ", ");
+        if (this.parameterTypes != null) {
+            b.append("Param types: ");
+            for (String t: this.parameterTypes) {
+                b.append(t + ", ");
+            }
         }
-        if (this.ReturnType != null) {
-            b.append(String.format("\nReturn type: %s\n", this.ReturnType.describe()));
+        if (this.returnType != null) {
+            b.append(String.format("\nReturn type: %s\n", this.returnType));
         }
         return b.toString();
     }

@@ -83,14 +83,13 @@ public class Tandoop {
     private void parseFile(String file) throws Exception {
         MethodParser methodParser = new MethodParser(file, this.srcDir);
         methodParser.collectMethodInfo(this.methodPool);
-        // System.out.println("MethodPool:\n" + this.methodPool);
     }
 
     private void getObjectFromTest(Sequence newSeq, MethodInfo method, VarInfo var) throws Exception {
         JsonReader reader = new JsonReader(new FileReader("../tandoop/testOutput.json"));
-        String fullType = method.getFullReturnType();
+        String returnType = method.getReturnType();
         try {
-            var.Val = new Gson().fromJson(reader, Class.forName(fullType));
+            var.Val = new Gson().fromJson(reader, Class.forName(returnType));
         } catch (JsonIOException e) {
             System.err.println("JsonIOException: " + e);
             return;
@@ -101,18 +100,18 @@ public class Tandoop {
         System.out.printf("object: %s\n", var.Val);
 
         boolean isNull = var.Val == null;
-        boolean equalsToOldValue = this.valuePool.containsKey(fullType) && this.valuePool.get(fullType).contains(var.Val);
+        boolean equalsToOldValue = this.valuePool.containsKey(returnType) && this.valuePool.get(returnType).contains(var.Val);
         var.Extensible = !isNull && !equalsToOldValue;
 
-        newSeq.addVal(fullType, var);
+        newSeq.addVal(returnType, var);
 
         if (var.Extensible) {
-            if (this.valuePool.containsKey(fullType)) {
-                this.valuePool.get(fullType).addValue(var.Val);
+            if (this.valuePool.containsKey(returnType)) {
+                this.valuePool.get(returnType).addValue(var.Val);
             } else {
-                this.valuePool.put(fullType, new TypedValuePool(fullType, Arrays.asList(var.Val)));
+                this.valuePool.put(returnType, new TypedValuePool(returnType, Arrays.asList(var.Val)));
             }
-            System.out.println("Added extensible val:" + this.valuePool.get(fullType));
+            System.out.println("Added extensible val:" + this.valuePool.get(returnType));
         } else {
             System.out.printf("Non-extensible val: %s, isNull: %b, equalsToOldValue: %b\n ", var, isNull, equalsToOldValue);
         }
@@ -196,8 +195,8 @@ public class Tandoop {
         // if method is constructor, sentence = Type Type1 = new methodName(p0,p1,...);\n
         // otherwise, sentence = Type Type1 = p0.methodName(p1,p2,...);\n
         StringBuilder b = new StringBuilder();
-        if (method.ReturnType != "void") {
-            b.append(String.format("        %s %s = ", method.ReturnType, var.getContent()));
+        if (method.returnType == null || !method.returnType.equals("void")) {
+            b.append(String.format("        %s %s = ", method.getSimpleReturnType(), var.getContent()));
             newSeq.NewVar = var.getContent();
         }
         String typeDeclaration = b.toString();
@@ -295,7 +294,7 @@ public class Tandoop {
                 continue;
             }
 
-            VarInfo var = new VarInfo(method.ReturnType);
+            VarInfo var = new VarInfo(method.getSimpleReturnType());
             Sequence newSeq = this.extend(method, var, seqs, vals);
             // Check if newSeq is duplicate
             if (this.errorSeqs.contains(newSeq) || this.nonErrorSeqs.contains(newSeq)) {
@@ -308,7 +307,7 @@ public class Tandoop {
             int returnVal = newSeq.runTest(this.prjDir);
             getObjectFromTest(newSeq, method, var);
 
-            System.out.println("Return Val: " + returnVal);
+            // System.out.println("Return Val: " + returnVal);
             if (returnVal == 0) {
                 nonErrorSeqs.add(newSeq);
                 // TODO: apply filters and add to err/nonerr sets

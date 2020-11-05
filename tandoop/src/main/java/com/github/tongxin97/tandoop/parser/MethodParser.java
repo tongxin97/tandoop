@@ -19,9 +19,13 @@ import com.github.javaparser.ParseProblemException;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.ImportDeclaration;
+import com.github.javaparser.ast.type.Type;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 import java.io.FileInputStream;
 import java.io.File;
 import java.util.Optional;
@@ -31,6 +35,7 @@ import com.github.tongxin97.tandoop.method.MethodPool;
 
 public class MethodParser {
   private CompilationUnit cu;
+  private Map<String, String> importedTypes; // map simple type to fully qualified type
 
   public MethodParser(String filename, String srcDir) throws Exception {
     // set up type solver
@@ -43,6 +48,15 @@ public class MethodParser {
     // TODO: handle generic types
     // parse
     this.cu = StaticJavaParser.parse(new FileInputStream(filename));
+    // store imported types
+    this.importedTypes = new HashMap<>();
+    for (ImportDeclaration importDeclaration : this.cu.getImports()) {
+      String type = importDeclaration.getNameAsString();
+      String l[] = type.split("\\.");
+      String simpleType = l[l.length-1];
+      this.importedTypes.put(simpleType, type);
+    }
+    // System.out.println("imports: " + this.importedTypes);
   }
 
   public void collectMethodInfo(MethodPool methodPool) {
@@ -75,6 +89,17 @@ public class MethodParser {
     return null;
   }
 
+  private String resolveType(Type simpleType) {
+    try {
+      return simpleType.resolve().describe();
+    } catch (Exception e) {
+      if (this.importedTypes.containsKey(simpleType.toString())) {
+        return this.importedTypes.get(simpleType.toString());
+      }
+    }
+    return null;
+  }
+
   /**
    * getConstructorInfo creates a MethodInfo instance for the constructor.
    * @return MethodInfo if a public constructor exists; null otherwise.
@@ -93,7 +118,12 @@ public class MethodParser {
                 this.getPackageName()
               );
               for (Parameter p : cd.getParameters()) {
-                info.addParameterType(p.getType().resolve());
+                String paramType = this.resolveType(p.getType());
+                if (paramType == null) {
+                  System.err.println("Unable to resolve parameter type: " + p.getType());
+                  return null;
+                }
+                info.addParameterType(paramType);
               }
               return info;
           }
@@ -168,9 +198,19 @@ public class MethodParser {
 
       MethodInfo info = new MethodInfo(md.getNameAsString(), className, getPackageName());
       for (Parameter p : md.getParameters()) {
-        info.addParameterType(p.getType().resolve());
+        String paramType = resolveType(p.getType());
+        if (paramType == null) {
+          System.err.println("Unable to resolve parameter type: " + p.getType());
+          return;
+        }
+        info.addParameterType(paramType);
       }
-      info.setReturnType(md.getType().resolve());
+      String returnType = resolveType(md.getType());
+      if (returnType == null) {
+        System.err.println("Unable to resolve return type: " + md.getType());
+        return;
+      }
+      info.setReturnType(returnType);
       collector.add(info);
       // System.out.println("info: " + info);
     }

@@ -2,7 +2,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import java.io.*;
 import com.google.gson.Gson;
-import com.github.tongxin97.tandoop.value.ValueInfo;
+import com.github.tongxin97.tandoop.sequence.Sequence;
 
 public class TandoopTest {
   @Test
@@ -11,16 +11,16 @@ public class TandoopTest {
     String output = "";
     try {
       try {
-        ValueInfo ValueInfo0 = new ValueInfo(null);
+        Sequence Sequence0 = new Sequence();
 
         try {
-          assertTrue(ValueInfo0.equals(ValueInfo0));
-          ValueInfo0.hashCode();
-          ValueInfo0.toString();
+          assertTrue(Sequence0.equals(Sequence0));
+          Sequence0.hashCode();
+          Sequence0.toString();
         } catch (Exception e) {
 					 System.err.println("e1: " + e);
 					 fail();				 }
-        output = new Gson().toJson(ValueInfo0);
+        output = new Gson().toJson(Sequence0);
         System.out.println(output);
       } catch (Throwable t) { 
         System.err.println("e2: " + t);

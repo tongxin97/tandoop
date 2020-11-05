@@ -8,7 +8,7 @@ public class MethodParserTest {
   public void test() {
     try {
       MethodParser p = new MethodParser(
-        "./src/main/java/com/github/tongxin97/tandoop/sequence/Sequence.java",
+        "./src/main/java/com/github/tongxin97/tandoop/method/MethodInfo.java",
         "./src/main/java/"
       );
       MethodPool mp = new MethodPool();
@@ -16,6 +16,7 @@ public class MethodParserTest {
       System.out.println(mp);
     } catch (Exception e) {
       System.err.println(e.getMessage());
+      e.printStackTrace();
       fail();
     }
   }
