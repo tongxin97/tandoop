@@ -11,7 +11,7 @@ public class TandoopTest {
     String output = "";
     try {
       try {
-        ValueInfo ValueInfo0 = new ValueInfo("0");
+        ValueInfo ValueInfo0 = new ValueInfo(null);
 
         try {
           assertTrue(ValueInfo0.equals(ValueInfo0));

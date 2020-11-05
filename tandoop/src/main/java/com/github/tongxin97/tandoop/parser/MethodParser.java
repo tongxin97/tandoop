@@ -9,6 +9,10 @@ import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.visitor.VoidVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+import com.github.javaparser.symbolsolver.JavaSymbolSolver;
+import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
+import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeSolver;
+import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ParseProblemException;
@@ -19,25 +23,35 @@ import com.github.javaparser.ast.NodeList;
 import java.util.List;
 import java.util.ArrayList;
 import java.io.FileInputStream;
+import java.io.File;
 import java.util.Optional;
 
 import com.github.tongxin97.tandoop.method.MethodInfo;
 import com.github.tongxin97.tandoop.method.MethodPool;
 
 public class MethodParser {
-  private CompilationUnit CU;
+  private CompilationUnit cu;
 
-  public MethodParser(String filename) throws Exception {
-    this.CU = StaticJavaParser.parse(new FileInputStream(filename));
+  public MethodParser(String filename, String srcDir) throws Exception {
+    // set up type solver
+    CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver();
+    combinedTypeSolver.add(new ReflectionTypeSolver());
+    combinedTypeSolver.add(new JavaParserTypeSolver(new File(srcDir)));
+    // configure JavaParser to use type solver
+    JavaSymbolSolver symbolSolver = new JavaSymbolSolver(combinedTypeSolver);
+    StaticJavaParser.getConfiguration().setSymbolResolver(symbolSolver);
+    // TODO: handle generic types
+    // parse
+    this.cu = StaticJavaParser.parse(new FileInputStream(filename));
   }
 
-  public void CollectMethodInfo(MethodPool methodPool) {
+  public void collectMethodInfo(MethodPool methodPool) {
     try {
       if (isAbstractClass()) {
         return; // skip if class is abstract
       }
     } catch (Exception e) {
-      System.err.println("CollectMethodInfo exception: " + e.getMessage());
+      System.err.println("collectMethodInfo exception: " + e.getMessage());
       return;
     }
 
@@ -47,14 +61,14 @@ public class MethodParser {
       return; // skip if no constructor info
     }
     methodPool.MethodInfoList.add(constructorInfo);
-    methodCollector.visit(this.CU, methodPool.MethodInfoList);
+    methodCollector.visit(this.cu, methodPool.MethodInfoList);
   }
 
   private String getPackageName() {
-    if (this.CU == null) {
+    if (this.cu == null) {
       return null;
     }
-    Optional<PackageDeclaration> opt = this.CU.getPackageDeclaration();
+    Optional<PackageDeclaration> opt = this.cu.getPackageDeclaration();
     if (opt.isPresent()) {
       return opt.get().getNameAsString();
     }
@@ -66,16 +80,20 @@ public class MethodParser {
    * @return MethodInfo if a public constructor exists; null otherwise.
    */
   private MethodInfo getConstructorInfo() {
-    for (TypeDeclaration td: this.CU.getTypes()) {
+    for (TypeDeclaration td: this.cu.getTypes()) {
+
       List<BodyDeclaration> bds = td.getMembers();
       if(bds != null) {
         for (BodyDeclaration bd: bds) {
           if (bd instanceof ConstructorDeclaration) {
               ConstructorDeclaration cd = (ConstructorDeclaration) bd;
-              MethodInfo info = new MethodInfo(cd.getNameAsString(), cd.getNameAsString(), this.getPackageName());
-              info.ReturnType = cd.getNameAsString();
+              MethodInfo info = new MethodInfo(
+                cd.getNameAsString(),
+                cd.getNameAsString(),
+                this.getPackageName()
+              );
               for (Parameter p : cd.getParameters()) {
-                info.ParameterTypes.add(p.getType().toString());
+                info.addParameterType(p.getType().resolve());
               }
               return info;
           }
@@ -111,10 +129,10 @@ public class MethodParser {
     return false;
   }
   private boolean isAbstractClass() throws Exception {
-    if (this.CU == null) {
-      throw new Exception("Can't determine if class is abstract: this.CU is null.");
+    if (this.cu == null) {
+      throw new Exception("Can't determine if class is abstract: this.cu is null.");
     }
-    for (TypeDeclaration td: this.CU.getTypes()) {
+    for (TypeDeclaration td: this.cu.getTypes()) {
       if (td instanceof ClassOrInterfaceDeclaration) {
         return isAbstractClass((ClassOrInterfaceDeclaration) td);
       }
@@ -150,10 +168,11 @@ public class MethodParser {
 
       MethodInfo info = new MethodInfo(md.getNameAsString(), className, getPackageName());
       for (Parameter p : md.getParameters()) {
-        info.ParameterTypes.add(p.getType().toString());
+        info.addParameterType(p.getType().resolve());
       }
-      info.ReturnType = md.getType().toString();
+      info.setReturnType(md.getType().resolve());
       collector.add(info);
+      // System.out.println("info: " + info);
     }
   }
 }

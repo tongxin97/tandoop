@@ -72,7 +72,7 @@ public class Tandoop {
             if (file.isDirectory()) {
                 walkThroughDirectory(file);
             } else {
-                // System.out.println(file.getPath());
+                System.out.println(file.getPath());
                 if (file.getName().endsWith(".java")) {
                     parseFile(file.getPath());
                 }
@@ -81,8 +81,8 @@ public class Tandoop {
     }
 
     private void parseFile(String file) throws Exception {
-        MethodParser methodParser = new MethodParser(file);
-        methodParser.CollectMethodInfo(this.methodPool);
+        MethodParser methodParser = new MethodParser(file, this.srcDir);
+        methodParser.collectMethodInfo(this.methodPool);
         // System.out.println("MethodPool:\n" + this.methodPool);
     }
 
@@ -120,12 +120,12 @@ public class Tandoop {
 
     private void initPrimitiveValuePool() {
         // int type
-        TypedValuePool intValuePool = new TypedValuePool("int", Arrays.asList(
+        TypedValuePool intValuePool = new TypedValuePool(int.class.getName(), Arrays.asList(
             0, 1, -1, 1000, -1000, Integer.MAX_VALUE, Integer.MIN_VALUE
         ));
         this.valuePool.put(int.class.getName(), intValuePool);
         // String type
-        TypedValuePool stringValuePool = new TypedValuePool("String", Arrays.asList(
+        TypedValuePool stringValuePool = new TypedValuePool(String.class.getName(), Arrays.asList(
             "", "a", "abc", "0", "3.14", "\n"
         ));
         this.valuePool.put(String.class.getName(), stringValuePool);
@@ -158,7 +158,7 @@ public class Tandoop {
             } else {
                 ValueInfo v = null;
                 // 3 possible choices
-                int r = Rand.getRandomInt(3);
+                int r = Rand.getRandomInt(2);
                 switch(r) {
                 case 0: // use a value v from a sequence that is already in seqs
                     v = this.getRandomExtensibleValFromSequences(seqs, seqs, type);
@@ -269,7 +269,7 @@ public class Tandoop {
     }
 
     // TODO add arguments: contracts, filters, timeLimits
-    public Sequence generateSequence(int timeLimits) throws Exception {
+    public void generateSequence(int timeLimits) throws Exception {
         while (timeLimits > 0) {
             MethodInfo method;
             try {
@@ -319,6 +319,7 @@ public class Tandoop {
             // System.out.println("nonErrorSeqs: " + nonErrorSeqs);
             --timeLimits;
         }
-        return new Sequence();
+        System.out.println("errorSeqs: " + errorSeqs);
+        System.out.println("nonErrorSeqs: " + nonErrorSeqs);
     }
 }

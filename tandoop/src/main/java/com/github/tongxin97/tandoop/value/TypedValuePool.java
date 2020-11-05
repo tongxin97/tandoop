@@ -24,6 +24,8 @@ public class TypedValuePool<T> {
         this.nullValue = null;
         if (vals != null) {
             this.values = new HashSet(vals);
+        } else {
+            this.values = new HashSet();
         }
     }
 

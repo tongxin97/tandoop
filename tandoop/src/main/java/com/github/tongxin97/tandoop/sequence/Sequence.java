@@ -78,7 +78,7 @@ public class Sequence {
 
 	@Override
 	public String toString() {
-		return this.ExcSeq;
+		return "Sequence: \n" + this.ExcSeq;
 	}
 
 	@Override
@@ -103,7 +103,7 @@ public class Sequence {
 	}
 
 	public boolean hasExtensibleValOfType(String type) {
-		return this.Vals.containsKey(type) && this.Vals.get(type).get(0) != null;
+		return this.Vals.containsKey(type);
 	}
 
 	/**

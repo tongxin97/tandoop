@@ -1,16 +1,17 @@
 package com.github.tongxin97.tandoop.method;
 
-import com.github.javaparser.ast.type.Type;
+import java.lang.StringBuilder;
 import java.util.List;
 import java.util.ArrayList;
 import java.lang.IllegalArgumentException;
+import com.github.javaparser.resolution.types.ResolvedType;
 
 public class MethodInfo {
     public String PackageName;
     public String ClassName;
     public String Name;
-    public List<String> ParameterTypes;
-    public String ReturnType;
+    public List<ResolvedType> ParameterTypes;
+    public ResolvedType ReturnType;
 
     public MethodInfo(String name, String className, String packageName) throws IllegalArgumentException {
         if (name == null || className == null || packageName == null) {
@@ -22,9 +23,17 @@ public class MethodInfo {
         this.ParameterTypes = new ArrayList<>();
     }
 
-    public List<String> GetParameterTypes() {
-        return this.ParameterTypes;
+    public void addParameterType(ResolvedType t) {
+        this.ParameterTypes.add(t);
     }
+
+    public void setReturnType(ResolvedType t) {
+        this.ReturnType = t;
+    }
+
+    // public List<String> GetParameterTypes() {
+    //     return this.ParameterTypes;
+    // }
 
     public boolean IsConstructor() {
         return this.ClassName.equals(this.Name);
@@ -36,6 +45,15 @@ public class MethodInfo {
 
     @Override
     public String toString() {
-        return String.format("Class name: %s\tMethod name: %s\tParam types: %s\tReturn type:%s", this.ClassName, this.Name, this.ParameterTypes, this.ReturnType);
+        StringBuilder b = new StringBuilder();
+        b.append(String.format("Class name: %s\tMethod name: %s\n", this.ClassName, this.Name));
+        b.append("Param types: ");
+        for (ResolvedType t: this.ParameterTypes) {
+            b.append(t.describe() + ", ");
+        }
+        if (this.ReturnType != null) {
+            b.append(String.format("\nReturn type: %s\n", this.ReturnType.describe()));
+        }
+        return b.toString();
     }
 }

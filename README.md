@@ -15,4 +15,4 @@ mvn surefire:test -Dtest=TandoopTest
 
 ## Pending Questions/TODOs
 * Handle class/method inheritance? eg. when randomly selecting an object of certain class, do we consider objects whose class is a subclass of that class?
-* Handle generic type
+* Handle generic types
