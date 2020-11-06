@@ -14,9 +14,6 @@ public class Main {
     options.addOption("src", "srcDir", true, "Project src directory");
     options.addOption("prj", "projectDir", true, "Project directory");
 
-    // TODO:
-    // mvn clean install
-    // mvn dependency:copy-dependencies
     try {
       // parse cmdline arguments
       CommandLine cmd = parser.parse(options, args);

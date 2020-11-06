@@ -162,18 +162,11 @@ public class Sequence {
 			String cmd = "javac -cp 'target/dependency/*':target/classes -d target/classes src/main/java/com/github/tongxin97/tandoop/TandoopTest.java";
 			Process p = Runtime.getRuntime().exec(new String[] {"bash", "-c", cmd});
 
-			// BufferedReader out = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			// BufferedReader err = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-			// String s;
-        	// while ((s = out.readLine()) != null) {
-			// 	System.out.println("line: " + s);
-			// }
-			// while ((s = err.readLine()) != null) {
-			// 	System.out.println("line: " + s);
-			// }
-
 			int cmdReturnValue = p.waitFor();
 			System.out.println("javacompile: " + cmdReturnValue);
+			if (cmdReturnValue != 0) {
+				return cmdReturnValue;
+			}
 
 			Result result = JUnitCore.runClasses(TandoopTest.class);
 			returnVal = result.getFailureCount();
