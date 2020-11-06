@@ -1,5 +1,7 @@
 package com.github.tongxin97.tandoop.util;
 
+import java.util.List;
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 public class Str {
@@ -13,5 +15,11 @@ public class Str {
 
   public static boolean isQualifiedType(String type) {
     return pattern.matcher(type).find();
+  }
+
+  public static List<String> parseNestedTypes(String type) {
+    List<String> res = new ArrayList<>();
+
+    return res;
   }
 }

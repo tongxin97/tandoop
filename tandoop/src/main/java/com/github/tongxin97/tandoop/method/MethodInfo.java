@@ -57,7 +57,7 @@ public class MethodInfo {
         return Str.getLastElementAfterSplit(this.returnType, "\\.");
     }
 
-    public List<String> GetParameterTypes() {
+    public List<String> getParameterTypes() {
         return this.parameterTypes;
     }
 

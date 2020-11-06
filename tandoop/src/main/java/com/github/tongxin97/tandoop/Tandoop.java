@@ -241,6 +241,11 @@ public class Tandoop {
         newSeq.addMethod(method);
         // add import statements to newSeq
         newSeq.addImport(String.format("import %s.%s;\n", method.PackageName, method.ClassName));
+        for (String paramType: method.getParameterTypes()) {
+            if (!paramType.startsWith("java.lang")) { // if type is not included in the Java language
+
+            }
+        }
 
         String newStatements = this.genNewStatements(method, newSeq, var, vals);
         System.out.println("New statements:\n " + newStatements);
@@ -261,7 +266,7 @@ public class Tandoop {
             // System.out.printf("Selected random method: %s.%s\n", method.ClassName, method.Name);
             Set<Sequence> seqs = new LinkedHashSet<>();
             List<ValueInfo> vals = new ArrayList<>();
-            List<String> types = method.GetParameterTypes();
+            List<String> types = method.getParameterTypes();
             if (!method.IsConstructor()) {
                 // prepend class name to  types list since we need instance type when method is not constructor
                 types.add(0, method.ClassName);
