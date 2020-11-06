@@ -18,7 +18,7 @@ public class Str {
   /**
    *
    * @param type potentially nested type, eg. java.util.Set<java.lang.String>>
-   * @param res set to store parsed types
+   * @param res set to store parsed types (could be null)
    * @return true if some of the parsed types are generic
    */
   public static boolean parseNestedTypes(String type, Set<String> res) {

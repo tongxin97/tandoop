@@ -78,7 +78,7 @@ public class Sequence {
 
 	@Override
 	public String toString() {
-		return "Sequence: \n" + this.ExcSeq;
+		return "\nSequence: \n" + this.ExcSeq;
 	}
 
 	@Override
@@ -133,7 +133,7 @@ public class Sequence {
 		testString.append("          " + this.NewVar + ".toString();\n");
 		testString.append("        } catch (Exception e) {\n");
 		testString.append("					 System.err.println(\"e1: \" + e);\n");
-		testString.append("					 fail();");
+		testString.append("					 fail();\n");
 		testString.append("				 }\n");
 		testString.append("        output = new Gson().toJson(" + this.NewVar + ");\n");
 		testString.append("        System.out.println(output);\n");
@@ -161,28 +161,25 @@ public class Sequence {
 	public int runTest(String prjDir) throws Exception {
 		int returnVal = 1;
 		try {
-			// javac -cp "target/dependency/*":target/classes -d target/classes src/main/java/com/github/tongxin97/tandoop/TandoopTest.java
-			// javac -cp 'target/dependency/*':target/classes -d target/classes src/main/java/com/github/tongxin97/tandoop/TandoopTest.java
 			String cmd = "javac -cp 'target/dependency/*':target/classes -d target/classes src/main/java/com/github/tongxin97/tandoop/TandoopTest.java";
-			Process p = Runtime.getRuntime().exec(cmd, null, new File("/Users/xin/Desktop/AST/tandoop/tandoop"));
-			// Process p = Runtime.getRuntime().exec(cmd);
+			Process p = Runtime.getRuntime().exec(new String[] {"bash", "-c", cmd});
 
-			BufferedReader out = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			BufferedReader err = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-			String s;
-        	while ((s = out.readLine()) != null) {
-				System.out.println("line: " + s);
-			}
-			while ((s = err.readLine()) != null) {
-				System.out.println("line: " + s);
-			}
+			// BufferedReader out = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			// BufferedReader err = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+			// String s;
+        	// while ((s = out.readLine()) != null) {
+			// 	System.out.println("line: " + s);
+			// }
+			// while ((s = err.readLine()) != null) {
+			// 	System.out.println("line: " + s);
+			// }
 
 			int cmdReturnValue = p.waitFor();
 			System.out.println("javacompile: " + cmdReturnValue);
 
 			Result result = JUnitCore.runClasses(TandoopTest.class);
 			returnVal = result.getFailureCount();
-            System.out.println("returnVal:" + returnVal);
+			System.out.println("returnVal:" + returnVal);
 
 		} catch (Exception e) {
 			System.out.println(e);

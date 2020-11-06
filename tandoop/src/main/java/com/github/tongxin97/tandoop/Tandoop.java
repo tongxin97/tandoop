@@ -193,7 +193,6 @@ public class Tandoop {
                 b.append(',');
             }
             if (vals.get(i) == null) {
-                // TODO: handle nested generics types, eg. List<T>
                 b.append(String.format("(%s) null", method.getSimpleParameterTypeAtIdx(i)));
                 newSeq.InputParamsWithNull = true;
             } else {

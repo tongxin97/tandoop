@@ -146,15 +146,16 @@ public class MethodParser {
         for (BodyDeclaration bd: bds) {
           if (bd instanceof ConstructorDeclaration) {
               ConstructorDeclaration cd = (ConstructorDeclaration) bd;
+              String constructorName = cd.getNameAsString();
               MethodInfo info = new MethodInfo(
-                cd.getNameAsString(),
-                cd.getNameAsString(),
+                constructorName,
+                constructorName,
                 this.getPackageName()
               );
               for (Parameter p : cd.getParameters()) {
                 String paramType = this.resolveType(p.getType());
                 if (paramType == null) {
-                  System.err.println("Unable to resolve parameter type: " + p.getType());
+                  System.err.printf("Unable to resolve parameter type %s at %s\n", p.getType(), constructorName);
                   return null;
                 }
                 info.addParameterType(paramType);
@@ -234,14 +235,14 @@ public class MethodParser {
       for (Parameter p : md.getParameters()) {
         String paramType = resolveType(p.getType());
         if (paramType == null) {
-          System.err.println("Unable to resolve parameter type: " + p.getType());
+          System.err.printf("Unable to resolve parameter type %s at %s\n", p.getType(), md.getNameAsString());
           return;
         }
         info.addParameterType(paramType);
       }
       String returnType = resolveType(md.getType());
       if (returnType == null) {
-        System.err.println("Unable to resolve return type: " + md.getType());
+        System.err.printf("Unable to resolve return type %s at %s\n", md.getType(), md.getNameAsString());
         return;
       }
       info.setReturnType(returnType);
