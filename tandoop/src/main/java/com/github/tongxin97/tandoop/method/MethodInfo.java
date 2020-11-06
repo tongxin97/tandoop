@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.lang.IllegalArgumentException;
 
+import com.github.tongxin97.tandoop.util.Str;
+
 public class MethodInfo {
     public String PackageName;
     public String ClassName;
@@ -41,8 +43,7 @@ public class MethodInfo {
         if (this.returnType == null) { // constructors don't have returnType
             return this.ClassName;
         }
-        String s[] = this.returnType.split("\\.");
-        return s[s.length-1];
+        return Str.getLastElementAfterSplit(this.returnType, "\\.");
     }
 
     public List<String> GetParameterTypes() {

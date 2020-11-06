@@ -32,6 +32,7 @@ import java.util.Optional;
 
 import com.github.tongxin97.tandoop.method.MethodInfo;
 import com.github.tongxin97.tandoop.method.MethodPool;
+import com.github.tongxin97.tandoop.util.Str;
 
 public class MethodParser {
   private CompilationUnit cu;
@@ -52,8 +53,7 @@ public class MethodParser {
     this.importedTypes = new HashMap<>();
     for (ImportDeclaration importDeclaration : this.cu.getImports()) {
       String type = importDeclaration.getNameAsString();
-      String l[] = type.split("\\.");
-      String simpleType = l[l.length-1];
+      String simpleType = Str.getLastElementAfterSplit(type, "\\.");
       this.importedTypes.put(simpleType, type);
     }
     // System.out.println("imports: " + this.importedTypes);
