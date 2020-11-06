@@ -164,8 +164,8 @@ public class Sequence {
 			// javac -cp "target/dependency/*":target/classes -d target/classes src/main/java/com/github/tongxin97/tandoop/TandoopTest.java
 			// javac -cp 'target/dependency/*':target/classes -d target/classes src/main/java/com/github/tongxin97/tandoop/TandoopTest.java
 			String cmd = "javac -cp 'target/dependency/*':target/classes -d target/classes src/main/java/com/github/tongxin97/tandoop/TandoopTest.java";
-			// Process p = Runtime.getRuntime().exec(cmd, null, new File("."));
-			Process p = Runtime.getRuntime().exec(cmd);
+			Process p = Runtime.getRuntime().exec(cmd, null, new File("/Users/xin/Desktop/AST/tandoop/tandoop"));
+			// Process p = Runtime.getRuntime().exec(cmd);
 
 			BufferedReader out = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			BufferedReader err = new BufferedReader(new InputStreamReader(p.getErrorStream()));

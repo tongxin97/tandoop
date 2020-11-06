@@ -240,12 +240,14 @@ public class Tandoop {
         newSeq.addMethod(method);
         // add import statement for method
         newSeq.addImport(String.format("import %s.%s;\n", method.PackageName, method.ClassName));
-        // add import statements for parameter types
-        for (String paramType: method.getParameterTypes()) {
-            if (!paramType.startsWith("java.lang")) { // if type is not included in the Java language
-                Set<String> types = new HashSet<>();
-                Str.parseNestedTypes(paramType, types);
-                for (String type: types) {
+        // add import statements for parameter types and return type
+        List<String> types = method.getParameterTypes();
+        types.add(method.getReturnType());
+        for (String t: types) {
+            if (!t.startsWith("java.lang")) { // if type is not included in the Java language
+                Set<String> nestedTypes = new HashSet<>();
+                Str.parseNestedTypes(t, nestedTypes);
+                for (String type: nestedTypes) {
                     newSeq.addImport(String.format("import %s;\n", type));
                 }
             }
@@ -284,12 +286,12 @@ public class Tandoop {
                 continue;
             }
             // Skip method if any of its associated types is generic (for now)
-            boolean hasGenericParamType = false;
+            boolean hasGenericType = false;
             for (String paramType: method.getParameterTypes()) {
-                hasGenericParamType |= Str.parseNestedTypes(paramType, null);
+                hasGenericType |= Str.parseNestedTypes(paramType, null);
             }
-            hasGenericParamType |= Str.parseNestedTypes(method.getReturnType(), null);
-            if (hasGenericParamType) {
+            hasGenericType |= Str.parseNestedTypes(method.getReturnType(), null);
+            if (hasGenericType) {
                 --timeLimits;
                 continue;
             }
