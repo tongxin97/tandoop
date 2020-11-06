@@ -97,7 +97,7 @@ public class Tandoop {
             System.err.println("JsonSyntaxException: " + e);
             return;
         }
-        System.out.printf("object: %s\n", var.Val);
+        // System.out.printf("object: %s\n", var.Val);
 
         boolean isNull = var.Val == null;
         boolean equalsToOldValue = this.valuePool.containsKey(returnType) && this.valuePool.get(returnType).contains(var.Val);
@@ -109,7 +109,8 @@ public class Tandoop {
             if (this.valuePool.containsKey(returnType)) {
                 this.valuePool.get(returnType).addValue(var.Val);
             } else {
-                this.valuePool.put(returnType, new TypedValuePool(returnType, Arrays.asList(var.Val)));
+                boolean isPrimitiveType = Class.forName(returnType).isPrimitive();
+                this.valuePool.put(returnType, new TypedValuePool(returnType, isPrimitiveType, Arrays.asList(var.Val)));
             }
             System.out.println("Added extensible val:" + this.valuePool.get(returnType));
         } else {
@@ -123,14 +124,19 @@ public class Tandoop {
             0, 1, -1, 1000, -1000, Integer.MAX_VALUE, Integer.MIN_VALUE
         ));
         this.valuePool.put(int.class.getName(), intValuePool);
-        // String type
-        TypedValuePool stringValuePool = new TypedValuePool(String.class.getName(), Arrays.asList(
-            "", "a", "abc", "0", "3.14", "\n"
-        ));
-        this.valuePool.put(String.class.getName(), stringValuePool);
         // null type
         TypedValuePool nullValueSingleton = new TypedValuePool("null", null);
         this.valuePool.put("null", nullValueSingleton);
+        // char type
+        TypedValuePool charValuePool = new TypedValuePool(char.class.getName(), Arrays.asList(
+            'a', 'z', 'B', '\t'
+        ));
+        this.valuePool.put(char.class.getName(), charValuePool);
+        // double type
+        TypedValuePool doubleValuePool = new TypedValuePool(double.class.getName(), Arrays.asList(
+            0.0, 3.14, -100, Double.MAX_VALUE, Double.MIN_VALUE, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY
+        ));
+        this.valuePool.put(double.class.getName(), doubleValuePool);
 
         // TODO add more initial primitive types
     }
@@ -152,7 +158,7 @@ public class Tandoop {
 
     private void getRandomSeqsAndVals(Set<Sequence> seqs, List<ValueInfo> vals, List<String> types) {
         for (String type: types) {
-            if (this.valuePool.containsKey(type)) {
+            if (this.valuePool.containsKey(type) && this.valuePool.get(type).isPrimitiveType) {
                 vals.add(new ValueInfo(type, this.valuePool.get(type).getRandomValue()));
             } else {
                 ValueInfo v = null;

@@ -18,8 +18,9 @@ public class TypedValuePool<T> {
     private String type;
     private T nullValue;
     private Set<T> values;
+    public boolean isPrimitiveType;
 
-    public TypedValuePool(String type, List<T> vals) {
+    private void init(String type, List<T> vals) {
         this.type = type;
         this.nullValue = null;
         if (vals != null) {
@@ -27,6 +28,16 @@ public class TypedValuePool<T> {
         } else {
             this.values = new HashSet();
         }
+    }
+
+    public TypedValuePool(String type, List<T> vals) {
+        init(type, vals);
+        this.isPrimitiveType = true;
+    }
+
+    public TypedValuePool(String type, boolean isPrimitive, List<T> vals) {
+        init(type, vals);
+        this.isPrimitiveType = isPrimitive;
     }
 
     public T getRandomValue() {
