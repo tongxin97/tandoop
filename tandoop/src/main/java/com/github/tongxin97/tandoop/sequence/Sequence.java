@@ -1,8 +1,5 @@
 package com.github.tongxin97.tandoop.sequence;
 
-
-import java.io.*;
-
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import java.lang.IllegalArgumentException;
@@ -12,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
+import java.io.*;
 
 import com.github.tongxin97.tandoop.method.MethodInfo;
 import com.github.tongxin97.tandoop.util.Rand;

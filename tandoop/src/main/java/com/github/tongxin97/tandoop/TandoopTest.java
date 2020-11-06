@@ -4,7 +4,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import java.io.*;
 import com.google.gson.Gson;
-import com.github.tongxin97.tandoop.method.MethodPool;
+import com.github.tongxin97.tandoop.Tandoop;
 
 public class TandoopTest {
   @Test
@@ -13,17 +13,17 @@ public class TandoopTest {
     String output = "";
     try {
       try {
-        MethodPool MethodPool0 = new MethodPool();
+        Tandoop Tandoop0 = new Tandoop((String) null,(String) null);
 
         try {
-          assertTrue(MethodPool0.equals(MethodPool0));
-          MethodPool0.hashCode();
-          MethodPool0.toString();
+          assertTrue(Tandoop0.equals(Tandoop0));
+          Tandoop0.hashCode();
+          Tandoop0.toString();
         } catch (Exception e) {
 					 System.err.println("e1: " + e);
 					 fail();
 				 }
-        output = new Gson().toJson(MethodPool0);
+        output = new Gson().toJson(Tandoop0);
         System.out.println(output);
       } catch (Throwable t) { 
         System.err.println("e2: " + t);
