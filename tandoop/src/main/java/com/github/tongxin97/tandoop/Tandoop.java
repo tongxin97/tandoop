@@ -1,6 +1,5 @@
 package com.github.tongxin97.tandoop;
 
-import java.lang.StringBuilder;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.HashSet;
 import java.io.*;
 import java.util.stream.Collectors;
 import java.nio.charset.StandardCharsets;
@@ -18,6 +18,7 @@ import com.github.tongxin97.tandoop.parser.MethodParser;
 import com.github.tongxin97.tandoop.method.MethodInfo;
 import com.github.tongxin97.tandoop.method.MethodPool;
 import com.github.tongxin97.tandoop.util.Rand;
+import com.github.tongxin97.tandoop.util.Str;
 import com.github.tongxin97.tandoop.value.*;
 import com.github.tongxin97.tandoop.sequence.Sequence;
 
@@ -39,10 +40,9 @@ public class Tandoop {
     private final double repetitionProb = 1;
 
     String srcDir;
-    String testDir;
     String prjDir;
 
-    public Tandoop(String srcDir, String testDir, String prjDir) throws Exception {
+    public Tandoop(String srcDir, String prjDir) throws Exception {
         // init error/non-error method sequences, and method/value pool
         this.errorSeqs = new LinkedHashSet<>();
         this.nonErrorSeqs = new LinkedHashSet<>();
@@ -50,7 +50,6 @@ public class Tandoop {
         this.valuePool = new HashMap<>();
 
         this.srcDir = srcDir;
-        this.testDir = testDir;
         this.prjDir = prjDir;
 
         MethodParser.parseAndResolveDirectory(srcDir, this.methodPool);
@@ -239,11 +238,16 @@ public class Tandoop {
         }
         // add new method to newSeq
         newSeq.addMethod(method);
-        // add import statements to newSeq
+        // add import statement for method
         newSeq.addImport(String.format("import %s.%s;\n", method.PackageName, method.ClassName));
+        // add import statements for parameter types
         for (String paramType: method.getParameterTypes()) {
             if (!paramType.startsWith("java.lang")) { // if type is not included in the Java language
-
+                Set<String> types = new HashSet<>();
+                Str.parseNestedTypes(paramType, types);
+                for (String type: types) {
+                    newSeq.addImport(String.format("import %s;\n", type));
+                }
             }
         }
 
@@ -279,6 +283,16 @@ public class Tandoop {
                 // System.out.println("Instance val is null");
                 continue;
             }
+            // Skip method if any of its associated types is generic (for now)
+            boolean hasGenericParamType = false;
+            for (String paramType: method.getParameterTypes()) {
+                hasGenericParamType |= Str.parseNestedTypes(paramType, null);
+            }
+            hasGenericParamType |= Str.parseNestedTypes(method.getReturnType(), null);
+            if (hasGenericParamType) {
+                --timeLimits;
+                continue;
+            }
 
             VarInfo var = new VarInfo(method.getSimpleReturnType());
             Sequence newSeq = this.extend(method, var, seqs, vals);
@@ -289,7 +303,7 @@ public class Tandoop {
             }
             // System.out.println(newSeq.ExcSeq);
 
-            newSeq.generateTest(this.testDir);
+            newSeq.generateTest();
             int returnVal = newSeq.runTest(this.prjDir);
             getObjectFromTest(newSeq, method, var);
 

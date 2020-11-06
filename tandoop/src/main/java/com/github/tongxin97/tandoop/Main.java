@@ -11,18 +11,16 @@ public class Main {
     CommandLineParser parser = new DefaultParser();
     Options options = new Options();
     options.addOption("src", "srcDir", true, "Project src directory");
-    options.addOption("test", "testDir", true, "Project test directory");
     options.addOption("prj", "projectDir", true, "Project directory");
 
+    // TODO:
+    // mvn clean install
+    // mvn dependency:copy-dependencies
     try {
       // parse cmdline arguments
       CommandLine cmd = parser.parse(options, args);
       if (!cmd.hasOption("src")) {
         System.err.println("Project src directory not provided.");
-        return;
-      }
-      if (!cmd.hasOption("test")) {
-        System.err.println("Project test directory not provided.");
         return;
       }
       if (!cmd.hasOption("prj")) {
@@ -31,7 +29,6 @@ public class Main {
       }
       Tandoop tandoop = new Tandoop(
         cmd.getOptionValue("src"),
-        cmd.getOptionValue("test"),
         cmd.getOptionValue("prj")
       );
       tandoop.generateSequence(10);

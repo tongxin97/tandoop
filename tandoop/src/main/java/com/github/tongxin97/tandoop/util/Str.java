@@ -1,25 +1,47 @@
 package com.github.tongxin97.tandoop.util;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.regex.Pattern;
+import java.util.Set;
+import java.util.HashSet;
 
 public class Str {
-  private static String regex = "/^[a-z]\\w*(\\.[a-z]\\w*)+$/i";
-  private static Pattern pattern = Pattern.compile(regex);
+
+  public static boolean isGenericType(String type) {
+    return !type.contains(".");
+  }
 
   public static String getLastElementAfterSplit(String s, String delim) {
     String l[] = s.split(delim);
     return l[l.length-1];
   }
 
-  public static boolean isQualifiedType(String type) {
-    return pattern.matcher(type).find();
-  }
 
-  public static List<String> parseNestedTypes(String type) {
-    List<String> res = new ArrayList<>();
-
-    return res;
+  /**
+   *
+   * @param type potentially nested type, eg. java.util.Set<java.lang.String>>
+   * @param res set to store parsed types
+   * @return true if some of the parsed types are generic
+   */
+  public static boolean parseNestedTypes(String type, Set<String> res) {
+    boolean containsGenericType = false;
+    StringBuilder b = new StringBuilder();
+    for (int i = 0; i < type.length(); i++){
+      char c = type.charAt(i);
+      if (c == '<') {
+        containsGenericType |= isGenericType(b.toString());
+        if (res != null) {
+          res.add(b.toString());
+        }
+        b.setLength(0); // reset
+      } else {
+        if (c != '>') {
+          b.append(c);
+        }
+      }
+    }
+    if (res != null) {
+      res.add(b.toString()); // add last
+    }
+    containsGenericType |= isGenericType(b.toString());
+    return containsGenericType;
   }
 }

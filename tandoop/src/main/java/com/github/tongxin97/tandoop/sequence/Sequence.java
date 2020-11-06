@@ -5,7 +5,6 @@ import java.io.*;
 
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
-
 import java.lang.IllegalArgumentException;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +16,7 @@ import java.util.HashSet;
 import com.github.tongxin97.tandoop.method.MethodInfo;
 import com.github.tongxin97.tandoop.util.Rand;
 import com.github.tongxin97.tandoop.value.ValueInfo;
+import com.github.tongxin97.tandoop.TandoopTest;
 
 /**
  * The class that stores a sequence
@@ -68,7 +68,6 @@ public class Sequence {
 		this.Methods.addAll(methods);
 	}
 
-	// TODO: handle nested types
 	public void addImport(String newImport) {
 		this.Imports.add(newImport);
 	}
@@ -111,8 +110,9 @@ public class Sequence {
 	 * Generate a test and writes it to testDir/TandoopTest.java
 	 * Add contract checking into the test itself.
 	 */
-	public void generateTest(String testDir) throws Exception {
-		StringBuilder testString = new StringBuilder("import org.junit.Test;\n");
+	public void generateTest() throws Exception {
+		StringBuilder testString = new StringBuilder("package com.github.tongxin97.tandoop;\n\n");
+		testString.append("import org.junit.Test;\n");
 		testString.append("import static org.junit.Assert.*;\n");
 		testString.append("import java.io.*;\n");
 		testString.append("import com.google.gson.Gson;\n");
@@ -152,7 +152,7 @@ public class Sequence {
 		testString.append("  }\n");
 		testString.append("}");
 
-		String filename = testDir + "/TandoopTest.java";
+		String filename = "src/main/java/com/github/tongxin97/tandoop/TandoopTest.java";
 		BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
 		writer.write(testString.toString());
 		writer.close();
@@ -161,18 +161,29 @@ public class Sequence {
 	public int runTest(String prjDir) throws Exception {
 		int returnVal = 1;
 		try {
-			String cmd = "mvn test -Dtest=TandoopTest";
-			Process p = Runtime.getRuntime().exec(cmd, null, new File(prjDir));
-			// BufferedReader out = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			// BufferedReader err = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-			// String s;
-        	// while ((s = out.readLine()) != null) {
-			// 	System.out.println("line: " + s);
-			// }
-			// while ((s = err.readLine()) != null) {
-			// 	System.out.println("line: " + s);
-			// }
-			returnVal = p.waitFor();
+			// javac -cp "target/dependency/*":target/classes -d target/classes src/main/java/com/github/tongxin97/tandoop/TandoopTest.java
+			// javac -cp 'target/dependency/*':target/classes -d target/classes src/main/java/com/github/tongxin97/tandoop/TandoopTest.java
+			String cmd = "javac -cp 'target/dependency/*':target/classes -d target/classes src/main/java/com/github/tongxin97/tandoop/TandoopTest.java";
+			// Process p = Runtime.getRuntime().exec(cmd, null, new File("."));
+			Process p = Runtime.getRuntime().exec(cmd);
+
+			BufferedReader out = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			BufferedReader err = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+			String s;
+        	while ((s = out.readLine()) != null) {
+				System.out.println("line: " + s);
+			}
+			while ((s = err.readLine()) != null) {
+				System.out.println("line: " + s);
+			}
+
+			int cmdReturnValue = p.waitFor();
+			System.out.println("javacompile: " + cmdReturnValue);
+
+			Result result = JUnitCore.runClasses(TandoopTest.class);
+			returnVal = result.getFailureCount();
+            System.out.println("returnVal:" + returnVal);
+
 		} catch (Exception e) {
 			System.out.println(e);
 		}

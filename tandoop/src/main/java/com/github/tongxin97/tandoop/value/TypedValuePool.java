@@ -1,6 +1,5 @@
 package com.github.tongxin97.tandoop.value;
 
-import java.lang.StringBuilder;
 import java.util.List;
 import java.util.HashSet;
 import java.util.Set;

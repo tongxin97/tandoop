@@ -1,6 +1,5 @@
 package com.github.tongxin97.tandoop.method;
 
-import java.lang.StringBuilder;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.ArrayList;
