@@ -21,14 +21,19 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.type.Type;
+import com.github.javaparser.utils.SourceRoot;
+import com.github.javaparser.utils.ProjectRoot;
+import com.github.javaparser.symbolsolver.utils.SymbolSolverCollectionStrategy;
 
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Optional;
 import java.io.FileInputStream;
 import java.io.File;
-import java.util.Optional;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import com.github.tongxin97.tandoop.method.MethodInfo;
 import com.github.tongxin97.tandoop.method.MethodPool;
@@ -38,17 +43,7 @@ public class MethodParser {
   private CompilationUnit cu;
   private Map<String, String> importedTypes; // map simple type to fully qualified type
 
-  public MethodParser(String filename, String srcDir) throws Exception {
-    // set up type solver
-    CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver();
-    combinedTypeSolver.add(new ReflectionTypeSolver());
-    combinedTypeSolver.add(new JavaParserTypeSolver(new File(srcDir)));
-    // configure JavaParser to use type solver
-    JavaSymbolSolver symbolSolver = new JavaSymbolSolver(combinedTypeSolver);
-    StaticJavaParser.getConfiguration().setSymbolResolver(symbolSolver);
-    // TODO: handle generic types
-    // parse
-    this.cu = StaticJavaParser.parse(new FileInputStream(filename));
+  private void storeImportedTypes() {
     // store imported types
     this.importedTypes = new HashMap<>();
     for (ImportDeclaration importDeclaration : this.cu.getImports()) {
@@ -57,6 +52,44 @@ public class MethodParser {
       this.importedTypes.put(simpleType, type);
     }
     // System.out.println("imports: " + this.importedTypes);
+  }
+
+  public MethodParser(String filename, String srcDir) throws Exception {
+    if (filename == null || srcDir == null) {
+      throw new IllegalArgumentException(String.format("Parameters can't be null: filename=%s, srcDir=%s", filename, srcDir));
+    }
+    this.cu = StaticJavaParser.parse(new FileInputStream(filename));
+    this.storeImportedTypes();
+  }
+
+  public MethodParser(CompilationUnit cu, String srcDir) throws Exception {
+    if (cu == null || srcDir == null) {
+      throw new IllegalArgumentException(String.format("Parameters can't be null: cu=%s, srcDir=%s", cu, srcDir));
+    }
+    this.cu = cu;
+    this.storeImportedTypes();
+  }
+
+  public static void parseAndResolveDirectory(String srcDir, MethodPool methodPool) throws Exception {
+    CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver();
+    combinedTypeSolver.add(new ReflectionTypeSolver());
+    combinedTypeSolver.add(new JavaParserTypeSolver(new File(srcDir)));
+    JavaSymbolSolver symbolSolver = new JavaSymbolSolver(combinedTypeSolver);
+    StaticJavaParser.getConfiguration().setSymbolResolver(symbolSolver);
+    // TODO: handle generic types
+
+    Path rootPath = Paths.get(srcDir);
+    ProjectRoot projectRoot = new SymbolSolverCollectionStrategy(
+      StaticJavaParser.getConfiguration()
+    ).collect(rootPath);
+
+    for (SourceRoot sr: projectRoot.getSourceRoots()) {
+      sr.tryToParse();
+      List<CompilationUnit> compilations = sr.getCompilationUnits();
+      for (CompilationUnit cu: compilations) {
+          new MethodParser(cu, srcDir).collectMethodInfo(methodPool);
+      }
+    }
   }
 
   public void collectMethodInfo(MethodPool methodPool) {
@@ -93,6 +126,7 @@ public class MethodParser {
     try {
       return simpleType.resolve().describe();
     } catch (Exception e) {
+      // e.printStackTrace();
       if (this.importedTypes.containsKey(simpleType.toString())) {
         return this.importedTypes.get(simpleType.toString());
       }

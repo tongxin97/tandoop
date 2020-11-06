@@ -2,6 +2,7 @@ package com.github.tongxin97.tandoop.method;
 
 import java.lang.StringBuilder;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.ArrayList;
 import java.lang.IllegalArgumentException;
 
@@ -21,6 +22,16 @@ public class MethodInfo {
         this.Name = name;
         this.ClassName = className;
         this.PackageName = packageName;
+        this.parameterTypes = new ArrayList<>();
+    }
+
+    public MethodInfo(List<String> params) throws IllegalArgumentException {
+        if (params == null || params.size() != 3) {
+            throw new IllegalArgumentException("Invalid argument to MethodInfo()");
+        }
+        this.Name = params.get(0);
+        this.ClassName = params.get(1);
+        this.PackageName = params.get(2);
         this.parameterTypes = new ArrayList<>();
     }
 
@@ -48,6 +59,10 @@ public class MethodInfo {
 
     public List<String> GetParameterTypes() {
         return this.parameterTypes;
+    }
+
+    public String getSimpleParameterTypeAtIdx(int i) {
+        return Str.getLastElementAfterSplit(this.parameterTypes.get(i), "\\.");
     }
 
     public boolean IsConstructor() {

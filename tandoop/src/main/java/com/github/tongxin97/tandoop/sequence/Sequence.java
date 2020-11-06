@@ -68,6 +68,7 @@ public class Sequence {
 		this.Methods.addAll(methods);
 	}
 
+	// TODO: handle nested types
 	public void addImport(String newImport) {
 		this.Imports.add(newImport);
 	}

@@ -7,12 +7,8 @@ public class MethodParserTest {
   @Test
   public void test() {
     try {
-      MethodParser p = new MethodParser(
-        "./src/main/java/com/github/tongxin97/tandoop/method/MethodInfo.java",
-        "./src/main/java/"
-      );
       MethodPool mp = new MethodPool();
-      p.collectMethodInfo(mp);
+      MethodParser.parseAndResolveDirectory("./src/main/java/", mp);
       System.out.println(mp);
     } catch (Exception e) {
       System.err.println(e.getMessage());

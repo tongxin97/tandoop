@@ -53,36 +53,10 @@ public class Tandoop {
         this.testDir = testDir;
         this.prjDir = prjDir;
 
-        // Note: need to use the directory of source code (e.g., ../joda-time/src/main)
-        // There are errors when trying to parse java test classes
-        walkThroughDirectory(new File(srcDir));
-
+        MethodParser.parseAndResolveDirectory(srcDir, this.methodPool);
+        // System.out.println(this.methodPool);
         this.initPrimitiveValuePool();
         // System.out.println("ValuePool:\n" + this.valuePool);
-    }
-
-    private void walkThroughDirectory(File dir) throws Exception {
-        File[] files = dir.listFiles();
-        if (files == null) {
-            System.err.printf("%s is not a directory.\n", dir.getPath());
-            return;
-        }
-        // System.out.println(dir.getPath());
-        for (File file: files) {
-            if (file.isDirectory()) {
-                walkThroughDirectory(file);
-            } else {
-                System.out.println(file.getPath());
-                if (file.getName().endsWith(".java")) {
-                    parseFile(file.getPath());
-                }
-            }
-        }
-    }
-
-    private void parseFile(String file) throws Exception {
-        MethodParser methodParser = new MethodParser(file, this.srcDir);
-        methodParser.collectMethodInfo(this.methodPool);
     }
 
     private void getObjectFromTest(Sequence newSeq, MethodInfo method, VarInfo var) throws Exception {
@@ -220,7 +194,8 @@ public class Tandoop {
                 b.append(',');
             }
             if (vals.get(i) == null) {
-                b.append("null");
+                // TODO: handle nested generics types, eg. List<T>
+                b.append(String.format("(%s) null", method.getSimpleParameterTypeAtIdx(i)));
                 newSeq.InputParamsWithNull = true;
             } else {
                 b.append(vals.get(i).getContent());
