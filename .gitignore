@@ -22,7 +22,7 @@ joda-time
 /.metadata/
 
 # TandoopTest
-./tandoop/src/test/java/com/github/tongxin97/tandoop/TandoopTest.java
+tandoop/src/test/java/com/github/tongxin97/tandoop/TandoopTest.java
 
 # test output
-./tandoop/testOutput.json
+tandoop/testOutput.json
