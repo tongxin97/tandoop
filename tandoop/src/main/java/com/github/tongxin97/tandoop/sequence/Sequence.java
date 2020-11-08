@@ -2,7 +2,11 @@ package com.github.tongxin97.tandoop.sequence;
 
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
+import org.junit.runner.notification.Failure;
 import java.lang.IllegalArgumentException;
+import java.lang.reflect.Method;
+import java.net.URLClassLoader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
@@ -14,7 +18,6 @@ import java.io.*;
 import com.github.tongxin97.tandoop.method.MethodInfo;
 import com.github.tongxin97.tandoop.util.Rand;
 import com.github.tongxin97.tandoop.value.ValueInfo;
-import com.github.tongxin97.tandoop.TandoopTest;
 
 /**
  * The class that stores a sequence
@@ -108,73 +111,63 @@ public class Sequence {
 	 * Generate a test and writes it to testDir/TandoopTest.java
 	 * Add contract checking into the test itself.
 	 */
-	public void generateTest() throws Exception {
-		StringBuilder testString = new StringBuilder("package com.github.tongxin97.tandoop;\n\n");
-		testString.append("import org.junit.Test;\n");
-		testString.append("import static org.junit.Assert.*;\n");
+	public void generateTest(int timeLimits) throws Exception {
+		StringBuilder testString = new StringBuilder("");
 		testString.append("import java.io.*;\n");
 		testString.append("import com.google.gson.Gson;\n");
 
 		for (String s: this.Imports) {
 			testString.append(s);
 		}
-		testString.append("\npublic class TandoopTest {\n  @Test\n  public void test() {\n");
-		testString.append("    boolean extensible = true;\n");
+		testString.append("\npublic class TandoopTest {\n");
+		testString.append("  public static String test() {\n");
 		testString.append("    String output = \"\";\n");
 		testString.append("    try {\n");
-		testString.append("      try {\n");
 		testString.append(this.ExcSeq);
 		testString.append("\n");
-		testString.append("        try {\n");
-		testString.append("          assertTrue(" + this.NewVar + ".equals(" + this.NewVar + "));\n");
-		testString.append("          " + this.NewVar + ".hashCode();\n");
-		testString.append("          " + this.NewVar + ".toString();\n");
-		testString.append("        } catch (Exception e) {\n");
-		testString.append("					 System.err.println(\"e1: \" + e);\n");
-		testString.append("					 fail();\n");
-		testString.append("				 }\n");
-		testString.append("        output = new Gson().toJson(" + this.NewVar + ");\n");
-		testString.append("        System.out.println(output);\n");
-		testString.append("      } catch (Throwable t) { \n");
-		testString.append("        System.err.println(\"e2: \" + t);\n");
-		testString.append("        extensible = false;\n");
-		testString.append("      }\n");
-		testString.append("      File f = new File(\"../tandoop/testOutput.json\");\n");
-		testString.append("      f.createNewFile();\n");
-		testString.append("      if (!extensible) { return; }\n");
-		testString.append("			PrintWriter p = new PrintWriter(new FileWriter(f));\n");
-		testString.append("      p.write(output);\n");
-		testString.append("      p.close();\n");
-		// testString.append("      f.close();\n");
-		testString.append("    } catch (Exception e) { System.err.println(\"e3: \" + e);}\n");
+		testString.append("      try {\n");
+		testString.append("        assert(" + this.NewVar + ".equals(" + this.NewVar + "));\n");
+		testString.append("        " + this.NewVar + ".hashCode();\n");
+		testString.append("        " + this.NewVar + ".toString();\n");
+		testString.append("      } catch (Exception e1) {\n");
+		testString.append("		   return \"e1: \" + e1;\n");
+		testString.append("		 }\n");
+		testString.append("      output = new Gson().toJson(" + this.NewVar + ");\n");
+		testString.append("    } catch (Exception e2) { \n");
+		testString.append("      return \"e2: \" + e2;\n");
+		testString.append("    }\n");
+		testString.append("	   return output;\n");
 		testString.append("  }\n");
 		testString.append("}");
 
-		String filename = "src/main/java/com/github/tongxin97/tandoop/TandoopTest.java";
+		String filename = "src/test/java/com/github/tongxin97/tandoop/TandoopTest.java";
 		BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
 		writer.write(testString.toString());
 		writer.close();
 	}
 
-	public int runTest(String prjDir) throws Exception {
-		int returnVal = 1;
+	public String runTest() throws Exception {
 		try {
-			String cmd = "javac -cp 'target/dependency/*':target/classes -d target/classes src/main/java/com/github/tongxin97/tandoop/TandoopTest.java";
+			String cmd = "javac -cp 'target/dependency/*':target/classes -d target/test-classes src/test/java/com/github/tongxin97/tandoop/TandoopTest.java";
 			Process p = Runtime.getRuntime().exec(new String[] {"bash", "-c", cmd});
 
 			int cmdReturnValue = p.waitFor();
 			System.out.println("javacompile: " + cmdReturnValue);
-			if (cmdReturnValue != 0) {
-				return cmdReturnValue;
-			}
+			assert(cmdReturnValue == 0);
 
-			Result result = JUnitCore.runClasses(TandoopTest.class);
-			returnVal = result.getFailureCount();
-			System.out.println("returnVal:" + returnVal);
-
+			// TODO: classloader
+			URLClassLoader classLoader = URLClassLoader.newInstance(new URL[] {new File("target/test-classes/").toURI().toURL(), 
+																			   new File("target/classes/").toURI().toURL(),
+																			   new File("target/dependency/gson-2.8.6.jar").toURI().toURL()});
+			Class testClass = Class.forName("TandoopTest", false, classLoader);
+			
+			Method method = testClass.getMethod("test");
+			Object result = method.invoke(null);
+			System.out.println("Test result: " + result);
+			return result.toString();
 		} catch (Exception e) {
-			System.out.println(e);
+			// e.printStackTrace();
+			return "e3: " + e;
 		}
-		return returnVal;
 	}
 }

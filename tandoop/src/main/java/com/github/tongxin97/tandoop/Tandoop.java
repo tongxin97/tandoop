@@ -43,6 +43,11 @@ public class Tandoop {
     String prjDir;
 
     public Tandoop(String srcDir, String prjDir) throws Exception {
+        if (srcDir == null || prjDir == null) {
+            throw new IllegalArgumentException(
+                String.format("Parameters can't be null: srcDir=%s, prjDir=%s", srcDir, prjDir)
+            );
+        }
         // init error/non-error method sequences, and method/value pool
         this.errorSeqs = new LinkedHashSet<>();
         this.nonErrorSeqs = new LinkedHashSet<>();
@@ -280,7 +285,7 @@ public class Tandoop {
             // System.out.printf("Seqs: %s, Vals %s\n", seqs, vals);
             // sanity check: instance val (vals[0]) can't be null when method is not constructor
             if (!method.IsConstructor() && vals.get(0) == null) {
-                --timeLimits;
+                // --timeLimits;
                 // System.out.println("Instance val is null");
                 continue;
             }
@@ -291,7 +296,7 @@ public class Tandoop {
             }
             hasGenericType |= Str.parseNestedTypes(method.getReturnType(), null);
             if (hasGenericType) {
-                --timeLimits;
+                // --timeLimits;
                 continue;
             }
 
@@ -304,19 +309,15 @@ public class Tandoop {
             }
             // System.out.println(newSeq.ExcSeq);
 
-            newSeq.generateTest();
-            int returnVal = newSeq.runTest(this.prjDir);
-            getObjectFromTest(newSeq, method, var);
-
-            // System.out.println("Return Val: " + returnVal);
-            if (returnVal == 0) {
+            newSeq.generateTest(timeLimits);
+            String result = newSeq.runTest();
+            if (result.startsWith("e1: ") || result.startsWith("e3: ")) {
+                errorSeqs.add(newSeq);
+            } else {
                 nonErrorSeqs.add(newSeq);
                 // TODO: apply filters and add to err/nonerr sets
                 // setExtensibleFlags(newSeq, filter, runtimevalues)
-            } else {
-                errorSeqs.add(newSeq);
             }
-            // System.out.println("nonErrorSeqs: " + nonErrorSeqs);
             --timeLimits;
         }
         System.out.println("errorSeqs: " + errorSeqs);
