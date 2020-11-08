@@ -134,7 +134,7 @@ public class Tandoop {
         return null;
     }
 
-    private void getRandomSeqsAndVals(Set<Sequence> seqs, List<ValueInfo> vals, List<String> types) {
+    private void getRandomSeqsAndVals(Set<Sequence> seqs, List<ValueInfo> vals, final List<String> types) {
         for (String type: types) {
             if (this.valuePool.containsKey(type) && this.valuePool.get(type).isPrimitiveType) {
                 vals.add(new ValueInfo(type, this.valuePool.get(type).getRandomValue()));
@@ -228,6 +228,16 @@ public class Tandoop {
         return repeatedStatement.toString();
     }
 
+    private void addImportStatement(String t, Sequence newSeq) {
+        if (!t.startsWith("java.lang")) { // if type is not included in the Java language
+            Set<String> nestedTypes = new HashSet<>();
+            Str.parseNestedTypes(t, nestedTypes);
+            for (String type: nestedTypes) {
+                newSeq.addImport(String.format("import %s;\n", type));
+            }
+        }
+    }
+
     public Sequence extend(MethodInfo method, VarInfo var, Set<Sequence> seqs, List<ValueInfo> vals) {
         Sequence newSeq = new Sequence();
         // merge seqs to one seq: methods, vals, and executable sequence string
@@ -245,17 +255,10 @@ public class Tandoop {
         // add import statement for method
         newSeq.addImport(String.format("import %s.%s;\n", method.PackageName, method.ClassName));
         // add import statements for parameter types and return type
-        List<String> types = method.getParameterTypes();
-        types.add(method.getReturnType());
-        for (String t: types) {
-            if (!t.startsWith("java.lang")) { // if type is not included in the Java language
-                Set<String> nestedTypes = new HashSet<>();
-                Str.parseNestedTypes(t, nestedTypes);
-                for (String type: nestedTypes) {
-                    newSeq.addImport(String.format("import %s;\n", type));
-                }
-            }
+        for (String t: method.getParameterTypes()) {
+            addImportStatement(t, newSeq);
         }
+        addImportStatement(method.getReturnType(), newSeq);
 
         String newStatements = this.genNewStatements(method, newSeq, var, vals);
         System.out.println("New statements:\n " + newStatements);
@@ -276,12 +279,7 @@ public class Tandoop {
             // System.out.printf("Selected random method: %s.%s\n", method.ClassName, method.Name);
             Set<Sequence> seqs = new LinkedHashSet<>();
             List<ValueInfo> vals = new ArrayList<>();
-            List<String> types = method.getParameterTypes();
-            if (!method.IsConstructor()) {
-                // prepend class name to  types list since we need instance type when method is not constructor
-                types.add(0, method.ClassName);
-            }
-            this.getRandomSeqsAndVals(seqs, vals, types);
+            this.getRandomSeqsAndVals(seqs, vals, method.getParameterTypes());
             // sanity check: instance val (vals[0]) can't be null when method is not constructor
             if (!method.IsConstructor() && vals.get(0) == null) {
                 // --timeLimits;
@@ -298,9 +296,6 @@ public class Tandoop {
                 // --timeLimits;
                 continue;
             }
-
-            System.out.printf("\nDEBUG: iscontructor: %b, types: %s\n", method.IsConstructor(), types);
-            System.out.printf("DEBUG: vals: %s\n\n", vals);
 
             VarInfo var = new VarInfo(method.getSimpleReturnType());
             Sequence newSeq = this.extend(method, var, seqs, vals);

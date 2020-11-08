@@ -160,7 +160,6 @@ public class MethodParser {
                 }
                 info.addParameterType(paramType);
               }
-              System.out.printf("DEBUG: %s param types: %s\n", constructorName, info.getParameterTypes());
               return info;
           }
         }
@@ -233,6 +232,15 @@ public class MethodParser {
       }
 
       MethodInfo info = new MethodInfo(md.getNameAsString(), className, getPackageName());
+      // store return type
+      String returnType = resolveType(md.getType());
+      if (returnType == null) {
+        System.err.printf("Unable to resolve return type %s at %s\n", md.getType(), md.getNameAsString());
+        return;
+      }
+      info.setReturnType(returnType);
+      // store parameter type
+      info.addParameterType(returnType); // NOTE: add return type to parameterTypes since we need the instance type to construct a new method call.
       for (Parameter p : md.getParameters()) {
         String paramType = resolveType(p.getType());
         if (paramType == null) {
@@ -241,12 +249,6 @@ public class MethodParser {
         }
         info.addParameterType(paramType);
       }
-      String returnType = resolveType(md.getType());
-      if (returnType == null) {
-        System.err.printf("Unable to resolve return type %s at %s\n", md.getType(), md.getNameAsString());
-        return;
-      }
-      info.setReturnType(returnType);
       collector.add(info);
       // System.out.println("info: " + info);
     }
