@@ -63,11 +63,10 @@ public class Tandoop {
         // System.out.println("ValuePool:\n" + this.valuePool);
     }
 
-    private void getObjectFromTest(Sequence newSeq, MethodInfo method, VarInfo var) throws Exception {
-        JsonReader reader = new JsonReader(new FileReader("../tandoop/testOutput.json"));
+    private void setExtensibleFlag(Sequence newSeq, MethodInfo method, VarInfo var, String json) throws Exception {
         String returnType = method.getReturnType();
         try {
-            var.Val = new Gson().fromJson(reader, Class.forName(returnType));
+            var.Val = new Gson().fromJson(json, Class.forName(returnType));
         } catch (JsonIOException e) {
             System.err.println("JsonIOException: " + e);
             return;
@@ -75,25 +74,10 @@ public class Tandoop {
             System.err.println("JsonSyntaxException: " + e);
             return;
         }
-        // System.out.printf("object: %s\n", var.Val);
 
-        boolean isNull = var.Val == null;
+        // TODO: change hashcode() to equals()
         boolean equalsToOldValue = this.valuePool.containsKey(returnType) && this.valuePool.get(returnType).contains(var.Val);
-        var.Extensible = !isNull && !equalsToOldValue;
-
-        newSeq.addVal(returnType, var);
-
-        if (var.Extensible) {
-            if (this.valuePool.containsKey(returnType)) {
-                this.valuePool.get(returnType).addValue(var.Val);
-            } else {
-                boolean isPrimitiveType = Class.forName(returnType).isPrimitive();
-                this.valuePool.put(returnType, new TypedValuePool(returnType, isPrimitiveType, Arrays.asList(var.Val)));
-            }
-            System.out.println("Added extensible val:" + this.valuePool.get(returnType));
-        } else {
-            System.out.printf("Non-extensible val: %s, isNull: %b, equalsToOldValue: %b\n ", var, isNull, equalsToOldValue);
-        }
+        var.Extensible = !equalsToOldValue;
     }
 
     private void initPrimitiveValuePool() {
@@ -306,14 +290,31 @@ public class Tandoop {
             }
             // System.out.println(newSeq.ExcSeq);
 
-            newSeq.generateTest(timeLimits);
+            newSeq.generateTest();
             String result = newSeq.runTest();
-            if (result.startsWith("e1: ") || result.startsWith("e3: ")) {
+            if (result.startsWith("E: ") || result.startsWith("C: ")) {
                 errorSeqs.add(newSeq);
             } else {
                 nonErrorSeqs.add(newSeq);
-                // TODO: apply filters and add to err/nonerr sets
-                // setExtensibleFlags(newSeq, filter, runtimevalues)
+                if (result.startsWith("F: ")) {
+                    var.Extensible = false;
+                } else {
+                    setExtensibleFlag(newSeq, method, var, result);
+                }
+
+                if (var.Extensible) {
+                    String returnType = method.getReturnType();
+                    newSeq.addVal(returnType, var);
+                    if (this.valuePool.containsKey(returnType)) {
+                        this.valuePool.get(returnType).addValue(var.Val);
+                    } else {
+                        boolean isPrimitiveType = Class.forName(returnType).isPrimitive();
+                        this.valuePool.put(returnType, new TypedValuePool(returnType, isPrimitiveType, Arrays.asList(var.Val)));
+                    }
+                    System.out.println("Added extensible val:" + this.valuePool.get(returnType));
+                } else {
+                    System.out.printf("Non-extensible val: %s\n ", var);
+                }
             }
             --timeLimits;
         }

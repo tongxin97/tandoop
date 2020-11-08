@@ -111,32 +111,29 @@ public class Sequence {
 	 * Generate a test and writes it to testDir/TandoopTest.java
 	 * Add contract checking into the test itself.
 	 */
-	public void generateTest(int timeLimits) throws Exception {
+	public void generateTest() throws Exception {
 		StringBuilder testString = new StringBuilder("");
-		testString.append("import java.io.*;\n");
 		testString.append("import com.google.gson.Gson;\n");
-
 		for (String s: this.Imports) {
 			testString.append(s);
 		}
 		testString.append("\npublic class TandoopTest {\n");
 		testString.append("  public static String test() {\n");
-		testString.append("    String output = \"\";\n");
 		testString.append("    try {\n");
 		testString.append(this.ExcSeq);
-		testString.append("\n");
 		testString.append("      try {\n");
 		testString.append("        assert(" + this.NewVar + ".equals(" + this.NewVar + "));\n");
 		testString.append("        " + this.NewVar + ".hashCode();\n");
 		testString.append("        " + this.NewVar + ".toString();\n");
-		testString.append("      } catch (Exception e1) {\n");
-		testString.append("		   return \"e1: \" + e1;\n");
-		testString.append("		 }\n");
-		testString.append("      output = new Gson().toJson(" + this.NewVar + ");\n");
-		testString.append("    } catch (Exception e2) { \n");
-		testString.append("      return \"e2: \" + e2;\n");
+		testString.append("      } catch (Exception e) { return \"C: \" + e; }\n");
+		testString.append("      if (null == " + this.NewVar + ") { return \"F: null\"; }\n");
+		testString.append("      return new Gson().toJson(" + this.NewVar + ");\n");
 		testString.append("    }\n");
-		testString.append("	   return output;\n");
+		testString.append("    catch (AssertionError e) { return \"C: \" + e; }");
+		if (!InputParamsWithNull) {
+			testString.append("    catch (NullPointerException e) { return \"C\" + e; }\n");
+		}
+		testString.append("    catch (Exception e) { return \"F: \" + e; }\n");
 		testString.append("  }\n");
 		testString.append("}");
 
@@ -155,19 +152,16 @@ public class Sequence {
 			System.out.println("javacompile: " + cmdReturnValue);
 			assert(cmdReturnValue == 0);
 
-			// TODO: classloader
-			URLClassLoader classLoader = URLClassLoader.newInstance(new URL[] {new File("target/test-classes/").toURI().toURL(), 
-																			   new File("target/classes/").toURI().toURL(),
-																			   new File("target/dependency/gson-2.8.6.jar").toURI().toURL()});
+			URLClassLoader classLoader = new URLClassLoader(new URL[]{ new File("target/test-classes/").toURI().toURL() }, this.getClass().getClassLoader());
 			Class testClass = Class.forName("TandoopTest", false, classLoader);
 			
 			Method method = testClass.getMethod("test");
 			Object result = method.invoke(null);
-			System.out.println("Test result: " + result);
+			System.out.println("Result: " + result);
 			return result.toString();
 		} catch (Exception e) {
-			// e.printStackTrace();
-			return "e3: " + e;
+			e.printStackTrace();
+			return "E: " + e;
 		}
 	}
 }
