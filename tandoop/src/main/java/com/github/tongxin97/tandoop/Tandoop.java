@@ -282,7 +282,6 @@ public class Tandoop {
                 types.add(0, method.ClassName);
             }
             this.getRandomSeqsAndVals(seqs, vals, types);
-            // System.out.printf("Seqs: %s, Vals %s\n", seqs, vals);
             // sanity check: instance val (vals[0]) can't be null when method is not constructor
             if (!method.IsConstructor() && vals.get(0) == null) {
                 // --timeLimits;
@@ -299,6 +298,9 @@ public class Tandoop {
                 // --timeLimits;
                 continue;
             }
+
+            System.out.printf("\nDEBUG: iscontructor: %b, types: %s\n", method.IsConstructor(), types);
+            System.out.printf("DEBUG: vals: %s\n\n", vals);
 
             VarInfo var = new VarInfo(method.getSimpleReturnType());
             Sequence newSeq = this.extend(method, var, seqs, vals);

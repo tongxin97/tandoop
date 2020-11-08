@@ -160,6 +160,7 @@ public class MethodParser {
                 }
                 info.addParameterType(paramType);
               }
+              System.out.printf("DEBUG: %s param types: %s\n", constructorName, info.getParameterTypes());
               return info;
           }
         }
