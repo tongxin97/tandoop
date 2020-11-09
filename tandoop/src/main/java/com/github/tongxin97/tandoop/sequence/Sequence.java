@@ -152,19 +152,19 @@ public class Sequence {
 	public String runTest(String prjDir, ClassLoader parentClassLoader) throws Exception {
 		try {
 			String cmd = "javac -cp '" + prjDir + "/target/dependency/*':" + prjDir + "/target/classes:target/dependency/gson-2.8.6.jar -d target/test-classes src/test/java/com/github/tongxin97/tandoop/TandoopTest.java";
-			System.out.println(cmd);
+//			System.out.println(cmd);
 			Process p = Runtime.getRuntime().exec(new String[] {"bash", "-c", cmd});
 
 			String s;
-			BufferedReader out = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            while ((s = out.readLine()) != null) {
-				System.out.println("line: " + s);
-			}
-			BufferedReader err = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-            while ((s = err.readLine()) != null) {
-				System.out.println("line: " + s);
-			}
-		
+//			BufferedReader out = new BufferedReader(new InputStreamReader(p.getInputStream()));
+//            while ((s = out.readLine()) != null) {
+//				System.out.println("line: " + s);
+//			}
+//			BufferedReader err = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+//            while ((s = err.readLine()) != null) {
+//				System.out.println("line: " + s);
+//			}
+//
 			int cmdReturnValue = p.waitFor();
 			System.out.println("javacompile: " + cmdReturnValue);
 			assert(cmdReturnValue == 0);

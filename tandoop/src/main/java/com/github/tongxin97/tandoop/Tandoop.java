@@ -62,13 +62,13 @@ public class Tandoop {
         // load target project dependencies
         File dir = new File(this.prjDir + "/target/dependency");
         File[] dirListing = dir.listFiles();
-        URL[] urls = new URL[dirListing.length];
+        URL[] urls = new URL[dirListing.length + 1];
         for (int i = 0; i < dirListing.length; ++i) {
             urls[i] = dirListing[i].toURI().toURL();
             System.out.println(urls[i].toString());
         }
-        // urls[dirListing.length] = new File(this.prjDir + "/target/classes").toURI().toURL();
-        // URL[] urls = new URL[] {new File("../joda-time/target/joda-time-2.10.9-SNAPSHOT.jar").toURI().toURL()};
+         urls[dirListing.length] = new File(this.prjDir + "/target/classes").toURI().toURL();
+//         URL[] urls = new URL[] {new File("../joda-time/target/joda-time-2.10.9-SNAPSHOT.jar").toURI().toURL()};
         // URL[] urls = new URL[] {new File("../joda-time/target/classes").toURI().toURL()};
         this.classLoader = new URLClassLoader(urls, this.getClass().getClassLoader());
     }
