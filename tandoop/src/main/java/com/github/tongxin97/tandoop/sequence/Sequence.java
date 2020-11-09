@@ -151,7 +151,8 @@ public class Sequence {
 
 	public String runTest(String prjDir, ClassLoader parentClassLoader) throws Exception {
 		try {
-			String cmd = "javac -cp 'target/dependency/*':target/classes -d target/test-classes src/test/java/com/github/tongxin97/tandoop/TandoopTest.java";
+			String cmd = "javac -cp '" + prjDir + "/target/dependency/*':" + prjDir + "/target/classes:target/dependency/gson-2.8.6.jar -d target/test-classes src/test/java/com/github/tongxin97/tandoop/TandoopTest.java";
+			System.out.println(cmd);
 			Process p = Runtime.getRuntime().exec(new String[] {"bash", "-c", cmd});
 
 			String s;

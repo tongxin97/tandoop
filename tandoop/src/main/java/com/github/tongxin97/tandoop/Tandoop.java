@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 import java.nio.charset.StandardCharsets;
 import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
+import java.net.URLClassLoader;
+import java.net.URL;
 
 import com.github.tongxin97.tandoop.parser.MethodParser;
 import com.github.tongxin97.tandoop.method.MethodInfo;
@@ -63,7 +65,11 @@ public class Tandoop {
         URL[] urls = new URL[dirListing.length];
         for (int i = 0; i < dirListing.length; ++i) {
             urls[i] = dirListing[i].toURI().toURL();
+            System.out.println(urls[i].toString());
         }
+        // urls[dirListing.length] = new File(this.prjDir + "/target/classes").toURI().toURL();
+        // URL[] urls = new URL[] {new File("../joda-time/target/joda-time-2.10.9-SNAPSHOT.jar").toURI().toURL()};
+        // URL[] urls = new URL[] {new File("../joda-time/target/classes").toURI().toURL()};
         this.classLoader = new URLClassLoader(urls, this.getClass().getClassLoader());
     }
 
@@ -76,7 +82,7 @@ public class Tandoop {
         // otherwise, if runtime value equals to an old value, set extensible flag to false
         String returnType = method.getReturnType();
         try {
-            var.Val = new Gson().fromJson(result, Class.forName(returnType, this.classLoader));
+            var.Val = new Gson().fromJson(result, Class.forName(returnType, true, this.classLoader));
         } catch (JsonIOException e) {
             System.err.println("JsonIOException: " + e);
             return;
@@ -329,7 +335,7 @@ public class Tandoop {
                     if (this.valuePool.containsKey(returnType)) {
                         this.valuePool.get(returnType).addValue(var.Val);
                     } else {
-                        boolean isPrimitiveType = Class.forName(returnType, this.classLoader).isPrimitive();
+                        boolean isPrimitiveType = Class.forName(returnType, true, this.classLoader).isPrimitive();
                         this.valuePool.put(returnType, new TypedValuePool(returnType, isPrimitiveType, Arrays.asList(var.Val)));
                     }
                     System.out.println("Added extensible val:" + var.Val);
