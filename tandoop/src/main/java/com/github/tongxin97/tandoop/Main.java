@@ -30,7 +30,7 @@ public class Main {
 
       File directory = new File(prjDir + "/target/dependency");
       if (!directory.exists()){
-        System.out.println("Mvn dependencies not exist. Copying mvn dependencies...");
+        System.out.println("Mvn dependencies do not exist. Copying mvn dependencies...");
         String mvnCmd = "mvn clean install; mvn dependency:copy-dependencies";
         Process p = Runtime.getRuntime().exec(new String[] {"bash", "-c", mvnCmd}, null, new File(prjDir));
         if (p.waitFor() != 0) {
@@ -39,10 +39,7 @@ public class Main {
         }
       }
 
-      Tandoop tandoop = new Tandoop(
-        cmd.getOptionValue("src"),
-        prjDir
-      );
+      Tandoop tandoop = new Tandoop(cmd.getOptionValue("src"), prjDir);
       tandoop.generateSequence(3);
 
       // TODO: Check if need test file

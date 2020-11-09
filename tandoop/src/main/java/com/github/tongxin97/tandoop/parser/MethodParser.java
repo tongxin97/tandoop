@@ -11,14 +11,13 @@ import com.github.javaparser.ast.visitor.VoidVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
+import com.github.javaparser.symbolsolver.resolution.typesolvers.JarTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.PackageDeclaration;
-import com.github.javaparser.ParseProblemException;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.utils.SourceRoot;
@@ -26,7 +25,6 @@ import com.github.javaparser.utils.ProjectRoot;
 import com.github.javaparser.symbolsolver.utils.SymbolSolverCollectionStrategy;
 
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Optional;
@@ -70,10 +68,23 @@ public class MethodParser {
     this.storeImportedTypes();
   }
 
-  public static void parseAndResolveDirectory(String srcDir, MethodPool methodPool) throws Exception {
+  public static void parseAndResolveDirectory(String srcDir, String prjDir, MethodPool methodPool) throws Exception {
     CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver();
+    // add reflection solver
     combinedTypeSolver.add(new ReflectionTypeSolver());
+    // add source file solver
     combinedTypeSolver.add(new JavaParserTypeSolver(new File(srcDir)));
+    // add solver for each dependency jar
+    File dir = new File(prjDir + "/target/dependency");
+    File[] dirListing = dir.listFiles();
+    if (dirListing == null) {
+      System.err.println("Invalid maven dependency dir: " + prjDir + "/target/dependency");
+      System.exit(1);
+    }
+    for (File f: dirListing) {
+      combinedTypeSolver.add(new JarTypeSolver(f));
+    }
+    // use combinedTypeSolver in parser
     JavaSymbolSolver symbolSolver = new JavaSymbolSolver(combinedTypeSolver);
     StaticJavaParser.getConfiguration().setSymbolResolver(symbolSolver);
     // TODO: handle generic types
@@ -126,10 +137,10 @@ public class MethodParser {
     try {
       return simpleType.resolve().describe();
     } catch (Exception e) {
-      // e.printStackTrace();
-      if (this.importedTypes.containsKey(simpleType.toString())) {
-        return this.importedTypes.get(simpleType.toString());
-      }
+//       e.printStackTrace();
+//      if (this.importedTypes.containsKey(simpleType.toString())) {
+//        return this.importedTypes.get(simpleType.toString());
+//      }
     }
     return null;
   }

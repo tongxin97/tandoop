@@ -57,7 +57,7 @@ public class Tandoop {
         this.srcDir = srcDir;
         this.prjDir = prjDir;
 
-        MethodParser.parseAndResolveDirectory(srcDir, this.methodPool);
+        MethodParser.parseAndResolveDirectory(srcDir, prjDir, this.methodPool);
         // System.out.println(this.methodPool);
         this.initPrimitiveValuePool();
         // System.out.println("ValuePool:\n" + this.valuePool);
