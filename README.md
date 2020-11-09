@@ -9,12 +9,10 @@ mvn exec:java -Dexec.mainClass="com.github.tongxin97.tandoop.Main" -Dexec.args="
 mvn exec:java -Dexec.mainClass="com.github.tongxin97.tandoop.Main" -Dexec.args="../joda-time/src/main"
 
 mvn compile && mvn exec:java -Dexec.mainClass="com.github.tongxin97.tandoop.Main" -Dexec.args="-src ./src/main/java/ -prj ../tandoop"
-
-mvn compile && mvn exec:java -Dexec.mainClass="com.github.tongxin97.tandoop.Main" -Dexec.args="-src /Users/xin/Desktop/AST/joda-time/src/main/java/ -prj /Users/xin/Desktop/AST/joda-time"
+mvn compile && mvn exec:java -Dexec.mainClass="com.github.tongxin97.tandoop.Main" -Dexec.args="-src ../joda-time/src/main/java/ -prj ../joda-time"
 
 java -cp "target/dependency/*":target/classes com.github.tongxin97.tandoop.Main -src ./src/main/java/ -prj ../tandoop
 
-mvn compile && mvn exec:java -Dexec.mainClass="com.github.tongxin97.tandoop.Main" -Dexec.args="-src ../joda-time/src/main/java/ -prj ../joda-time"
 
 mvn surefire:test -Dtest=TandoopTest
 ```

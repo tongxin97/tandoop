@@ -1,6 +1,7 @@
 package com.github.tongxin97.tandoop.parser;
 
 import com.github.javaparser.ast.body.BodyDeclaration;
+import com.github.javaparser.ast.nodeTypes.NodeWithModifiers;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
@@ -91,8 +92,8 @@ public class MethodParser {
 
   public void collectMethodInfo(MethodPool methodPool) {
     try {
-      if (isAbstractClass()) {
-        return; // skip if class is abstract
+      if (isAbstractOrNonPublicClass(null)) {
+        return; // skip if class is abstract or non-public
       }
     } catch (Exception e) {
       System.err.println("collectMethodInfo exception: " + e.getMessage());
@@ -140,6 +141,9 @@ public class MethodParser {
         for (BodyDeclaration bd: bds) {
           if (bd instanceof ConstructorDeclaration) {
               ConstructorDeclaration cd = (ConstructorDeclaration) bd;
+              if (!checkModifier(cd, Modifier.Keyword.PUBLIC)) { // return null if contructor is not public
+                return null;
+              }
               String constructorName = cd.getNameAsString();
               MethodInfo info = new MethodInfo(
                 constructorName,
@@ -162,41 +166,30 @@ public class MethodParser {
     return null;
   }
 
-  private static boolean isPrivateMethod(MethodDeclaration md) {
-    for (Modifier m : md.getModifiers()) {
-      if (m.getKeyword().equals(Modifier.Keyword.PRIVATE)) {
+  private static boolean checkModifier(NodeWithModifiers n, Modifier.Keyword k) {
+    for (Object m : n.getModifiers()) {
+      if (((Modifier)m).getKeyword().equals(k)) {
         return true;
       }
     }
     return false;
   }
 
-  private static boolean isPublicClass(ClassOrInterfaceDeclaration cd) {
-    for (Modifier m : cd.getModifiers()) {
-      if (m.getKeyword().equals(Modifier.Keyword.PUBLIC)) {
-        return true;
-      }
-    }
-    return false;
-  }
-  private static boolean isAbstractClass(ClassOrInterfaceDeclaration cd) {
-    for (Modifier m : cd.getModifiers()) {
-      if (m.getKeyword().equals(Modifier.Keyword.ABSTRACT)) {
-        return true;
-      }
-    }
-    return false;
-  }
-  private boolean isAbstractClass() throws Exception {
+  private boolean isAbstractOrNonPublicClass(ClassOrInterfaceDeclaration cid) throws Exception {
     if (this.cu == null) {
       throw new Exception("Can't determine if class is abstract: this.cu is null.");
     }
-    for (TypeDeclaration td: this.cu.getTypes()) {
-      if (td instanceof ClassOrInterfaceDeclaration) {
-        return isAbstractClass((ClassOrInterfaceDeclaration) td);
+    if (cid == null) {
+      for (TypeDeclaration td: this.cu.getTypes()) {
+        if (td instanceof ClassOrInterfaceDeclaration) {
+          cid = (ClassOrInterfaceDeclaration) td;
+          break;
+        }
       }
     }
-    throw new Exception("Can't determine if class is abstract.");
+    boolean isAbstractClass = checkModifier(cid, Modifier.Keyword.ABSTRACT);
+    boolean isPublicClass = checkModifier(cid, Modifier.Keyword.PUBLIC);
+    return isAbstractClass || !isPublicClass;
   }
 
   private class MethodCollector extends VoidVisitorAdapter<List<MethodInfo>> {
@@ -205,7 +198,7 @@ public class MethodParser {
       super.visit(md, collector);
 
       // Skip if method is private
-      if (MethodParser.isPrivateMethod(md)) {
+      if (md.getModifiers().contains(Modifier.Keyword.PRIVATE)) {
         // System.out.println("Encountered private method: " + md.getNameAsString());
         return;
       }
@@ -218,7 +211,7 @@ public class MethodParser {
           // if parent node is not public class, skip this method
           if (!(
             t instanceof ClassOrInterfaceDeclaration &&
-            MethodParser.isPublicClass((ClassOrInterfaceDeclaration) t)
+            checkModifier((ClassOrInterfaceDeclaration) t, Modifier.Keyword.PUBLIC)
           )) {
             // System.out.printf("Encountered method in private inner class: %s.%s\n", t.getNameAsString(), md.getNameAsString());
             return;
