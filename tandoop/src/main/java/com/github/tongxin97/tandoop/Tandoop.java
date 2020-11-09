@@ -83,11 +83,9 @@ public class Tandoop {
         String returnType = method.getReturnType();
         try {
             var.Val = new Gson().fromJson(result, Class.forName(returnType, true, this.classLoader));
-        } catch (JsonIOException e) {
-            System.err.println("JsonIOException: " + e);
-            return;
-        } catch (JsonSyntaxException e) {
-            System.err.println("JsonSyntaxException: " + e);
+        } catch (Exception e) {
+            System.err.println("Gson exception: " + e.getMessage());
+            var.Extensible = false;
             return;
         }
 

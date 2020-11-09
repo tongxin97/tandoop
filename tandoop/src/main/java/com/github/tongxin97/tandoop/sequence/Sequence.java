@@ -173,9 +173,15 @@ public class Sequence {
 			Class testClass = Class.forName("TandoopTest", false, classLoader);
 			
 			Method method = testClass.getMethod("test");
-			Object result = method.invoke(null);
-			System.out.println("Result: " + result);
-			return result.toString();
+			try {
+				Object result = method.invoke(null);
+	//			System.out.println("Result: " + result);
+				return result.toString();
+			} catch (Exception e) {
+				System.out.println("Wrapper invoke exception: " + e);
+				System.out.println("Underlying invoke exception: " + e.getCause());
+				return "E: " + e;
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "E: " + e;

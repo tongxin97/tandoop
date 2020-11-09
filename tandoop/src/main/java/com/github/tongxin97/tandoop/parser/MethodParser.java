@@ -141,7 +141,8 @@ public class MethodParser {
         for (BodyDeclaration bd: bds) {
           if (bd instanceof ConstructorDeclaration) {
               ConstructorDeclaration cd = (ConstructorDeclaration) bd;
-              if (!checkModifier(cd, Modifier.Keyword.PUBLIC)) { // return null if contructor is not public
+              // return null if contructor is abstract or non-public
+              if (checkModifier(cd, Modifier.Keyword.ABSTRACT) || !checkModifier(cd, Modifier.Keyword.PUBLIC)) {
                 return null;
               }
               String constructorName = cd.getNameAsString();
@@ -189,6 +190,7 @@ public class MethodParser {
     }
     boolean isAbstractClass = checkModifier(cid, Modifier.Keyword.ABSTRACT);
     boolean isPublicClass = checkModifier(cid, Modifier.Keyword.PUBLIC);
+//    System.out.printf("class %s is abstract: %b, publicx: %b\n", cid.getNameAsString(), isAbstractClass, isPublicClass);
     return isAbstractClass || !isPublicClass;
   }
 
