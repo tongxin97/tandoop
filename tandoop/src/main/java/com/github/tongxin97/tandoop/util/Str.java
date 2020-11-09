@@ -14,6 +14,10 @@ public class Str {
     return l[l.length-1];
   }
 
+  public static String sanatizeTypeString(String type) {
+    return type.replaceAll("\\p{P}",""); // remove all punctuations
+  }
+
   /**
    *
    * @param type potentially nested type, eg. java.util.Set<java.lang.String>>

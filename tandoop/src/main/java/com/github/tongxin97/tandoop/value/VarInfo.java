@@ -2,6 +2,7 @@ package com.github.tongxin97.tandoop.value;
 
 import java.util.Map;
 import java.util.HashMap;
+import com.github.tongxin97.tandoop.util.Str;
 
 public class VarInfo extends ValueInfo{
   public int Idx; // the index number of this variable appearing in vars of the same type across sequences, generated based on varNums
@@ -15,6 +16,6 @@ public class VarInfo extends ValueInfo{
 
   @Override
   public String getContent() {
-    return Type + String.valueOf(this.Idx);
+    return Str.sanatizeTypeString(Type) + String.valueOf(this.Idx);
   }
 }
