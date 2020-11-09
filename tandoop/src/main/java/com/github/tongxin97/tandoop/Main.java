@@ -28,13 +28,21 @@ public class Main {
 
       String prjDir = cmd.getOptionValue("prj");
 
+      // copy target project dependencies from maven
       File directory = new File(prjDir + "/target/dependency");
       if (!directory.exists()){
-        System.out.println("Mvn dependencies do not exist. Copying mvn dependencies...");
-        String mvnCmd = "mvn clean install; mvn dependency:copy-dependencies";
+        System.out.println("Mvn dependencies do not exist. Mvn installing...");
+        String mvnCmd = "mvn clean install -DskipTests";
         Process p = Runtime.getRuntime().exec(new String[] {"bash", "-c", mvnCmd}, null, new File(prjDir));
         if (p.waitFor() != 0) {
           System.err.println("Mvn build error.");
+          return;
+        }
+        System.out.println("Copying mvn dependencies...");
+        mvnCmd = "mvn dependency:copy-dependencies";
+        p = Runtime.getRuntime().exec(new String[] {"bash", "-c", mvnCmd}, null, new File(prjDir));
+        if (p.waitFor() != 0) {
+          System.err.println("Mvn copy dependencies error.");
           return;
         }
       }

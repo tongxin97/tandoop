@@ -14,6 +14,8 @@ mvn compile && mvn exec:java -Dexec.mainClass="com.github.tongxin97.tandoop.Main
 
 java -cp "target/dependency/*":target/classes com.github.tongxin97.tandoop.Main -src ./src/main/java/ -prj ../tandoop
 
+mvn compile && mvn exec:java -Dexec.mainClass="com.github.tongxin97.tandoop.Main" -Dexec.args="-src ../joda-time/src/main/java/ -prj ../joda-time"
+
 mvn surefire:test -Dtest=TandoopTest
 ```
 

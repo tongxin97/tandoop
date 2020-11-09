@@ -32,6 +32,8 @@ public class Tandoop {
     private final int maxRepetition = 100;
     private final double repetitionProb = 1;
 
+    public URLClassLoader classLoader;
+
     String srcDir;
     String prjDir;
 
@@ -54,6 +56,15 @@ public class Tandoop {
         // System.out.println(this.methodPool);
         this.initPrimitiveValuePool();
         // System.out.println("ValuePool:\n" + this.valuePool);
+
+        // load target project dependencies
+        File dir = new File(this.prjDir + "/target/dependency");
+        File[] dirListing = dir.listFiles();
+        URL[] urls = new URL[dirListing.length];
+        for (int i = 0; i < dirListing.length; ++i) {
+            urls[i] = dirListing[i].toURI().toURL();
+        }
+        this.classLoader = new URLClassLoader(urls, this.getClass().getClassLoader());
     }
 
     private void setExtensibleFlag(Sequence newSeq, MethodInfo method, VarInfo var, String result) throws Exception {
@@ -65,7 +76,7 @@ public class Tandoop {
         // otherwise, if runtime value equals to an old value, set extensible flag to false
         String returnType = method.getReturnType();
         try {
-            var.Val = new Gson().fromJson(result, Class.forName(returnType));
+            var.Val = new Gson().fromJson(result, Class.forName(returnType, this.classLoader));
         } catch (JsonIOException e) {
             System.err.println("JsonIOException: " + e);
             return;
@@ -305,7 +316,7 @@ public class Tandoop {
             // System.out.println(newSeq.ExcSeq);
 
             newSeq.generateTest();
-            String result = newSeq.runTest();
+            String result = newSeq.runTest(this.prjDir, this.classLoader);
             if (result.startsWith("E: ") || result.startsWith("C: ")) {
                 errorSeqs.add(newSeq);
             } else {
@@ -318,7 +329,7 @@ public class Tandoop {
                     if (this.valuePool.containsKey(returnType)) {
                         this.valuePool.get(returnType).addValue(var.Val);
                     } else {
-                        boolean isPrimitiveType = Class.forName(returnType).isPrimitive();
+                        boolean isPrimitiveType = Class.forName(returnType, this.classLoader).isPrimitive();
                         this.valuePool.put(returnType, new TypedValuePool(returnType, isPrimitiveType, Arrays.asList(var.Val)));
                     }
                     System.out.println("Added extensible val:" + var.Val);

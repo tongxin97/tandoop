@@ -149,7 +149,7 @@ public class Sequence {
 		
 	}
 
-	public String runTest() throws Exception {
+	public String runTest(String prjDir, ClassLoader parentClassLoader) throws Exception {
 		try {
 			String cmd = "javac -cp 'target/dependency/*':target/classes -d target/test-classes src/test/java/com/github/tongxin97/tandoop/TandoopTest.java";
 			Process p = Runtime.getRuntime().exec(new String[] {"bash", "-c", cmd});
@@ -167,8 +167,8 @@ public class Sequence {
 			int cmdReturnValue = p.waitFor();
 			System.out.println("javacompile: " + cmdReturnValue);
 			assert(cmdReturnValue == 0);
-
-			URLClassLoader classLoader = new URLClassLoader(new URL[]{ new File("target/test-classes/").toURI().toURL() }, this.getClass().getClassLoader());
+			
+			URLClassLoader classLoader = new URLClassLoader(new URL[]{ new File("target/test-classes/").toURI().toURL() }, parentClassLoader);
 			Class testClass = Class.forName("TandoopTest", false, classLoader);
 			
 			Method method = testClass.getMethod("test");
