@@ -1,13 +1,6 @@
 package com.github.tongxin97.tandoop;
 
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.HashSet;
+import java.util.*;
 import java.io.*;
 import java.util.stream.Collectors;
 import java.nio.charset.StandardCharsets;
@@ -114,6 +107,8 @@ public class Tandoop {
             .filter(s -> s.hasExtensibleValOfType(type))
             .collect(Collectors.toList());
 
+//        System.out.printf("seqsWithGivenType: %s, %s, %d\n", type, seqsWithGivenType, seqsWithGivenType.size());
+
         if (seqsWithGivenType.size() > 0) {
             int i = Rand.getRandomInt(seqsWithGivenType.size());
             Sequence s = seqsWithGivenType.get(i);
@@ -124,24 +119,24 @@ public class Tandoop {
     }
 
     private void getRandomSeqsAndVals(Set<Sequence> seqs, List<ValueInfo> vals, final List<String> types) {
+//        System.out.println("types: " + types);
         for (String type: types) {
             if (this.valuePool.containsKey(type) && this.valuePool.get(type).isPrimitiveType) {
                 vals.add(new ValueInfo(type, this.valuePool.get(type).getRandomValue()));
             } else {
+                // 3 possible choices for v
+                // 1) v = null
                 ValueInfo v = null;
-                // 3 possible choices
-                int r = Rand.getRandomInt(2);
-                switch(r) {
-                case 0: // use a value v from a sequence that is already in seqs
-                    v = this.getRandomExtensibleValFromSequences(seqs, seqs, type);
-                    break;
-                case 1: // select a (possibly duplicate) sequence from nonErrorSeqs, add it to seqs, and use a value from it
+                // 2) use a value v from a sequence that is already in seqs
+                v = this.getRandomExtensibleValFromSequences(seqs, seqs, type);
+                // 3) select a (possibly duplicate) sequence from nonErrorSeqs, add it to seqs, and use a value from it
+                if (v == null) {
                     v = this.getRandomExtensibleValFromSequences(this.nonErrorSeqs, seqs, type);
-                default: // use null
                 }
                 vals.add(v);
             }
         }
+//        System.out.println("vals: " + vals);
     }
 
     /**
@@ -257,7 +252,11 @@ public class Tandoop {
 
     // TODO add arguments: contracts, filters, timeLimits
     public void generateSequence(int timeLimits) throws Exception {
-        while (timeLimits > 0) {
+        long startTime = System.currentTimeMillis();
+        long elapsedTime = 0L;
+//        while (timeLimits > 0) {
+        while (elapsedTime < 20*1000) {
+            elapsedTime = (new Date()).getTime() - startTime;
             MethodInfo method;
             try {
                 method = methodPool.getRandomMethod();
@@ -272,7 +271,7 @@ public class Tandoop {
             // sanity check: instance val (vals[0]) can't be null when method is not constructor
             if (!method.IsConstructor() && vals.get(0) == null) {
                 // --timeLimits;
-                // System.out.println("Instance val is null");
+                 System.out.printf("Instance val is null: %s.%s\n", method.ClassName, method.Name);
                 continue;
             }
             // Skip method if any of its associated types is generic (for now)
@@ -312,9 +311,9 @@ public class Tandoop {
                         boolean isPrimitiveType = Class.forName(returnType).isPrimitive();
                         this.valuePool.put(returnType, new TypedValuePool(returnType, isPrimitiveType, Arrays.asList(var.Val)));
                     }
-                    System.out.println("Added extensible val:" + this.valuePool.get(returnType));
+                    System.out.println("Added extensible val:" + var.Val);
                 } else {
-                    System.out.printf("Non-extensible val: %s\n ", var);
+                    System.out.printf("Non-extensible val: %s\n ", var.Val);
                 }
             }
             --timeLimits;

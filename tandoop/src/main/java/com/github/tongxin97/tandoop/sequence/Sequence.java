@@ -49,6 +49,7 @@ public class Sequence {
 			this.Vals.put(type, new ArrayList<>());
 		}
 		this.Vals.get(type).add(v);
+		System.out.printf("Added val %s of type %s\n", this.Vals.get(type), type);
 	}
 
 	public void addVals(String type, List<ValueInfo> vals) {
@@ -154,14 +155,14 @@ public class Sequence {
 			Process p = Runtime.getRuntime().exec(new String[] {"bash", "-c", cmd});
 
 			String s;
-			BufferedReader out = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            while ((s = out.readLine()) != null) {
-				System.out.println("line: " + s);
-			}
-			BufferedReader err = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-            while ((s = err.readLine()) != null) {
-				System.out.println("line: " + s);
-			}
+//			BufferedReader out = new BufferedReader(new InputStreamReader(p.getInputStream()));
+//            while ((s = out.readLine()) != null) {
+//				System.out.println("line: " + s);
+//			}
+//			BufferedReader err = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+//            while ((s = err.readLine()) != null) {
+//				System.out.println("line: " + s);
+//			}
 		
 			int cmdReturnValue = p.waitFor();
 			System.out.println("javacompile: " + cmdReturnValue);

@@ -224,8 +224,8 @@ public class MethodParser {
         }
         className = t.getNameAsString();
       }
-
-      MethodInfo info = new MethodInfo(md.getNameAsString(), className, getPackageName());
+      String packageName = getPackageName();
+      MethodInfo info = new MethodInfo(md.getNameAsString(), className, packageName);
       // store return type
       String returnType = resolveType(md.getType());
       if (returnType == null) {
@@ -234,7 +234,8 @@ public class MethodParser {
       }
       info.setReturnType(returnType);
       // store parameter type
-      info.addParameterType(returnType); // NOTE: add return type to parameterTypes since we need the instance type to construct a new method call.
+      // NOTE: add instance type to parameterTypes since we need it to construct a new method call.
+      info.addParameterType(packageName + "." + className);
       for (Parameter p : md.getParameters()) {
         String paramType = resolveType(p.getType());
         if (paramType == null) {

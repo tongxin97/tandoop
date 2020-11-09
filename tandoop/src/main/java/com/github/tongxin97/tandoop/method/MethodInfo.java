@@ -53,7 +53,7 @@ public class MethodInfo {
         if (this.returnType == null) { // constructors don't have returnType
             return this.ClassName;
         }
-        return Str.getLastElementAfterSplit(this.returnType, "\\.");
+        return Str.getLastElementAfterSplit(this.returnType, "\\.").replaceAll(">", "");
     }
 
     public final List<String> getParameterTypes() {
@@ -61,7 +61,7 @@ public class MethodInfo {
     }
 
     public String getSimpleParameterTypeAtIdx(int i) {
-        return Str.getLastElementAfterSplit(this.parameterTypes.get(i), "\\.");
+        return Str.getLastElementAfterSplit(this.parameterTypes.get(i), "\\.").replaceAll(">", "");
     }
 
     public boolean IsConstructor() {
