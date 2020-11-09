@@ -39,25 +39,12 @@ import com.github.tongxin97.tandoop.util.Str;
 
 public class MethodParser {
   private CompilationUnit cu;
-  private Map<String, String> importedTypes; // map simple type to fully qualified type
-
-  private void storeImportedTypes() {
-    // store imported types
-    this.importedTypes = new HashMap<>();
-    for (ImportDeclaration importDeclaration : this.cu.getImports()) {
-      String type = importDeclaration.getNameAsString();
-      String simpleType = Str.getLastElementAfterSplit(type, "\\.");
-      this.importedTypes.put(simpleType, type);
-    }
-    // System.out.println("imports: " + this.importedTypes);
-  }
 
   public MethodParser(String filename, String srcDir) throws Exception {
     if (filename == null || srcDir == null) {
       throw new IllegalArgumentException(String.format("Parameters can't be null: filename=%s, srcDir=%s", filename, srcDir));
     }
     this.cu = StaticJavaParser.parse(new FileInputStream(filename));
-    this.storeImportedTypes();
   }
 
   public MethodParser(CompilationUnit cu, String srcDir) throws Exception {
@@ -65,7 +52,6 @@ public class MethodParser {
       throw new IllegalArgumentException(String.format("Parameters can't be null: cu=%s, srcDir=%s", cu, srcDir));
     }
     this.cu = cu;
-    this.storeImportedTypes();
   }
 
   public static void parseAndResolveDirectory(String srcDir, String prjDir, MethodPool methodPool) throws Exception {
@@ -138,9 +124,6 @@ public class MethodParser {
       return simpleType.resolve().describe();
     } catch (Exception e) {
 //       e.printStackTrace();
-//      if (this.importedTypes.containsKey(simpleType.toString())) {
-//        return this.importedTypes.get(simpleType.toString());
-//      }
     }
     return null;
   }
