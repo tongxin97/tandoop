@@ -63,10 +63,16 @@ public class Tandoop {
         // System.out.println("ValuePool:\n" + this.valuePool);
     }
 
-    private void setExtensibleFlag(Sequence newSeq, MethodInfo method, VarInfo var, String json) throws Exception {
+    private void setExtensibleFlag(Sequence newSeq, MethodInfo method, VarInfo var, String result) throws Exception {
+        // if runtime value is null, set extensible to false and return
+        if (result.startsWith("F: ")) {
+            var.Extensible = false;
+            return;
+        }
+        // otherwise, if runtime value equals to an old value, set extensible flag to false
         String returnType = method.getReturnType();
         try {
-            var.Val = new Gson().fromJson(json, Class.forName(returnType));
+            var.Val = new Gson().fromJson(result, Class.forName(returnType));
         } catch (JsonIOException e) {
             System.err.println("JsonIOException: " + e);
             return;
@@ -75,7 +81,6 @@ public class Tandoop {
             return;
         }
 
-        // TODO: change hashcode() to equals()
         boolean equalsToOldValue = this.valuePool.containsKey(returnType) && this.valuePool.get(returnType).contains(var.Val);
         var.Extensible = !equalsToOldValue;
     }
@@ -296,12 +301,8 @@ public class Tandoop {
                 errorSeqs.add(newSeq);
             } else {
                 nonErrorSeqs.add(newSeq);
-                if (result.startsWith("F: ")) {
-                    var.Extensible = false;
-                } else {
-                    setExtensibleFlag(newSeq, method, var, result);
-                }
 
+                setExtensibleFlag(newSeq, method, var, result);
                 if (var.Extensible) {
                     String returnType = method.getReturnType();
                     newSeq.addVal(returnType, var);

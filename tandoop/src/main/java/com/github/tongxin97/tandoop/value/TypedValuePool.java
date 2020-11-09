@@ -1,8 +1,7 @@
 package com.github.tongxin97.tandoop.value;
 
 import java.util.List;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
 
 import com.github.tongxin97.tandoop.util.Rand;
 
@@ -16,16 +15,16 @@ import com.github.tongxin97.tandoop.util.Rand;
 public class TypedValuePool<T> {
     private String type;
     private T nullValue;
-    private Set<T> values;
+    private List<T> values;
     public boolean isPrimitiveType;
 
     private void init(String type, List<T> vals) {
         this.type = type;
         this.nullValue = null;
         if (vals != null) {
-            this.values = new HashSet(vals);
+            this.values = new ArrayList(vals);
         } else {
-            this.values = new HashSet();
+            this.values = new ArrayList();
         }
     }
 
