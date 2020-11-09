@@ -148,6 +148,12 @@ public class Sequence {
 			String cmd = "javac -cp 'target/dependency/*':target/classes -d target/test-classes src/test/java/com/github/tongxin97/tandoop/TandoopTest.java";
 			Process p = Runtime.getRuntime().exec(new String[] {"bash", "-c", cmd});
 
+			// BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			// String s;
+            // while ((s = br.readLine()) != null) {
+			// 	System.out.println("line: " + s);
+			// }
+			 
 			int cmdReturnValue = p.waitFor();
 			System.out.println("javacompile: " + cmdReturnValue);
 			assert(cmdReturnValue == 0);
