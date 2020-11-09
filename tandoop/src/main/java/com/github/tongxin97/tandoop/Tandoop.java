@@ -65,7 +65,8 @@ public class Tandoop {
             urls[i] = dirListing[i].toURI().toURL();
             System.out.println(urls[i].toString());
         }
-         urls[dirListing.length] = new File(this.prjDir + "/target/classes").toURI().toURL();
+        urls[dirListing.length] = new File(this.prjDir + "/target/classes").toURI().toURL();
+        // urls[dirListing.length] = new File("../joda-time/target/joda-time-2.10.9-SNAPSHOT.jar").toURI().toURL();
         this.classLoader = new URLClassLoader(urls, this.getClass().getClassLoader());
     }
 
@@ -169,7 +170,7 @@ public class Tandoop {
         // otherwise, sentence = Type Type1 = p0.methodName(p1,p2,...);\n
         StringBuilder b = new StringBuilder();
         if (method.returnType == null || !method.returnType.equals("void")) {
-            b.append(String.format("        %s %s = ", method.getSimpleReturnType(), var.getContent()));
+            b.append(String.format("      %s %s = ", method.getSimpleReturnType(), var.getContent()));
             newSeq.NewVar = var.getContent();
         }
         String typeDeclaration = b.toString();
@@ -323,7 +324,8 @@ public class Tandoop {
                     if (this.valuePool.containsKey(returnType)) {
                         this.valuePool.get(returnType).addValue(var.Val);
                     } else {
-                        boolean isPrimitiveType = Class.forName(returnType, false, this.classLoader).isPrimitive();
+                        boolean isPrimitiveType = result.getClass().isPrimitive();
+                        // boolean isPrimitiveType = Class.forName(returnType, true, this.classLoader).isPrimitive();
                         this.valuePool.put(returnType, new TypedValuePool(returnType, isPrimitiveType, Arrays.asList(var.Val)));
                     }
                     System.out.println("Added extensible val:" + var.Val);

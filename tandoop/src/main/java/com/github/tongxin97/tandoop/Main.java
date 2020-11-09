@@ -51,7 +51,7 @@ public class Main {
       testClassDir.mkdir();
 
       Tandoop tandoop = new Tandoop(cmd.getOptionValue("src"), prjDir);
-      tandoop.generateSequence(5*1000);
+      tandoop.generateSequence(10*1000);
 
       // TODO: Check if need test file
       File testFile = new File("src/test/java/com/github/tongxin97/tandoop/TandoopTest.java");
