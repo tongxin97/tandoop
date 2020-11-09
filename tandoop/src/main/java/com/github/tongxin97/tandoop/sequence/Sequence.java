@@ -137,10 +137,15 @@ public class Sequence {
 		testString.append("  }\n");
 		testString.append("}");
 
-		String filename = "src/test/java/com/github/tongxin97/tandoop/TandoopTest.java";
-		BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
-		writer.write(testString.toString());
-		writer.close();
+		try {
+			String filename = "src/test/java/com/github/tongxin97/tandoop/TandoopTest.java";
+			BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
+			writer.write(testString.toString());
+			writer.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 	public String runTest() throws Exception {
