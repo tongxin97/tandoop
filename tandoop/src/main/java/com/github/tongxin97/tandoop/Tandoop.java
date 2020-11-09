@@ -250,12 +250,24 @@ public class Tandoop {
         return newSeq;
     }
 
+    private void writeSeqsToFile() {
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter("err_seqs.txt"));
+            writer.write(this.errorSeqs.toString());
+            writer.close();
+            writer = new BufferedWriter(new FileWriter("non_err_seqs.txt"));
+            writer.write(this.nonErrorSeqs.toString());
+            writer.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     // TODO add arguments: contracts, filters, timeLimits
-    public void generateSequence(int timeLimits) throws Exception {
+    public void generateSequence(long timeLimits) throws Exception {
         long startTime = System.currentTimeMillis();
         long elapsedTime = 0L;
-//        while (timeLimits > 0) {
-        while (elapsedTime < 20*1000) {
+        while (elapsedTime < timeLimits) {
             elapsedTime = (new Date()).getTime() - startTime;
             MethodInfo method;
             try {
@@ -270,8 +282,7 @@ public class Tandoop {
             this.getRandomSeqsAndVals(seqs, vals, method.getParameterTypes());
             // sanity check: instance val (vals[0]) can't be null when method is not constructor
             if (!method.IsConstructor() && vals.get(0) == null) {
-                // --timeLimits;
-                 System.out.printf("Instance val is null: %s.%s\n", method.ClassName, method.Name);
+//                 System.out.printf("Instance val is null: %s.%s\n", method.ClassName, method.Name);
                 continue;
             }
             // Skip method if any of its associated types is generic (for now)
@@ -281,7 +292,6 @@ public class Tandoop {
             }
             hasGenericType |= Str.parseNestedTypes(method.getReturnType(), null);
             if (hasGenericType) {
-                // --timeLimits;
                 continue;
             }
 
@@ -316,9 +326,9 @@ public class Tandoop {
                     System.out.printf("Non-extensible val: %s\n ", var.Val);
                 }
             }
-            --timeLimits;
         }
-        System.out.println("errorSeqs: " + errorSeqs);
-        System.out.println("nonErrorSeqs: " + nonErrorSeqs);
+//        System.out.println("errorSeqs: " + errorSeqs);
+//        System.out.println("nonErrorSeqs: " + nonErrorSeqs);
+        writeSeqsToFile();
     }
 }

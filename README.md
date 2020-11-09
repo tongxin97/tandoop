@@ -10,9 +10,13 @@ mvn exec:java -Dexec.mainClass="com.github.tongxin97.tandoop.Main" -Dexec.args="
 
 mvn compile && mvn exec:java -Dexec.mainClass="com.github.tongxin97.tandoop.Main" -Dexec.args="-src ./src/main/java/ -prj ../tandoop"
 
+mvn compile && mvn exec:java -Dexec.mainClass="com.github.tongxin97.tandoop.Main" -Dexec.args="-src /Users/xin/Desktop/AST/joda-time/src/main/java/ -prj /Users/xin/Desktop/AST/joda-time"
+
 java -cp "target/dependency/*":target/classes com.github.tongxin97.tandoop.Main -src ./src/main/java/ -prj ../tandoop
 
 mvn surefire:test -Dtest=TandoopTest
 ```
 
 ## Pending Questions/TODOs
+* Handle generic types
+* Handle class/method inheritance
