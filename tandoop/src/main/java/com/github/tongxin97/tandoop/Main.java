@@ -39,7 +39,7 @@ public class Main {
         }
       }
 
-      File testClassDir = new File("/target/test-classes");
+      File testClassDir = new File("target/test-classes");
       testClassDir.mkdir();
 
       Tandoop tandoop = new Tandoop(cmd.getOptionValue("src"), prjDir);
