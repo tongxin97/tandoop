@@ -114,27 +114,26 @@ public class Sequence {
 	 */
 	public void generateTest() throws Exception {
 		StringBuilder testString = new StringBuilder("");
-		testString.append("import com.google.gson.Gson;\n");
 		for (String s: this.Imports) {
 			testString.append(s);
 		}
 		testString.append("\npublic class TandoopTest {\n");
-		testString.append("  public static String test() {\n");
+		testString.append("  public static Object test() {\n");
 		testString.append("    try {\n");
 		testString.append(this.ExcSeq);
 		testString.append("      try {\n");
 		testString.append("        assert(" + this.NewVar + ".equals(" + this.NewVar + "));\n");
 		testString.append("        " + this.NewVar + ".hashCode();\n");
 		testString.append("        " + this.NewVar + ".toString();\n");
-		testString.append("      } catch (Exception e) { return \"C: \" + e; }\n");
-		testString.append("      if (null == " + this.NewVar + ") { return \"F: null\"; }\n");
-		testString.append("      return new Gson().toJson(" + this.NewVar + ");\n");
+		testString.append("      } catch (Exception e) { return \"[Tandoop] C: \" + e; }\n");
+		testString.append("      if (null == " + this.NewVar + ") { return \"[Tandoop] F: null\"; }\n");
+		testString.append("      return " + this.NewVar + ";\n");
 		testString.append("    }\n");
-		testString.append("    catch (AssertionError e) { return \"C: \" + e; }");
+		testString.append("    catch (AssertionError e) { return \"[Tandoop] C: \" + e; }\n");
 		if (!InputParamsWithNull) {
-			testString.append("    catch (NullPointerException e) { return \"C\" + e; }\n");
+			testString.append("    catch (NullPointerException e) { return \"[Tandoop] C\" + e; }\n");
 		}
-		testString.append("    catch (Exception e) { return \"F: \" + e; }\n");
+		testString.append("    catch (Exception e) { return \"[Tandoop] F: \" + e; }\n");
 		testString.append("  }\n");
 		testString.append("}");
 
@@ -149,22 +148,22 @@ public class Sequence {
 		
 	}
 
-	public String runTest(String prjDir, ClassLoader parentClassLoader) throws Exception {
+	public Object runTest(String prjDir, ClassLoader parentClassLoader) throws Exception {
 		try {
 			String cmd = "javac -cp '" + prjDir + "/target/dependency/*':" + prjDir + "/target/classes:target/dependency/gson-2.8.6.jar -d target/test-classes src/test/java/com/github/tongxin97/tandoop/TandoopTest.java";
-//			System.out.println(cmd);
+			// System.out.println(cmd);
 			Process p = Runtime.getRuntime().exec(new String[] {"bash", "-c", cmd});
 
-			String s;
-//			BufferedReader out = new BufferedReader(new InputStreamReader(p.getInputStream()));
-//            while ((s = out.readLine()) != null) {
-//				System.out.println("line: " + s);
-//			}
-//			BufferedReader err = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-//            while ((s = err.readLine()) != null) {
-//				System.out.println("line: " + s);
-//			}
-//
+			// String s;
+			// BufferedReader out = new BufferedReader(new InputStreamReader(p.getInputStream()));
+           	// while ((s = out.readLine()) != null) {
+			// 	System.out.println("line: " + s);
+			// }
+			// BufferedReader err = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+           	// while ((s = err.readLine()) != null) {
+			// 	System.out.println("line: " + s);
+			// }
+
 			int cmdReturnValue = p.waitFor();
 			System.out.println("javacompile: " + cmdReturnValue);
 			assert(cmdReturnValue == 0);
@@ -175,16 +174,16 @@ public class Sequence {
 			Method method = testClass.getMethod("test");
 			try {
 				Object result = method.invoke(null);
-	//			System.out.println("Result: " + result);
-				return result.toString();
+				// System.out.println("Result: " + result.toString());
+				return result;
 			} catch (Exception e) {
 				System.out.println("Wrapper invoke exception: " + e);
 				System.out.println("Underlying invoke exception: " + e.getCause());
-				return "E: " + e;
+				return "[Tandoop] E: " + e;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			return "E: " + e;
+			return "[Tandoop] E: " + e;
 		}
 	}
 }

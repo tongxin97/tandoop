@@ -1,0 +1,17 @@
+[
+Sequence: 
+        DateTimeFormatterBuilder DateTimeFormatterBuilder0 = new DateTimeFormatterBuilder();
+, 
+Sequence: 
+        Partial Partial0 = new Partial();
+, 
+Sequence: 
+        DefaultNameProvider DefaultNameProvider0 = new DefaultNameProvider();
+, 
+Sequence: 
+        Partial Partial0 = new Partial();
+        Partial Partial1 = null;
+      for (int i=0; i<3; i++) {
+        Partial1 = Partial0.withChronologyRetainFields((Chronology) null);
+      }
+]

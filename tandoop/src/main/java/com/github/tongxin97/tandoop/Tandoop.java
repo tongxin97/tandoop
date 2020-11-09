@@ -4,8 +4,6 @@ import java.util.*;
 import java.io.*;
 import java.util.stream.Collectors;
 import java.nio.charset.StandardCharsets;
-import com.google.gson.*;
-import com.google.gson.stream.JsonReader;
 import java.net.URLClassLoader;
 import java.net.URL;
 
@@ -68,26 +66,18 @@ public class Tandoop {
             System.out.println(urls[i].toString());
         }
          urls[dirListing.length] = new File(this.prjDir + "/target/classes").toURI().toURL();
-//         URL[] urls = new URL[] {new File("../joda-time/target/joda-time-2.10.9-SNAPSHOT.jar").toURI().toURL()};
-        // URL[] urls = new URL[] {new File("../joda-time/target/classes").toURI().toURL()};
         this.classLoader = new URLClassLoader(urls, this.getClass().getClassLoader());
     }
 
-    private void setExtensibleFlag(Sequence newSeq, MethodInfo method, VarInfo var, String result) throws Exception {
+    private void setExtensibleFlag(Sequence newSeq, MethodInfo method, VarInfo var, Object result) throws Exception {
         // if runtime value is null, set extensible to false and return
-        if (result.startsWith("F: ")) {
+        if (result.toString().startsWith("[Tandoop] F: ")) {
             var.Extensible = false;
             return;
         }
         // otherwise, if runtime value equals to an old value, set extensible flag to false
         String returnType = method.getReturnType();
-        try {
-            var.Val = new Gson().fromJson(result, Class.forName(returnType, true, this.classLoader));
-        } catch (Exception e) {
-            System.err.println("Gson exception: " + e.getMessage());
-            var.Extensible = false;
-            return;
-        }
+        var.Val = result;
 
         boolean equalsToOldValue = this.valuePool.containsKey(returnType) && this.valuePool.get(returnType).contains(var.Val);
         var.Extensible = !equalsToOldValue;
@@ -320,8 +310,8 @@ public class Tandoop {
             // System.out.println(newSeq.ExcSeq);
 
             newSeq.generateTest();
-            String result = newSeq.runTest(this.prjDir, this.classLoader);
-            if (result.startsWith("E: ") || result.startsWith("C: ")) {
+            Object result = newSeq.runTest(this.prjDir, this.classLoader);
+            if (result.toString().startsWith("[Tandoop] E: ") || result.toString().startsWith("[Tandoop] C: ")) {
                 errorSeqs.add(newSeq);
             } else {
                 nonErrorSeqs.add(newSeq);
@@ -333,7 +323,7 @@ public class Tandoop {
                     if (this.valuePool.containsKey(returnType)) {
                         this.valuePool.get(returnType).addValue(var.Val);
                     } else {
-                        boolean isPrimitiveType = Class.forName(returnType, true, this.classLoader).isPrimitive();
+                        boolean isPrimitiveType = Class.forName(returnType, false, this.classLoader).isPrimitive();
                         this.valuePool.put(returnType, new TypedValuePool(returnType, isPrimitiveType, Arrays.asList(var.Val)));
                     }
                     System.out.println("Added extensible val:" + var.Val);
