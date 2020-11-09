@@ -209,27 +209,32 @@ public class MethodParser {
         // System.out.println("Encountered private method: " + md.getNameAsString());
         return;
       }
-
+      String methodName = md.getNameAsString();
       String className = null;
       Optional<Node> opt = md.getParentNode();
       if (opt.isPresent()) {
-        TypeDeclaration t = (TypeDeclaration) opt.get();
-        // if parent node is not public class, skip this method
-        if (!(
-          t instanceof ClassOrInterfaceDeclaration &&
-          MethodParser.isPublicClass((ClassOrInterfaceDeclaration) t)
-        )) {
-          // System.out.printf("Encountered method in private inner class: %s.%s\n", t.getNameAsString(), md.getNameAsString());
+        try {
+          TypeDeclaration t = (TypeDeclaration) opt.get();
+          // if parent node is not public class, skip this method
+          if (!(
+            t instanceof ClassOrInterfaceDeclaration &&
+            MethodParser.isPublicClass((ClassOrInterfaceDeclaration) t)
+          )) {
+            // System.out.printf("Encountered method in private inner class: %s.%s\n", t.getNameAsString(), md.getNameAsString());
+            return;
+          }
+          className = t.getNameAsString();
+        } catch (Exception e) {
+          System.err.printf("Failed to get class name for method: %s\n", methodName);
           return;
         }
-        className = t.getNameAsString();
       }
       String packageName = getPackageName();
-      MethodInfo info = new MethodInfo(md.getNameAsString(), className, packageName);
+      MethodInfo info = new MethodInfo(methodName, className, packageName);
       // store return type
       String returnType = resolveType(md.getType());
       if (returnType == null) {
-        System.err.printf("Unable to resolve return type %s at %s\n", md.getType(), md.getNameAsString());
+        System.err.printf("Unable to resolve return type %s at %s\n", md.getType(), methodName);
         return;
       }
       info.setReturnType(returnType);
@@ -239,7 +244,7 @@ public class MethodParser {
       for (Parameter p : md.getParameters()) {
         String paramType = resolveType(p.getType());
         if (paramType == null) {
-          System.err.printf("Unable to resolve parameter type %s at %s\n", p.getType(), md.getNameAsString());
+          System.err.printf("Unable to resolve parameter type %s at %s\n", p.getType(), methodName);
           return;
         }
         info.addParameterType(paramType);
