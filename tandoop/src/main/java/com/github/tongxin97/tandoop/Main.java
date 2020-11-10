@@ -54,8 +54,8 @@ public class Main {
       tandoop.generateSequence(10*1000);
 
       // TODO: Check if need test file
-      File testFile = new File("src/test/java/com/github/tongxin97/tandoop/TandoopTest.java");
-      testFile.delete();
+      // File testFile = new File("src/test/java/com/github/tongxin97/tandoop/TandoopTest.java");
+      // testFile.delete();
 
     } catch (ParseException e) {
       System.err.println( "Unexpected exception:" + e.getMessage() );

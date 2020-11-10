@@ -1,8 +1,5 @@
 package com.github.tongxin97.tandoop.sequence;
 
-import org.junit.runner.JUnitCore;
-import org.junit.runner.Result;
-import org.junit.runner.notification.Failure;
 import java.lang.IllegalArgumentException;
 import java.lang.reflect.Method;
 import java.net.URLClassLoader;
@@ -166,7 +163,9 @@ public class Sequence {
 
 			int cmdReturnValue = p.waitFor();
 			System.out.println("javacompile: " + cmdReturnValue);
-			assert(cmdReturnValue == 0);
+			if (cmdReturnValue != 0) {
+				return "[Tandoop] E: java compiler error";
+			}
 			
 			URLClassLoader classLoader = new URLClassLoader(new URL[]{ new File("target/test-classes/").toURI().toURL() }, parentClassLoader);
 			Class testClass = Class.forName("TandoopTest", false, classLoader);

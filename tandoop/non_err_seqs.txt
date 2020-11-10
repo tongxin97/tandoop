@@ -1,53 +1,43 @@
 [
 Sequence: 
-      Instant Instant0 = new Instant();
+      MutableInterval MutableInterval0 = new MutableInterval();
 , 
 Sequence: 
-      MutableDateTime MutableDateTime0 = new MutableDateTime();
-, 
-Sequence: 
-      MutableDateTime MutableDateTime0 = new MutableDateTime();
-      MutableDateTime MutableDateTime1 = null;
-      for (int i=0; i<15; i++) {
-        MutableDateTime1 = MutableDateTime0.now();
-      }
-, 
-Sequence: 
-      Instant Instant0 = new Instant();
-      MutableDateTime MutableDateTime2 = null;
-      for (int i=0; i<91; i++) {
-        MutableDateTime2 = Instant0.toMutableDateTimeISO();
-      }
-, 
-Sequence: 
-      Instant Instant0 = new Instant();
-      MutableDateTime MutableDateTime2 = null;
-      for (int i=0; i<91; i++) {
-        MutableDateTime2 = Instant0.toMutableDateTimeISO();
-      }
-      Instant Instant1 = null;
-      for (int i=0; i<80; i++) {
-        Instant1 = Instant0.toInstant();
-      }
-, 
-Sequence: 
-      Instant Instant0 = new Instant();
-      Instant Instant2 = null;
-      for (int i=0; i<27; i++) {
-        Instant2 = Instant0.parse((String) null);
-      }
-, 
-Sequence: 
-      MutableDateTime MutableDateTime0 = new MutableDateTime();
-      MutableDateTime MutableDateTime1 = null;
-      for (int i=0; i<15; i++) {
-        MutableDateTime1 = MutableDateTime0.now();
-      }
-      MutableDateTime MutableDateTime3 = null;
-      for (int i=0; i<76; i++) {
-        MutableDateTime3 = MutableDateTime1.now((Chronology) null);
+      MutableInterval MutableInterval0 = new MutableInterval();
+      Object Object0 = null;
+      for (int i=0; i<47; i++) {
+        Object0 = MutableInterval0.clone();
       }
 , 
 Sequence: 
       ZoneInfoProvider ZoneInfoProvider0 = new ZoneInfoProvider();
+, 
+Sequence: 
+      DateTimeFormatter DateTimeFormatter0 = new DateTimeFormatter((DateTimePrinter) null,(DateTimeParser) null);
+, 
+Sequence: 
+      DateTimeFormatterBuilder DateTimeFormatterBuilder0 = new DateTimeFormatterBuilder();
+, 
+Sequence: 
+      Instant Instant0 = new Instant();
+, 
+Sequence: 
+      PreciseDateTimeField PreciseDateTimeField0 = new PreciseDateTimeField((DateTimeFieldType) null,(DurationField) null,(DurationField) null);
+, 
+Sequence: 
+      DateTimeFormatter DateTimeFormatter0 = new DateTimeFormatter((DateTimePrinter) null,(DateTimeParser) null);
+      MutableDateTime MutableDateTime0 = null;
+      for (int i=0; i<51; i++) {
+        MutableDateTime0 = DateTimeFormatter0.parseMutableDateTime((String) null);
+      }
+, 
+Sequence: 
+      DateTimeFormatterBuilder DateTimeFormatterBuilder0 = new DateTimeFormatterBuilder();
+      DateTimeFormatterBuilder DateTimeFormatterBuilder1 = null;
+      for (int i=0; i<75; i++) {
+        DateTimeFormatterBuilder1 = DateTimeFormatterBuilder0.appendEraText();
+      }
+, 
+Sequence: 
+      DecoratedDurationField DecoratedDurationField0 = new DecoratedDurationField((DurationField) null,(DurationFieldType) null);
 ]
