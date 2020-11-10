@@ -26,3 +26,4 @@ tandoop/src/test/java/com/github/tongxin97/tandoop/TandoopTest.java
 
 # test output
 tandoop/testOutput.json
+tandoop/failed_test_classes
