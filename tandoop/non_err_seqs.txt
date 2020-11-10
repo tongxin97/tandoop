@@ -1,43 +1,30 @@
 [
 Sequence: 
-      MutableInterval MutableInterval0 = new MutableInterval();
+      TimeOfDay TimeOfDay0 = new TimeOfDay();
 , 
 Sequence: 
-      MutableInterval MutableInterval0 = new MutableInterval();
-      Object Object0 = null;
-      for (int i=0; i<47; i++) {
-        Object0 = MutableInterval0.clone();
-      }
+      Partial Partial0 = new Partial();
 , 
 Sequence: 
-      ZoneInfoProvider ZoneInfoProvider0 = new ZoneInfoProvider();
+      IllegalFieldValueException IllegalFieldValueException0 = new IllegalFieldValueException((DateTimeFieldType) null,(Number) null,(Number) null,(Number) null);
 , 
 Sequence: 
       DateTimeFormatter DateTimeFormatter0 = new DateTimeFormatter((DateTimePrinter) null,(DateTimeParser) null);
 , 
 Sequence: 
-      DateTimeFormatterBuilder DateTimeFormatterBuilder0 = new DateTimeFormatterBuilder();
-, 
-Sequence: 
-      Instant Instant0 = new Instant();
-, 
-Sequence: 
-      PreciseDateTimeField PreciseDateTimeField0 = new PreciseDateTimeField((DateTimeFieldType) null,(DurationField) null,(DurationField) null);
-, 
-Sequence: 
       DateTimeFormatter DateTimeFormatter0 = new DateTimeFormatter((DateTimePrinter) null,(DateTimeParser) null);
-      MutableDateTime MutableDateTime0 = null;
-      for (int i=0; i<51; i++) {
-        MutableDateTime0 = DateTimeFormatter0.parseMutableDateTime((String) null);
-      }
+      LocalDateTime LocalDateTime0 = DateTimeFormatter0.parseLocalDateTime((String) null);
 , 
 Sequence: 
-      DateTimeFormatterBuilder DateTimeFormatterBuilder0 = new DateTimeFormatterBuilder();
-      DateTimeFormatterBuilder DateTimeFormatterBuilder1 = null;
-      for (int i=0; i<75; i++) {
-        DateTimeFormatterBuilder1 = DateTimeFormatterBuilder0.appendEraText();
-      }
+      DateTimeZoneBuilder DateTimeZoneBuilder0 = new DateTimeZoneBuilder();
 , 
 Sequence: 
-      DecoratedDurationField DecoratedDurationField0 = new DecoratedDurationField((DurationField) null,(DurationFieldType) null);
+      IllegalFieldValueException IllegalFieldValueException1 = new IllegalFieldValueException((DateTimeFieldType) null,(Number) null,(Number) null,(Number) null);
+, 
+Sequence: 
+      DateTimeZoneBuilder DateTimeZoneBuilder1 = new DateTimeZoneBuilder();
+, 
+Sequence: 
+      TimeOfDay TimeOfDay0 = new TimeOfDay();
+      Property Property0 = TimeOfDay0.minuteOfHour();
 ]

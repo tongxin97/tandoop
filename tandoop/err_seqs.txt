@@ -1,8 +1,12 @@
 [
 Sequence: 
-      ZoneInfoProvider ZoneInfoProvider0 = new ZoneInfoProvider();
-      DateTimeZone DateTimeZone0 = null;
-      for (int i=0; i<31; i++) {
-        DateTimeZone0 = ZoneInfoProvider0.loadZoneData((String) null);
+      DateTimeFormatter DateTimeFormatter0 = new DateTimeFormatter((DateTimePrinter) null,(DateTimeParser) null);
+      Integer Integer0 = null;
+      for (int i=0; i<63; i++) {
+        Integer0 = DateTimeFormatter0.getPivotYear();
       }
+, 
+Sequence: 
+      DateTimeFormatter DateTimeFormatter0 = new DateTimeFormatter((DateTimePrinter) null,(DateTimeParser) null);
+      DateTimePrinter DateTimePrinter0 = DateTimeFormatter0.getPrinter();
 ]
