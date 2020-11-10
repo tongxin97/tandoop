@@ -50,7 +50,6 @@ public class Main {
       File testClassDir = new File("target/test-classes");
       testClassDir.mkdir();
 
-<<<<<<< HEAD
       // remove previously genereated error tests
       File folder = new File(String.format("%s/src/test/java/", prjDir));
       File[] files = folder.listFiles( new FilenameFilter() {
@@ -64,11 +63,6 @@ public class Main {
           System.err.println("Can't remove " + f.getAbsolutePath());
         }
       }
-=======
-      File failedTestFileDir = new File("failed_test_classes");
-      failedTestFileDir.delete();
-      failedTestFileDir.mkdir();
->>>>>>> 8525571b5e35f3f13cbecf688b4d72047688c4c0
 
       Tandoop tandoop = new Tandoop(cmd.getOptionValue("src"), prjDir);
       tandoop.generateSequence(20*1000);
