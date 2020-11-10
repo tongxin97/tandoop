@@ -30,7 +30,7 @@ public class Tandoop {
     private Set<Sequence> nonErrorSeqs;
 
     private final int maxRepetition = 100;
-    private final double repetitionProb = 1;
+    private final double repetitionProb = 0.1;
 
     public URLClassLoader classLoader;
 
