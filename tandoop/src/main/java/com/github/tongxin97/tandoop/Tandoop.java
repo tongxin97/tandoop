@@ -223,7 +223,9 @@ public class Tandoop {
             Set<String> nestedTypes = new HashSet<>();
             Str.parseNestedTypes(t, nestedTypes);
             for (String type: nestedTypes) {
-                newSeq.addImport(String.format("import %s;\n", type));
+                if (!type.startsWith("java.lang")) { // if type is not included in the Java language
+                    newSeq.addImport(String.format("import %s;\n", type));
+                }
             }
         }
     }

@@ -1,5 +1,6 @@
 [
 Sequence: 
+<<<<<<< Updated upstream
       TimeOfDay TimeOfDay0 = new TimeOfDay();
 , 
 Sequence: 
@@ -7,11 +8,748 @@ Sequence:
 , 
 Sequence: 
       IllegalFieldValueException IllegalFieldValueException0 = new IllegalFieldValueException((DateTimeFieldType) null,(Number) null,(Number) null,(Number) null);
+=======
+      PeriodFormatter PeriodFormatter0 = new PeriodFormatter((PeriodPrinter) null,(PeriodParser) null);
+, 
+Sequence: 
+      ZoneInfoProvider ZoneInfoProvider0 = new ZoneInfoProvider();
+, 
+Sequence: 
+      IllegalInstantException IllegalInstantException0 = new IllegalInstantException((String) null);
+, 
+Sequence: 
+      MonthDay MonthDay0 = new MonthDay();
+, 
+Sequence: 
+      PeriodFormatter PeriodFormatter0 = new PeriodFormatter((PeriodPrinter) null,(PeriodParser) null);
+      Period Period0 = PeriodFormatter0.parsePeriod((String) null);
+, 
+Sequence: 
+      MutableInterval MutableInterval0 = new MutableInterval();
+, 
+Sequence: 
+      MonthDay MonthDay0 = new MonthDay();
+      MonthDay MonthDay1 = null;
+      for (int i=0; i<88; i++) {
+        MonthDay1 = MonthDay0.now();
+      }
+, 
+Sequence: 
+      DelegatedDateTimeField DelegatedDateTimeField0 = new DelegatedDateTimeField((DateTimeField) null);
+, 
+Sequence: 
+      MonthDay MonthDay0 = new MonthDay();
+      Property Property0 = MonthDay0.property((DateTimeFieldType) null);
+, 
+Sequence: 
+      MonthDay MonthDay0 = new MonthDay();
+      MonthDay MonthDay2 = MonthDay0.plus((ReadablePeriod) null);
+, 
+Sequence: 
+      YearMonthDay YearMonthDay0 = new YearMonthDay();
+, 
+Sequence: 
+      MonthDay MonthDay0 = new MonthDay();
+      MonthDay MonthDay2 = MonthDay0.plus((ReadablePeriod) null);
+      MonthDay MonthDay3 = MonthDay0.parse((String) null,(DateTimeFormatter) null);
+, 
+Sequence: 
+      YearMonthDay YearMonthDay0 = new YearMonthDay();
+      YearMonthDay YearMonthDay1 = null;
+      for (int i=0; i<22; i++) {
+        YearMonthDay1 = YearMonthDay0.minus((ReadablePeriod) null);
+      }
+, 
+Sequence: 
+      ZeroIsMaxDateTimeField ZeroIsMaxDateTimeField0 = new ZeroIsMaxDateTimeField((DateTimeField) null,(DateTimeFieldType) null);
+, 
+Sequence: 
+      YearMonthDay YearMonthDay0 = new YearMonthDay();
+      YearMonthDay YearMonthDay1 = null;
+      for (int i=0; i<22; i++) {
+        YearMonthDay1 = YearMonthDay0.minus((ReadablePeriod) null);
+      }
+      YearMonthDay YearMonthDay2 = null;
+      for (int i=0; i<21; i++) {
+        YearMonthDay2 = YearMonthDay0.fromCalendarFields((Calendar) null);
+      }
+, 
+Sequence: 
+      MutableInterval MutableInterval0 = new MutableInterval();
+      Object Object0 = null;
+      for (int i=0; i<86; i++) {
+        Object0 = MutableInterval0.clone();
+      }
+, 
+Sequence: 
+      MutablePeriod MutablePeriod0 = new MutablePeriod();
+, 
+Sequence: 
+      MonthDay MonthDay0 = new MonthDay();
+      MonthDay MonthDay4 = null;
+      for (int i=0; i<64; i++) {
+        MonthDay4 = MonthDay0.withChronologyRetainFields((Chronology) null);
+      }
+, 
+Sequence: 
+      MonthDay MonthDay0 = new MonthDay();
+      Property Property1 = MonthDay0.dayOfMonth();
+, 
+Sequence: 
+      MutablePeriod MutablePeriod0 = new MutablePeriod();
+      MutablePeriod MutablePeriod1 = MutablePeriod0.copy();
+, 
+Sequence: 
+      YearMonthDay YearMonthDay0 = new YearMonthDay();
+      YearMonthDay YearMonthDay1 = null;
+      for (int i=0; i<22; i++) {
+        YearMonthDay1 = YearMonthDay0.minus((ReadablePeriod) null);
+      }
+      YearMonthDay YearMonthDay2 = null;
+      for (int i=0; i<21; i++) {
+        YearMonthDay2 = YearMonthDay0.fromCalendarFields((Calendar) null);
+      }
+      DateTime DateTime0 = YearMonthDay0.toDateTime((TimeOfDay) null,(DateTimeZone) null);
+, 
+Sequence: 
+      PreciseDateTimeField PreciseDateTimeField0 = new PreciseDateTimeField((DateTimeFieldType) null,(DurationField) null,(DurationField) null);
+, 
+Sequence: 
+      YearMonthDay YearMonthDay0 = new YearMonthDay();
+      YearMonthDay YearMonthDay1 = null;
+      for (int i=0; i<22; i++) {
+        YearMonthDay1 = YearMonthDay0.minus((ReadablePeriod) null);
+      }
+      YearMonthDay YearMonthDay2 = null;
+      for (int i=0; i<21; i++) {
+        YearMonthDay2 = YearMonthDay0.fromCalendarFields((Calendar) null);
+      }
+      DateTime DateTime0 = YearMonthDay0.toDateTime((TimeOfDay) null,(DateTimeZone) null);
+      YearMonthDay YearMonthDay3 = null;
+      for (int i=0; i<31; i++) {
+        YearMonthDay3 = YearMonthDay0.fromCalendarFields((Calendar) null);
+      }
+, 
+Sequence: 
+      MutablePeriod MutablePeriod0 = new MutablePeriod();
+      MutablePeriod MutablePeriod1 = MutablePeriod0.copy();
+      PeriodFormatter PeriodFormatter0 = new PeriodFormatter((PeriodPrinter) null,(PeriodParser) null);
+      Period Period0 = PeriodFormatter0.parsePeriod((String) null);
+      MutablePeriod MutablePeriod2 = MutablePeriod0.parse((String) null,PeriodFormatter0);
+, 
+Sequence: 
+      Partial Partial0 = new Partial();
+, 
+Sequence: 
+      Instant Instant0 = new Instant();
+, 
+Sequence: 
+      PreciseDateTimeField PreciseDateTimeField1 = new PreciseDateTimeField((DateTimeFieldType) null,(DurationField) null,(DurationField) null);
+, 
+Sequence: 
+      Instant Instant0 = new Instant();
+      Instant Instant1 = null;
+      for (int i=0; i<28; i++) {
+        Instant1 = Instant0.parse((String) null,(DateTimeFormatter) null);
+      }
+, 
+Sequence: 
+      MutablePeriod MutablePeriod3 = new MutablePeriod();
+, 
+Sequence: 
+      MonthDay MonthDay0 = new MonthDay();
+      MonthDay MonthDay4 = null;
+      for (int i=0; i<64; i++) {
+        MonthDay4 = MonthDay0.withChronologyRetainFields((Chronology) null);
+      }
+      Property Property2 = null;
+      for (int i=0; i<58; i++) {
+        Property2 = MonthDay0.dayOfMonth();
+      }
+, 
+Sequence: 
+      YearMonthDay YearMonthDay4 = new YearMonthDay();
+, 
+Sequence: 
+      Partial Partial0 = new Partial();
+      String String1 = Partial0.toString((String) null,(Locale) null);
+, 
+Sequence: 
+      DateMidnight DateMidnight0 = new DateMidnight();
+, 
+Sequence: 
+      DateMidnight DateMidnight0 = new DateMidnight();
+      DateMidnight DateMidnight1 = DateMidnight0.withFields((ReadablePartial) null);
+, 
+Sequence: 
+      Instant Instant0 = new Instant();
+      Instant Instant2 = null;
+      for (int i=0; i<26; i++) {
+        Instant2 = Instant0.now();
+      }
+, 
+Sequence: 
+      DateMidnight DateMidnight0 = new DateMidnight();
+      Property Property3 = DateMidnight0.monthOfYear();
+, 
+Sequence: 
+      DateMidnight DateMidnight0 = new DateMidnight();
+      Property Property3 = DateMidnight0.monthOfYear();
+      DateMidnight DateMidnight2 = DateMidnight0.withZoneRetainFields((DateTimeZone) null);
+, 
+Sequence: 
+      Instant Instant0 = new Instant();
+      Instant Instant2 = null;
+      for (int i=0; i<26; i++) {
+        Instant2 = Instant0.now();
+      }
+      DateTime DateTime1 = null;
+      for (int i=0; i<27; i++) {
+        DateTime1 = Instant0.toDateTimeISO();
+      }
+, 
+Sequence: 
+      MutablePeriod MutablePeriod0 = new MutablePeriod();
+      MutablePeriod MutablePeriod1 = MutablePeriod0.copy();
+      MutablePeriod MutablePeriod4 = MutablePeriod0.copy();
+, 
+Sequence: 
+      Instant Instant0 = new Instant();
+      Instant Instant2 = null;
+      for (int i=0; i<26; i++) {
+        Instant2 = Instant0.now();
+      }
+      DateTime DateTime1 = null;
+      for (int i=0; i<27; i++) {
+        DateTime1 = Instant0.toDateTimeISO();
+      }
+      YearMonthDay YearMonthDay5 = DateTime1.toYearMonthDay();
+, 
+Sequence: 
+      Instant Instant0 = new Instant();
+      Instant Instant2 = null;
+      for (int i=0; i<26; i++) {
+        Instant2 = Instant0.now();
+      }
+      DateTime DateTime1 = null;
+      for (int i=0; i<27; i++) {
+        DateTime1 = Instant0.toDateTimeISO();
+      }
+      YearMonthDay YearMonthDay5 = DateTime1.toYearMonthDay();
+      DateTime DateTime2 = null;
+      for (int i=0; i<74; i++) {
+        DateTime2 = DateTime1.withEarlierOffsetAtOverlap();
+      }
+, 
+Sequence: 
+      Instant Instant0 = new Instant();
+      Instant Instant2 = null;
+      for (int i=0; i<26; i++) {
+        Instant2 = Instant0.now();
+      }
+      DateTime DateTime1 = null;
+      for (int i=0; i<27; i++) {
+        DateTime1 = Instant0.toDateTimeISO();
+      }
+      Property Property4 = DateTime1.hourOfDay();
+, 
+Sequence: 
+      DateMidnight DateMidnight0 = new DateMidnight();
+      Property Property3 = DateMidnight0.monthOfYear();
+      DateMidnight DateMidnight2 = DateMidnight0.withZoneRetainFields((DateTimeZone) null);
+      DateMidnight DateMidnight3 = null;
+      for (int i=0; i<2; i++) {
+        DateMidnight3 = DateMidnight0.plus((ReadablePeriod) null);
+      }
+, 
+Sequence: 
+      Instant Instant0 = new Instant();
+      Instant Instant2 = null;
+      for (int i=0; i<26; i++) {
+        Instant2 = Instant0.now();
+      }
+      DateTime DateTime1 = null;
+      for (int i=0; i<27; i++) {
+        DateTime1 = Instant0.toDateTimeISO();
+      }
+      YearMonthDay YearMonthDay5 = DateTime1.toYearMonthDay();
+      DateTime DateTime2 = null;
+      for (int i=0; i<74; i++) {
+        DateTime2 = DateTime1.withEarlierOffsetAtOverlap();
+      }
+      Property Property5 = DateTime2.weekOfWeekyear();
+, 
+Sequence: 
+      MutableInterval MutableInterval0 = new MutableInterval();
+      Object Object0 = null;
+      for (int i=0; i<86; i++) {
+        Object0 = MutableInterval0.clone();
+      }
+      Partial Partial0 = new Partial();
+      String String1 = Partial0.toString((String) null,(Locale) null);
+      MutableInterval MutableInterval1 = MutableInterval0.parse(String1);
+, 
+Sequence: 
+      MutablePeriod MutablePeriod0 = new MutablePeriod();
+      Object Object2 = MutablePeriod0.clone();
+, 
+Sequence: 
+      ZoneInfoProvider ZoneInfoProvider0 = new ZoneInfoProvider();
+      MutableInterval MutableInterval0 = new MutableInterval();
+      Object Object0 = null;
+      for (int i=0; i<86; i++) {
+        Object0 = MutableInterval0.clone();
+      }
+      Partial Partial0 = new Partial();
+      String String1 = Partial0.toString((String) null,(Locale) null);
+      MutableInterval MutableInterval1 = MutableInterval0.parse(String1);
+      DateTimeZone DateTimeZone0 = ZoneInfoProvider0.getZone(String1);
+, 
+Sequence: 
+      DefaultNameProvider DefaultNameProvider0 = new DefaultNameProvider();
+, 
+Sequence: 
+      LocalDate LocalDate0 = new LocalDate();
+, 
+Sequence: 
+      LocalDate LocalDate0 = new LocalDate();
+      Property Property6 = LocalDate0.centuryOfEra();
+, 
+Sequence: 
+      MonthDay MonthDay0 = new MonthDay();
+      MonthDay MonthDay1 = null;
+      for (int i=0; i<88; i++) {
+        MonthDay1 = MonthDay0.now();
+      }
+      MonthDay MonthDay5 = MonthDay0.fromDateFields((Date) null);
+, 
+Sequence: 
+      MonthDay MonthDay0 = new MonthDay();
+      MonthDay MonthDay4 = null;
+      for (int i=0; i<64; i++) {
+        MonthDay4 = MonthDay0.withChronologyRetainFields((Chronology) null);
+      }
+      Partial Partial0 = new Partial();
+      String String1 = Partial0.toString((String) null,(Locale) null);
+      MonthDay MonthDay6 = MonthDay0.parse(String1,(DateTimeFormatter) null);
+, 
+Sequence: 
+      Instant Instant0 = new Instant();
+      Instant Instant2 = null;
+      for (int i=0; i<26; i++) {
+        Instant2 = Instant0.now();
+      }
+      DateTime DateTime1 = null;
+      for (int i=0; i<27; i++) {
+        DateTime1 = Instant0.toDateTimeISO();
+      }
+      YearMonthDay YearMonthDay5 = DateTime1.toYearMonthDay();
+      DateTime DateTime2 = null;
+      for (int i=0; i<74; i++) {
+        DateTime2 = DateTime1.withEarlierOffsetAtOverlap();
+      }
+      ZoneInfoProvider ZoneInfoProvider0 = new ZoneInfoProvider();
+      MutableInterval MutableInterval0 = new MutableInterval();
+      Object Object0 = null;
+      for (int i=0; i<86; i++) {
+        Object0 = MutableInterval0.clone();
+      }
+      Partial Partial0 = new Partial();
+      String String1 = Partial0.toString((String) null,(Locale) null);
+      MutableInterval MutableInterval1 = MutableInterval0.parse(String1);
+      DateTimeZone DateTimeZone0 = ZoneInfoProvider0.getZone(String1);
+      DateTime DateTime3 = DateTime2.parse(String1,(DateTimeFormatter) null);
+, 
+Sequence: 
+      Instant Instant0 = new Instant();
+      Instant Instant2 = null;
+      for (int i=0; i<26; i++) {
+        Instant2 = Instant0.now();
+      }
+      DateTime DateTime1 = null;
+      for (int i=0; i<27; i++) {
+        DateTime1 = Instant0.toDateTimeISO();
+      }
+      YearMonthDay YearMonthDay5 = DateTime1.toYearMonthDay();
+      Chronology Chronology0 = Instant0.getChronology();
+, 
+Sequence: 
+      LocalDate LocalDate0 = new LocalDate();
+      Property Property6 = LocalDate0.centuryOfEra();
+      Property Property7 = LocalDate0.era();
+, 
+Sequence: 
+      LocalDate LocalDate0 = new LocalDate();
+      Property Property6 = LocalDate0.centuryOfEra();
+      Date Date0 = LocalDate0.toDate();
+, 
+Sequence: 
+      Instant Instant0 = new Instant();
+      Instant Instant2 = null;
+      for (int i=0; i<26; i++) {
+        Instant2 = Instant0.now();
+      }
+      DateTime DateTime1 = null;
+      for (int i=0; i<27; i++) {
+        DateTime1 = Instant0.toDateTimeISO();
+      }
+      Property Property8 = DateTime1.minuteOfHour();
+, 
+Sequence: 
+      Partial Partial0 = new Partial();
+      String String1 = Partial0.toString((String) null,(Locale) null);
+      String String2 = Partial0.toString(String1);
+, 
+Sequence: 
+      MonthDay MonthDay0 = new MonthDay();
+      ZoneInfoProvider ZoneInfoProvider0 = new ZoneInfoProvider();
+      MutableInterval MutableInterval0 = new MutableInterval();
+      Object Object0 = null;
+      for (int i=0; i<86; i++) {
+        Object0 = MutableInterval0.clone();
+      }
+      Partial Partial0 = new Partial();
+      String String1 = Partial0.toString((String) null,(Locale) null);
+      MutableInterval MutableInterval1 = MutableInterval0.parse(String1);
+      DateTimeZone DateTimeZone0 = ZoneInfoProvider0.getZone(String1);
+      MonthDay MonthDay7 = null;
+      for (int i=0; i<52; i++) {
+        MonthDay7 = MonthDay0.parse(String1,(DateTimeFormatter) null);
+      }
+, 
+Sequence: 
+      YearMonthDay YearMonthDay0 = new YearMonthDay();
+      YearMonthDay YearMonthDay1 = null;
+      for (int i=0; i<22; i++) {
+        YearMonthDay1 = YearMonthDay0.minus((ReadablePeriod) null);
+      }
+      YearMonthDay YearMonthDay2 = null;
+      for (int i=0; i<21; i++) {
+        YearMonthDay2 = YearMonthDay0.fromCalendarFields((Calendar) null);
+      }
+      DateTime DateTime0 = YearMonthDay0.toDateTime((TimeOfDay) null,(DateTimeZone) null);
+      YearMonthDay YearMonthDay3 = null;
+      for (int i=0; i<31; i++) {
+        YearMonthDay3 = YearMonthDay0.fromCalendarFields((Calendar) null);
+      }
+      Instant Instant0 = new Instant();
+      Instant Instant2 = null;
+      for (int i=0; i<26; i++) {
+        Instant2 = Instant0.now();
+      }
+      DateTime DateTime1 = null;
+      for (int i=0; i<27; i++) {
+        DateTime1 = Instant0.toDateTimeISO();
+      }
+      YearMonthDay YearMonthDay5 = DateTime1.toYearMonthDay();
+      Chronology Chronology0 = Instant0.getChronology();
+      YearMonthDay YearMonthDay6 = YearMonthDay0.withChronologyRetainFields(Chronology0);
+, 
+Sequence: 
+      ZoneInfoProvider ZoneInfoProvider0 = new ZoneInfoProvider();
+      MonthDay MonthDay0 = new MonthDay();
+      MonthDay MonthDay4 = null;
+      for (int i=0; i<64; i++) {
+        MonthDay4 = MonthDay0.withChronologyRetainFields((Chronology) null);
+      }
+      Partial Partial0 = new Partial();
+      String String1 = Partial0.toString((String) null,(Locale) null);
+      MonthDay MonthDay6 = MonthDay0.parse(String1,(DateTimeFormatter) null);
+      DateTimeZone DateTimeZone1 = ZoneInfoProvider0.getZone(String1);
+, 
+Sequence: 
+      LocalDate LocalDate0 = new LocalDate();
+      Property Property6 = LocalDate0.centuryOfEra();
+      Property Property7 = LocalDate0.era();
+      Property Property9 = LocalDate0.dayOfWeek();
+, 
+Sequence: 
+      DefaultNameProvider DefaultNameProvider1 = new DefaultNameProvider();
+, 
+Sequence: 
+      Instant Instant0 = new Instant();
+      Instant Instant2 = null;
+      for (int i=0; i<26; i++) {
+        Instant2 = Instant0.now();
+      }
+      DateTime DateTime1 = null;
+      for (int i=0; i<27; i++) {
+        DateTime1 = Instant0.toDateTimeISO();
+      }
+      DateTime DateTime4 = DateTime1.withTime((LocalTime) null);
+, 
+Sequence: 
+      Instant Instant0 = new Instant();
+      Instant Instant2 = null;
+      for (int i=0; i<26; i++) {
+        Instant2 = Instant0.now();
+      }
+      DateTime DateTime1 = null;
+      for (int i=0; i<27; i++) {
+        DateTime1 = Instant0.toDateTimeISO();
+      }
+      YearMonthDay YearMonthDay5 = DateTime1.toYearMonthDay();
+      DateTime DateTime2 = null;
+      for (int i=0; i<74; i++) {
+        DateTime2 = DateTime1.withEarlierOffsetAtOverlap();
+      }
+      ZoneInfoProvider ZoneInfoProvider0 = new ZoneInfoProvider();
+      MutableInterval MutableInterval0 = new MutableInterval();
+      Object Object0 = null;
+      for (int i=0; i<86; i++) {
+        Object0 = MutableInterval0.clone();
+      }
+      Partial Partial0 = new Partial();
+      String String1 = Partial0.toString((String) null,(Locale) null);
+      MutableInterval MutableInterval1 = MutableInterval0.parse(String1);
+      DateTimeZone DateTimeZone0 = ZoneInfoProvider0.getZone(String1);
+      DateTime DateTime3 = DateTime2.parse(String1,(DateTimeFormatter) null);
+      Instant Instant3 = Instant0.parse(String1,(DateTimeFormatter) null);
+, 
+Sequence: 
+      LocalDate LocalDate0 = new LocalDate();
+      Property Property6 = LocalDate0.centuryOfEra();
+      Property Property7 = LocalDate0.era();
+      Property Property9 = LocalDate0.dayOfWeek();
+      LocalDate LocalDate1 = LocalDate0.withFields((ReadablePartial) null);
+, 
+Sequence: 
+      ZoneInfoProvider ZoneInfoProvider0 = new ZoneInfoProvider();
+      MonthDay MonthDay0 = new MonthDay();
+      MonthDay MonthDay4 = null;
+      for (int i=0; i<64; i++) {
+        MonthDay4 = MonthDay0.withChronologyRetainFields((Chronology) null);
+      }
+      Partial Partial0 = new Partial();
+      String String1 = Partial0.toString((String) null,(Locale) null);
+      MonthDay MonthDay6 = MonthDay0.parse(String1,(DateTimeFormatter) null);
+      DateTimeZone DateTimeZone1 = ZoneInfoProvider0.getZone(String1);
+      String String3 = MonthDay0.toString(String1,(Locale) null);
+, 
+Sequence: 
+      PeriodFormatter PeriodFormatter0 = new PeriodFormatter((PeriodPrinter) null,(PeriodParser) null);
+      Period Period0 = PeriodFormatter0.parsePeriod((String) null);
+      PeriodFormatter PeriodFormatter1 = PeriodFormatter0.withParseType((PeriodType) null);
+, 
+Sequence: 
+      DateMidnight DateMidnight0 = new DateMidnight();
+      Property Property3 = DateMidnight0.monthOfYear();
+      Instant Instant0 = new Instant();
+      Instant Instant2 = null;
+      for (int i=0; i<26; i++) {
+        Instant2 = Instant0.now();
+      }
+      DateTime DateTime1 = null;
+      for (int i=0; i<27; i++) {
+        DateTime1 = Instant0.toDateTimeISO();
+      }
+      YearMonthDay YearMonthDay5 = DateTime1.toYearMonthDay();
+      DateTime DateTime2 = null;
+      for (int i=0; i<74; i++) {
+        DateTime2 = DateTime1.withEarlierOffsetAtOverlap();
+      }
+      ZoneInfoProvider ZoneInfoProvider0 = new ZoneInfoProvider();
+      MutableInterval MutableInterval0 = new MutableInterval();
+      Object Object0 = null;
+      for (int i=0; i<86; i++) {
+        Object0 = MutableInterval0.clone();
+      }
+      Partial Partial0 = new Partial();
+      String String1 = Partial0.toString((String) null,(Locale) null);
+      MutableInterval MutableInterval1 = MutableInterval0.parse(String1);
+      DateTimeZone DateTimeZone0 = ZoneInfoProvider0.getZone(String1);
+      DateTime DateTime3 = DateTime2.parse(String1,(DateTimeFormatter) null);
+      DateMidnight DateMidnight4 = DateMidnight0.parse(String1);
+, 
+Sequence: 
+      Instant Instant0 = new Instant();
+      Instant Instant2 = null;
+      for (int i=0; i<26; i++) {
+        Instant2 = Instant0.now();
+      }
+      DateTime DateTime1 = null;
+      for (int i=0; i<27; i++) {
+        DateTime1 = Instant0.toDateTimeISO();
+      }
+      YearMonthDay YearMonthDay5 = DateTime1.toYearMonthDay();
+      TimeOfDay TimeOfDay0 = DateTime1.toTimeOfDay();
+, 
+Sequence: 
+      DateMidnight DateMidnight0 = new DateMidnight();
+      Property Property3 = DateMidnight0.monthOfYear();
+      Instant Instant0 = new Instant();
+      Instant Instant2 = null;
+      for (int i=0; i<26; i++) {
+        Instant2 = Instant0.now();
+      }
+      DateTime DateTime1 = null;
+      for (int i=0; i<27; i++) {
+        DateTime1 = Instant0.toDateTimeISO();
+      }
+      YearMonthDay YearMonthDay5 = DateTime1.toYearMonthDay();
+      DateTime DateTime2 = null;
+      for (int i=0; i<74; i++) {
+        DateTime2 = DateTime1.withEarlierOffsetAtOverlap();
+      }
+      ZoneInfoProvider ZoneInfoProvider0 = new ZoneInfoProvider();
+      MutableInterval MutableInterval0 = new MutableInterval();
+      Object Object0 = null;
+      for (int i=0; i<86; i++) {
+        Object0 = MutableInterval0.clone();
+      }
+      Partial Partial0 = new Partial();
+      String String1 = Partial0.toString((String) null,(Locale) null);
+      MutableInterval MutableInterval1 = MutableInterval0.parse(String1);
+      DateTimeZone DateTimeZone0 = ZoneInfoProvider0.getZone(String1);
+      DateTime DateTime3 = DateTime2.parse(String1,(DateTimeFormatter) null);
+      DateMidnight DateMidnight4 = DateMidnight0.parse(String1);
+      DateTime DateTime6 = DateTime2.plus((ReadableDuration) null);
 , 
 Sequence: 
       DateTimeFormatter DateTimeFormatter0 = new DateTimeFormatter((DateTimePrinter) null,(DateTimeParser) null);
 , 
 Sequence: 
+      DefaultNameProvider DefaultNameProvider2 = new DefaultNameProvider();
+, 
+Sequence: 
+      Instant Instant0 = new Instant();
+      Instant Instant2 = null;
+      for (int i=0; i<26; i++) {
+        Instant2 = Instant0.now();
+      }
+      DateTime DateTime1 = null;
+      for (int i=0; i<27; i++) {
+        DateTime1 = Instant0.toDateTimeISO();
+      }
+      YearMonthDay YearMonthDay5 = DateTime1.toYearMonthDay();
+      TimeOfDay TimeOfDay0 = DateTime1.toTimeOfDay();
+      LocalTime LocalTime0 = TimeOfDay0.toLocalTime();
+, 
+Sequence: 
+      Instant Instant0 = new Instant();
+      Instant Instant2 = null;
+      for (int i=0; i<26; i++) {
+        Instant2 = Instant0.now();
+      }
+      DateTime DateTime1 = null;
+      for (int i=0; i<27; i++) {
+        DateTime1 = Instant0.toDateTimeISO();
+      }
+      YearMonthDay YearMonthDay5 = DateTime1.toYearMonthDay();
+      ZoneInfoProvider ZoneInfoProvider0 = new ZoneInfoProvider();
+      MonthDay MonthDay0 = new MonthDay();
+      MonthDay MonthDay4 = null;
+      for (int i=0; i<64; i++) {
+        MonthDay4 = MonthDay0.withChronologyRetainFields((Chronology) null);
+      }
+      Partial Partial0 = new Partial();
+      String String1 = Partial0.toString((String) null,(Locale) null);
+      MonthDay MonthDay6 = MonthDay0.parse(String1,(DateTimeFormatter) null);
+      DateTimeZone DateTimeZone1 = ZoneInfoProvider0.getZone(String1);
+      DateTime DateTime7 = DateTime1.now(DateTimeZone1);
+, 
+Sequence: 
+      MutablePeriod MutablePeriod0 = new MutablePeriod();
+      MutablePeriod MutablePeriod1 = MutablePeriod0.copy();
+      PeriodFormatter PeriodFormatter0 = new PeriodFormatter((PeriodPrinter) null,(PeriodParser) null);
+      Period Period0 = PeriodFormatter0.parsePeriod((String) null);
+      MutablePeriod MutablePeriod2 = MutablePeriod0.parse((String) null,PeriodFormatter0);
+      Locale Locale0 = PeriodFormatter0.getLocale();
+, 
+Sequence: 
+      PeriodFormatterBuilder PeriodFormatterBuilder0 = new PeriodFormatterBuilder();
+, 
+Sequence: 
+      DateMidnight DateMidnight0 = new DateMidnight();
+      Property Property10 = DateMidnight0.year();
+, 
+Sequence: 
+      LocalDate LocalDate0 = new LocalDate();
+      Property Property6 = LocalDate0.centuryOfEra();
+      Date Date0 = LocalDate0.toDate();
+      DateTime DateTime8 = LocalDate0.toDateTimeAtStartOfDay();
+>>>>>>> Stashed changes
+, 
+Sequence: 
+      DateTimeFormatter DateTimeFormatter0 = new DateTimeFormatter((DateTimePrinter) null,(DateTimeParser) null);
+      MonthDay MonthDay0 = new MonthDay();
+      MonthDay MonthDay4 = null;
+      for (int i=0; i<64; i++) {
+        MonthDay4 = MonthDay0.withChronologyRetainFields((Chronology) null);
+      }
+      Partial Partial0 = new Partial();
+      String String1 = Partial0.toString((String) null,(Locale) null);
+      MonthDay MonthDay6 = MonthDay0.parse(String1,(DateTimeFormatter) null);
+      LocalTime LocalTime1 = DateTimeFormatter0.parseLocalTime(String1);
+, 
+Sequence: 
+      YearMonthDay YearMonthDay0 = new YearMonthDay();
+      YearMonthDay YearMonthDay1 = null;
+      for (int i=0; i<22; i++) {
+        YearMonthDay1 = YearMonthDay0.minus((ReadablePeriod) null);
+      }
+      YearMonthDay YearMonthDay2 = null;
+      for (int i=0; i<21; i++) {
+        YearMonthDay2 = YearMonthDay0.fromCalendarFields((Calendar) null);
+      }
+      DateTime DateTime0 = YearMonthDay0.toDateTime((TimeOfDay) null,(DateTimeZone) null);
+      YearMonthDay YearMonthDay3 = null;
+      for (int i=0; i<31; i++) {
+        YearMonthDay3 = YearMonthDay0.fromCalendarFields((Calendar) null);
+      }
+      Instant Instant0 = new Instant();
+      Instant Instant2 = null;
+      for (int i=0; i<26; i++) {
+        Instant2 = Instant0.now();
+      }
+      DateTime DateTime1 = null;
+      for (int i=0; i<27; i++) {
+        DateTime1 = Instant0.toDateTimeISO();
+      }
+      YearMonthDay YearMonthDay5 = DateTime1.toYearMonthDay();
+      Chronology Chronology0 = Instant0.getChronology();
+      YearMonthDay YearMonthDay6 = YearMonthDay0.withChronologyRetainFields(Chronology0);
+      Property Property11 = YearMonthDay0.monthOfYear();
+, 
+Sequence: 
+      DateMidnight DateMidnight0 = new DateMidnight();
+      Property Property3 = DateMidnight0.monthOfYear();
+      LocalDate LocalDate2 = DateMidnight0.toLocalDate();
+, 
+Sequence: 
+      DateMidnight DateMidnight0 = new DateMidnight();
+      Property Property3 = DateMidnight0.monthOfYear();
+      Instant Instant0 = new Instant();
+      Instant Instant2 = null;
+      for (int i=0; i<26; i++) {
+        Instant2 = Instant0.now();
+      }
+      DateTime DateTime1 = null;
+      for (int i=0; i<27; i++) {
+        DateTime1 = Instant0.toDateTimeISO();
+      }
+      YearMonthDay YearMonthDay5 = DateTime1.toYearMonthDay();
+      DateTime DateTime2 = null;
+      for (int i=0; i<74; i++) {
+        DateTime2 = DateTime1.withEarlierOffsetAtOverlap();
+      }
+      ZoneInfoProvider ZoneInfoProvider0 = new ZoneInfoProvider();
+      MutableInterval MutableInterval0 = new MutableInterval();
+      Object Object0 = null;
+      for (int i=0; i<86; i++) {
+        Object0 = MutableInterval0.clone();
+      }
+      Partial Partial0 = new Partial();
+      String String1 = Partial0.toString((String) null,(Locale) null);
+      MutableInterval MutableInterval1 = MutableInterval0.parse(String1);
+      DateTimeZone DateTimeZone0 = ZoneInfoProvider0.getZone(String1);
+      DateTime DateTime3 = DateTime2.parse(String1,(DateTimeFormatter) null);
+      DateMidnight DateMidnight4 = DateMidnight0.parse(String1);
+      DateTime DateTime6 = DateTime2.plus((ReadableDuration) null);
+      DateMidnight DateMidnight5 = DateMidnight0.minus((ReadablePeriod) null);
+, 
+Sequence: 
+<<<<<<< Updated upstream
       DateTimeFormatter DateTimeFormatter0 = new DateTimeFormatter((DateTimePrinter) null,(DateTimeParser) null);
       LocalDateTime LocalDateTime0 = DateTimeFormatter0.parseLocalDateTime((String) null);
 , 
@@ -27,4 +765,580 @@ Sequence:
 Sequence: 
       TimeOfDay TimeOfDay0 = new TimeOfDay();
       Property Property0 = TimeOfDay0.minuteOfHour();
+=======
+      YearMonthDay YearMonthDay0 = new YearMonthDay();
+      YearMonthDay YearMonthDay1 = null;
+      for (int i=0; i<22; i++) {
+        YearMonthDay1 = YearMonthDay0.minus((ReadablePeriod) null);
+      }
+      YearMonthDay YearMonthDay2 = null;
+      for (int i=0; i<21; i++) {
+        YearMonthDay2 = YearMonthDay0.fromCalendarFields((Calendar) null);
+      }
+      DateTime DateTime0 = YearMonthDay0.toDateTime((TimeOfDay) null,(DateTimeZone) null);
+      YearMonthDay YearMonthDay3 = null;
+      for (int i=0; i<31; i++) {
+        YearMonthDay3 = YearMonthDay0.fromCalendarFields((Calendar) null);
+      }
+      ZoneInfoProvider ZoneInfoProvider0 = new ZoneInfoProvider();
+      MonthDay MonthDay0 = new MonthDay();
+      MonthDay MonthDay4 = null;
+      for (int i=0; i<64; i++) {
+        MonthDay4 = MonthDay0.withChronologyRetainFields((Chronology) null);
+      }
+      Partial Partial0 = new Partial();
+      String String1 = Partial0.toString((String) null,(Locale) null);
+      MonthDay MonthDay6 = MonthDay0.parse(String1,(DateTimeFormatter) null);
+      DateTimeZone DateTimeZone1 = ZoneInfoProvider0.getZone(String1);
+      String String3 = MonthDay0.toString(String1,(Locale) null);
+      Interval Interval0 = YearMonthDay0.toInterval(DateTimeZone1);
+, 
+Sequence: 
+      PeriodFormatterBuilder PeriodFormatterBuilder0 = new PeriodFormatterBuilder();
+      PeriodFormatterBuilder PeriodFormatterBuilder2 = PeriodFormatterBuilder0.appendWeeks();
+, 
+Sequence: 
+      YearMonthDay YearMonthDay0 = new YearMonthDay();
+      YearMonthDay YearMonthDay1 = null;
+      for (int i=0; i<22; i++) {
+        YearMonthDay1 = YearMonthDay0.minus((ReadablePeriod) null);
+      }
+      YearMonthDay YearMonthDay2 = null;
+      for (int i=0; i<21; i++) {
+        YearMonthDay2 = YearMonthDay0.fromCalendarFields((Calendar) null);
+      }
+      DateTime DateTime0 = YearMonthDay0.toDateTime((TimeOfDay) null,(DateTimeZone) null);
+      YearMonthDay YearMonthDay3 = null;
+      for (int i=0; i<31; i++) {
+        YearMonthDay3 = YearMonthDay0.fromCalendarFields((Calendar) null);
+      }
+      Instant Instant0 = new Instant();
+      Instant Instant2 = null;
+      for (int i=0; i<26; i++) {
+        Instant2 = Instant0.now();
+      }
+      DateTime DateTime1 = null;
+      for (int i=0; i<27; i++) {
+        DateTime1 = Instant0.toDateTimeISO();
+      }
+      YearMonthDay YearMonthDay5 = DateTime1.toYearMonthDay();
+      Chronology Chronology0 = Instant0.getChronology();
+      YearMonthDay YearMonthDay6 = YearMonthDay0.withChronologyRetainFields(Chronology0);
+      Property Property11 = YearMonthDay0.monthOfYear();
+      ZoneInfoProvider ZoneInfoProvider0 = new ZoneInfoProvider();
+      MonthDay MonthDay0 = new MonthDay();
+      MonthDay MonthDay4 = null;
+      for (int i=0; i<64; i++) {
+        MonthDay4 = MonthDay0.withChronologyRetainFields((Chronology) null);
+      }
+      Partial Partial0 = new Partial();
+      String String1 = Partial0.toString((String) null,(Locale) null);
+      MonthDay MonthDay6 = MonthDay0.parse(String1,(DateTimeFormatter) null);
+      DateTimeZone DateTimeZone1 = ZoneInfoProvider0.getZone(String1);
+      String String3 = MonthDay0.toString(String1,(Locale) null);
+      DateTime DateTime9 = DateTime1.toDateTime(DateTimeZone1);
+, 
+Sequence: 
+      Instant Instant0 = new Instant();
+      Instant Instant2 = null;
+      for (int i=0; i<26; i++) {
+        Instant2 = Instant0.now();
+      }
+      DateTime DateTime1 = null;
+      for (int i=0; i<27; i++) {
+        DateTime1 = Instant0.toDateTimeISO();
+      }
+      DateTime DateTime4 = DateTime1.withTime((LocalTime) null);
+      LocalDateTime LocalDateTime0 = DateTime1.toLocalDateTime();
+, 
+Sequence: 
+      YearMonthDay YearMonthDay0 = new YearMonthDay();
+      YearMonthDay YearMonthDay1 = null;
+      for (int i=0; i<22; i++) {
+        YearMonthDay1 = YearMonthDay0.minus((ReadablePeriod) null);
+      }
+      YearMonthDay YearMonthDay2 = null;
+      for (int i=0; i<21; i++) {
+        YearMonthDay2 = YearMonthDay0.fromCalendarFields((Calendar) null);
+      }
+      DateTime DateTime0 = YearMonthDay0.toDateTime((TimeOfDay) null,(DateTimeZone) null);
+      YearMonthDay YearMonthDay3 = null;
+      for (int i=0; i<31; i++) {
+        YearMonthDay3 = YearMonthDay0.fromCalendarFields((Calendar) null);
+      }
+      YearMonthDay YearMonthDay7 = YearMonthDay0.plus((ReadablePeriod) null);
+, 
+Sequence: 
+      LocalDate LocalDate0 = new LocalDate();
+      Property Property6 = LocalDate0.centuryOfEra();
+      Date Date0 = LocalDate0.toDate();
+      Chronology Chronology1 = LocalDate0.getChronology();
+, 
+Sequence: 
+      Partial Partial0 = new Partial();
+      String String1 = Partial0.toString((String) null,(Locale) null);
+      String String2 = Partial0.toString(String1);
+      Chronology Chronology2 = null;
+      for (int i=0; i<97; i++) {
+        Chronology2 = Partial0.getChronology();
+      }
+, 
+Sequence: 
+      MonthDay MonthDay0 = new MonthDay();
+      MonthDay MonthDay2 = MonthDay0.plus((ReadablePeriod) null);
+      MonthDay MonthDay3 = MonthDay0.parse((String) null,(DateTimeFormatter) null);
+      Property Property12 = MonthDay0.dayOfMonth();
+, 
+Sequence: 
+      Instant Instant0 = new Instant();
+      Instant Instant2 = null;
+      for (int i=0; i<26; i++) {
+        Instant2 = Instant0.now();
+      }
+      DateTime DateTime1 = null;
+      for (int i=0; i<27; i++) {
+        DateTime1 = Instant0.toDateTimeISO();
+      }
+      YearMonthDay YearMonthDay5 = DateTime1.toYearMonthDay();
+      ZoneInfoProvider ZoneInfoProvider0 = new ZoneInfoProvider();
+      MonthDay MonthDay0 = new MonthDay();
+      MonthDay MonthDay4 = null;
+      for (int i=0; i<64; i++) {
+        MonthDay4 = MonthDay0.withChronologyRetainFields((Chronology) null);
+      }
+      Partial Partial0 = new Partial();
+      String String1 = Partial0.toString((String) null,(Locale) null);
+      MonthDay MonthDay6 = MonthDay0.parse(String1,(DateTimeFormatter) null);
+      DateTimeZone DateTimeZone1 = ZoneInfoProvider0.getZone(String1);
+      DateTime DateTime7 = DateTime1.now(DateTimeZone1);
+      DateTime DateTime11 = DateTime7.plus((ReadablePeriod) null);
+, 
+Sequence: 
+      DateTimeFormatter DateTimeFormatter0 = new DateTimeFormatter((DateTimePrinter) null,(DateTimeParser) null);
+      MonthDay MonthDay0 = new MonthDay();
+      MonthDay MonthDay4 = null;
+      for (int i=0; i<64; i++) {
+        MonthDay4 = MonthDay0.withChronologyRetainFields((Chronology) null);
+      }
+      Partial Partial0 = new Partial();
+      String String1 = Partial0.toString((String) null,(Locale) null);
+      MonthDay MonthDay6 = MonthDay0.parse(String1,(DateTimeFormatter) null);
+      LocalTime LocalTime1 = DateTimeFormatter0.parseLocalTime(String1);
+      String String4 = LocalTime1.toString(String1);
+, 
+Sequence: 
+      DateMidnight DateMidnight0 = new DateMidnight();
+      Property Property3 = DateMidnight0.monthOfYear();
+      DateMidnight DateMidnight2 = DateMidnight0.withZoneRetainFields((DateTimeZone) null);
+      DateMidnight DateMidnight3 = null;
+      for (int i=0; i<2; i++) {
+        DateMidnight3 = DateMidnight0.plus((ReadablePeriod) null);
+      }
+      LocalDate LocalDate3 = DateMidnight0.toLocalDate();
+, 
+Sequence: 
+      PeriodFormatterBuilder PeriodFormatterBuilder0 = new PeriodFormatterBuilder();
+      Instant Instant0 = new Instant();
+      Instant Instant2 = null;
+      for (int i=0; i<26; i++) {
+        Instant2 = Instant0.now();
+      }
+      DateTime DateTime1 = null;
+      for (int i=0; i<27; i++) {
+        DateTime1 = Instant0.toDateTimeISO();
+      }
+      YearMonthDay YearMonthDay5 = DateTime1.toYearMonthDay();
+      DateTime DateTime2 = null;
+      for (int i=0; i<74; i++) {
+        DateTime2 = DateTime1.withEarlierOffsetAtOverlap();
+      }
+      ZoneInfoProvider ZoneInfoProvider0 = new ZoneInfoProvider();
+      MutableInterval MutableInterval0 = new MutableInterval();
+      Object Object0 = null;
+      for (int i=0; i<86; i++) {
+        Object0 = MutableInterval0.clone();
+      }
+      Partial Partial0 = new Partial();
+      String String1 = Partial0.toString((String) null,(Locale) null);
+      MutableInterval MutableInterval1 = MutableInterval0.parse(String1);
+      DateTimeZone DateTimeZone0 = ZoneInfoProvider0.getZone(String1);
+      DateTime DateTime3 = DateTime2.parse(String1,(DateTimeFormatter) null);
+      Instant Instant3 = Instant0.parse(String1,(DateTimeFormatter) null);
+      PeriodFormatterBuilder PeriodFormatterBuilder3 = PeriodFormatterBuilder0.appendPrefix(String1);
+, 
+Sequence: 
+      DateTimeFormatter DateTimeFormatter0 = new DateTimeFormatter((DateTimePrinter) null,(DateTimeParser) null);
+      Instant Instant0 = new Instant();
+      Instant Instant2 = null;
+      for (int i=0; i<26; i++) {
+        Instant2 = Instant0.now();
+      }
+      DateTime DateTime1 = null;
+      for (int i=0; i<27; i++) {
+        DateTime1 = Instant0.toDateTimeISO();
+      }
+      YearMonthDay YearMonthDay5 = DateTime1.toYearMonthDay();
+      ZoneInfoProvider ZoneInfoProvider0 = new ZoneInfoProvider();
+      MonthDay MonthDay0 = new MonthDay();
+      MonthDay MonthDay4 = null;
+      for (int i=0; i<64; i++) {
+        MonthDay4 = MonthDay0.withChronologyRetainFields((Chronology) null);
+      }
+      Partial Partial0 = new Partial();
+      String String1 = Partial0.toString((String) null,(Locale) null);
+      MonthDay MonthDay6 = MonthDay0.parse(String1,(DateTimeFormatter) null);
+      DateTimeZone DateTimeZone1 = ZoneInfoProvider0.getZone(String1);
+      DateTime DateTime7 = DateTime1.now(DateTimeZone1);
+      DateTime DateTime11 = DateTime7.plus((ReadablePeriod) null);
+      DateTimeFormatter DateTimeFormatter1 = null;
+      for (int i=0; i<63; i++) {
+        DateTimeFormatter1 = DateTimeFormatter0.withZone(DateTimeZone1);
+      }
+, 
+Sequence: 
+      DateMidnight DateMidnight0 = new DateMidnight();
+      Property Property3 = DateMidnight0.monthOfYear();
+      DateMidnight DateMidnight2 = DateMidnight0.withZoneRetainFields((DateTimeZone) null);
+      LocalDate LocalDate4 = DateMidnight0.toLocalDate();
+, 
+Sequence: 
+      LocalDate LocalDate5 = new LocalDate();
+, 
+Sequence: 
+      PeriodFormatterBuilder PeriodFormatterBuilder0 = new PeriodFormatterBuilder();
+      PeriodFormatterBuilder PeriodFormatterBuilder2 = PeriodFormatterBuilder0.appendWeeks();
+      PeriodFormatter PeriodFormatter2 = PeriodFormatterBuilder0.toFormatter();
+, 
+Sequence: 
+      LocalDate LocalDate0 = new LocalDate();
+      Property Property6 = LocalDate0.centuryOfEra();
+      Date Date0 = LocalDate0.toDate();
+      Chronology Chronology1 = LocalDate0.getChronology();
+      DateTime DateTime13 = LocalDate0.toDateTimeAtCurrentTime();
+, 
+Sequence: 
+      DateMidnight DateMidnight0 = new DateMidnight();
+      Property Property3 = DateMidnight0.monthOfYear();
+      Instant Instant0 = new Instant();
+      Instant Instant2 = null;
+      for (int i=0; i<26; i++) {
+        Instant2 = Instant0.now();
+      }
+      DateTime DateTime1 = null;
+      for (int i=0; i<27; i++) {
+        DateTime1 = Instant0.toDateTimeISO();
+      }
+      YearMonthDay YearMonthDay5 = DateTime1.toYearMonthDay();
+      DateTime DateTime2 = null;
+      for (int i=0; i<74; i++) {
+        DateTime2 = DateTime1.withEarlierOffsetAtOverlap();
+      }
+      ZoneInfoProvider ZoneInfoProvider0 = new ZoneInfoProvider();
+      MutableInterval MutableInterval0 = new MutableInterval();
+      Object Object0 = null;
+      for (int i=0; i<86; i++) {
+        Object0 = MutableInterval0.clone();
+      }
+      Partial Partial0 = new Partial();
+      String String1 = Partial0.toString((String) null,(Locale) null);
+      MutableInterval MutableInterval1 = MutableInterval0.parse(String1);
+      DateTimeZone DateTimeZone0 = ZoneInfoProvider0.getZone(String1);
+      DateTime DateTime3 = DateTime2.parse(String1,(DateTimeFormatter) null);
+      DateMidnight DateMidnight4 = DateMidnight0.parse(String1);
+      DateTime DateTime6 = DateTime2.plus((ReadableDuration) null);
+      String String5 = Partial0.toString(String1,(Locale) null);
+, 
+Sequence: 
+      DateMidnight DateMidnight0 = new DateMidnight();
+      Property Property3 = DateMidnight0.monthOfYear();
+      LocalDate LocalDate2 = DateMidnight0.toLocalDate();
+      LocalDate LocalDate6 = DateMidnight0.toLocalDate();
+, 
+Sequence: 
+      LocalDate LocalDate0 = new LocalDate();
+      Property Property6 = LocalDate0.centuryOfEra();
+      Property Property7 = LocalDate0.era();
+      Property Property9 = LocalDate0.dayOfWeek();
+      Property Property14 = LocalDate0.dayOfYear();
+, 
+Sequence: 
+      DateMidnight DateMidnight0 = new DateMidnight();
+      Property Property3 = DateMidnight0.monthOfYear();
+      Instant Instant0 = new Instant();
+      Instant Instant2 = null;
+      for (int i=0; i<26; i++) {
+        Instant2 = Instant0.now();
+      }
+      DateTime DateTime1 = null;
+      for (int i=0; i<27; i++) {
+        DateTime1 = Instant0.toDateTimeISO();
+      }
+      YearMonthDay YearMonthDay5 = DateTime1.toYearMonthDay();
+      DateTime DateTime2 = null;
+      for (int i=0; i<74; i++) {
+        DateTime2 = DateTime1.withEarlierOffsetAtOverlap();
+      }
+      ZoneInfoProvider ZoneInfoProvider0 = new ZoneInfoProvider();
+      MutableInterval MutableInterval0 = new MutableInterval();
+      Object Object0 = null;
+      for (int i=0; i<86; i++) {
+        Object0 = MutableInterval0.clone();
+      }
+      Partial Partial0 = new Partial();
+      String String1 = Partial0.toString((String) null,(Locale) null);
+      MutableInterval MutableInterval1 = MutableInterval0.parse(String1);
+      DateTimeZone DateTimeZone0 = ZoneInfoProvider0.getZone(String1);
+      DateTime DateTime3 = DateTime2.parse(String1,(DateTimeFormatter) null);
+      DateMidnight DateMidnight4 = DateMidnight0.parse(String1);
+      DateTime DateTime6 = DateTime2.plus((ReadableDuration) null);
+      String String5 = Partial0.toString(String1,(Locale) null);
+      DateMidnight DateMidnight6 = DateMidnight0.plus((ReadablePeriod) null);
+, 
+Sequence: 
+      LocalDate LocalDate0 = new LocalDate();
+      Property Property6 = LocalDate0.centuryOfEra();
+      Date Date0 = LocalDate0.toDate();
+      LocalDate LocalDate7 = LocalDate0.withFields((ReadablePartial) null);
+, 
+Sequence: 
+      Instant Instant0 = new Instant();
+      Instant Instant2 = null;
+      for (int i=0; i<26; i++) {
+        Instant2 = Instant0.now();
+      }
+      DateTime DateTime1 = null;
+      for (int i=0; i<27; i++) {
+        DateTime1 = Instant0.toDateTimeISO();
+      }
+      YearMonthDay YearMonthDay5 = DateTime1.toYearMonthDay();
+      TimeOfDay TimeOfDay0 = DateTime1.toTimeOfDay();
+      LocalTime LocalTime0 = TimeOfDay0.toLocalTime();
+      ZoneInfoProvider ZoneInfoProvider0 = new ZoneInfoProvider();
+      MonthDay MonthDay0 = new MonthDay();
+      MonthDay MonthDay4 = null;
+      for (int i=0; i<64; i++) {
+        MonthDay4 = MonthDay0.withChronologyRetainFields((Chronology) null);
+      }
+      Partial Partial0 = new Partial();
+      String String1 = Partial0.toString((String) null,(Locale) null);
+      MonthDay MonthDay6 = MonthDay0.parse(String1,(DateTimeFormatter) null);
+      DateTimeZone DateTimeZone1 = ZoneInfoProvider0.getZone(String1);
+      String String3 = MonthDay0.toString(String1,(Locale) null);
+      DateTime DateTime14 = TimeOfDay0.toDateTimeToday(DateTimeZone1);
+, 
+Sequence: 
+      UTCProvider UTCProvider0 = new UTCProvider();
+, 
+Sequence: 
+      DateTimeFormatter DateTimeFormatter0 = new DateTimeFormatter((DateTimePrinter) null,(DateTimeParser) null);
+      MonthDay MonthDay0 = new MonthDay();
+      MonthDay MonthDay4 = null;
+      for (int i=0; i<64; i++) {
+        MonthDay4 = MonthDay0.withChronologyRetainFields((Chronology) null);
+      }
+      Partial Partial0 = new Partial();
+      String String1 = Partial0.toString((String) null,(Locale) null);
+      MonthDay MonthDay6 = MonthDay0.parse(String1,(DateTimeFormatter) null);
+      LocalTime LocalTime1 = DateTimeFormatter0.parseLocalTime(String1);
+      String String4 = LocalTime1.toString(String1);
+      Property Property15 = LocalTime1.millisOfSecond();
+, 
+Sequence: 
+      YearMonthDay YearMonthDay0 = new YearMonthDay();
+      YearMonthDay YearMonthDay1 = null;
+      for (int i=0; i<22; i++) {
+        YearMonthDay1 = YearMonthDay0.minus((ReadablePeriod) null);
+      }
+      YearMonthDay YearMonthDay2 = null;
+      for (int i=0; i<21; i++) {
+        YearMonthDay2 = YearMonthDay0.fromCalendarFields((Calendar) null);
+      }
+      DateTime DateTime0 = YearMonthDay0.toDateTime((TimeOfDay) null,(DateTimeZone) null);
+      YearMonthDay YearMonthDay3 = null;
+      for (int i=0; i<31; i++) {
+        YearMonthDay3 = YearMonthDay0.fromCalendarFields((Calendar) null);
+      }
+      ZoneInfoProvider ZoneInfoProvider0 = new ZoneInfoProvider();
+      MonthDay MonthDay0 = new MonthDay();
+      MonthDay MonthDay4 = null;
+      for (int i=0; i<64; i++) {
+        MonthDay4 = MonthDay0.withChronologyRetainFields((Chronology) null);
+      }
+      Partial Partial0 = new Partial();
+      String String1 = Partial0.toString((String) null,(Locale) null);
+      MonthDay MonthDay6 = MonthDay0.parse(String1,(DateTimeFormatter) null);
+      DateTimeZone DateTimeZone1 = ZoneInfoProvider0.getZone(String1);
+      String String3 = MonthDay0.toString(String1,(Locale) null);
+      Interval Interval0 = YearMonthDay0.toInterval(DateTimeZone1);
+      DateTime DateTime15 = YearMonthDay0.toDateTimeAtCurrentTime();
+, 
+Sequence: 
+      LocalDate LocalDate0 = new LocalDate();
+      DateTime DateTime16 = LocalDate0.toDateTimeAtCurrentTime();
+, 
+Sequence: 
+      DateTimeFormatter DateTimeFormatter0 = new DateTimeFormatter((DateTimePrinter) null,(DateTimeParser) null);
+      MonthDay MonthDay0 = new MonthDay();
+      MonthDay MonthDay4 = null;
+      for (int i=0; i<64; i++) {
+        MonthDay4 = MonthDay0.withChronologyRetainFields((Chronology) null);
+      }
+      Partial Partial0 = new Partial();
+      String String1 = Partial0.toString((String) null,(Locale) null);
+      MonthDay MonthDay6 = MonthDay0.parse(String1,(DateTimeFormatter) null);
+      LocalTime LocalTime1 = DateTimeFormatter0.parseLocalTime(String1);
+      String String4 = LocalTime1.toString(String1);
+      DateTimeFormatter DateTimeFormatter2 = Partial0.getFormatter();
+, 
+Sequence: 
+      YearMonthDay YearMonthDay0 = new YearMonthDay();
+      YearMonthDay YearMonthDay1 = null;
+      for (int i=0; i<22; i++) {
+        YearMonthDay1 = YearMonthDay0.minus((ReadablePeriod) null);
+      }
+      YearMonthDay YearMonthDay2 = null;
+      for (int i=0; i<21; i++) {
+        YearMonthDay2 = YearMonthDay0.fromCalendarFields((Calendar) null);
+      }
+      DateTime DateTime0 = YearMonthDay0.toDateTime((TimeOfDay) null,(DateTimeZone) null);
+      YearMonthDay YearMonthDay3 = null;
+      for (int i=0; i<31; i++) {
+        YearMonthDay3 = YearMonthDay0.fromCalendarFields((Calendar) null);
+      }
+      ZoneInfoProvider ZoneInfoProvider0 = new ZoneInfoProvider();
+      MonthDay MonthDay0 = new MonthDay();
+      MonthDay MonthDay4 = null;
+      for (int i=0; i<64; i++) {
+        MonthDay4 = MonthDay0.withChronologyRetainFields((Chronology) null);
+      }
+      Partial Partial0 = new Partial();
+      String String1 = Partial0.toString((String) null,(Locale) null);
+      MonthDay MonthDay6 = MonthDay0.parse(String1,(DateTimeFormatter) null);
+      DateTimeZone DateTimeZone1 = ZoneInfoProvider0.getZone(String1);
+      String String3 = MonthDay0.toString(String1,(Locale) null);
+      Interval Interval0 = YearMonthDay0.toInterval(DateTimeZone1);
+      YearMonthDay YearMonthDay8 = YearMonthDay0.fromCalendarFields((Calendar) null);
+, 
+Sequence: 
+      Instant Instant0 = new Instant();
+      Instant Instant2 = null;
+      for (int i=0; i<26; i++) {
+        Instant2 = Instant0.now();
+      }
+      DateTime DateTime1 = null;
+      for (int i=0; i<27; i++) {
+        DateTime1 = Instant0.toDateTimeISO();
+      }
+      Property Property4 = DateTime1.hourOfDay();
+      Property Property16 = DateTime1.weekyear();
+, 
+Sequence: 
+      Instant Instant0 = new Instant();
+      Instant Instant2 = null;
+      for (int i=0; i<26; i++) {
+        Instant2 = Instant0.now();
+      }
+      DateTime DateTime1 = null;
+      for (int i=0; i<27; i++) {
+        DateTime1 = Instant0.toDateTimeISO();
+      }
+      YearMonthDay YearMonthDay5 = DateTime1.toYearMonthDay();
+      TimeOfDay TimeOfDay0 = DateTime1.toTimeOfDay();
+      LocalTime LocalTime0 = TimeOfDay0.toLocalTime();
+      ZoneInfoProvider ZoneInfoProvider0 = new ZoneInfoProvider();
+      MonthDay MonthDay0 = new MonthDay();
+      MonthDay MonthDay4 = null;
+      for (int i=0; i<64; i++) {
+        MonthDay4 = MonthDay0.withChronologyRetainFields((Chronology) null);
+      }
+      Partial Partial0 = new Partial();
+      String String1 = Partial0.toString((String) null,(Locale) null);
+      MonthDay MonthDay6 = MonthDay0.parse(String1,(DateTimeFormatter) null);
+      DateTimeZone DateTimeZone1 = ZoneInfoProvider0.getZone(String1);
+      String String3 = MonthDay0.toString(String1,(Locale) null);
+      DateTime DateTime14 = TimeOfDay0.toDateTimeToday(DateTimeZone1);
+      DateTime DateTime17 = DateTime1.now(DateTimeZone1);
+, 
+Sequence: 
+      YearMonthDay YearMonthDay0 = new YearMonthDay();
+      YearMonthDay YearMonthDay1 = null;
+      for (int i=0; i<22; i++) {
+        YearMonthDay1 = YearMonthDay0.minus((ReadablePeriod) null);
+      }
+      YearMonthDay YearMonthDay2 = null;
+      for (int i=0; i<21; i++) {
+        YearMonthDay2 = YearMonthDay0.fromCalendarFields((Calendar) null);
+      }
+      DateTime DateTime0 = YearMonthDay0.toDateTime((TimeOfDay) null,(DateTimeZone) null);
+      YearMonthDay YearMonthDay3 = null;
+      for (int i=0; i<31; i++) {
+        YearMonthDay3 = YearMonthDay0.fromCalendarFields((Calendar) null);
+      }
+      ZoneInfoProvider ZoneInfoProvider0 = new ZoneInfoProvider();
+      MonthDay MonthDay0 = new MonthDay();
+      MonthDay MonthDay4 = null;
+      for (int i=0; i<64; i++) {
+        MonthDay4 = MonthDay0.withChronologyRetainFields((Chronology) null);
+      }
+      Partial Partial0 = new Partial();
+      String String1 = Partial0.toString((String) null,(Locale) null);
+      MonthDay MonthDay6 = MonthDay0.parse(String1,(DateTimeFormatter) null);
+      DateTimeZone DateTimeZone1 = ZoneInfoProvider0.getZone(String1);
+      String String3 = MonthDay0.toString(String1,(Locale) null);
+      Interval Interval0 = YearMonthDay0.toInterval(DateTimeZone1);
+      YearMonthDay YearMonthDay8 = YearMonthDay0.fromCalendarFields((Calendar) null);
+      Instant Instant0 = new Instant();
+      Instant Instant2 = null;
+      for (int i=0; i<26; i++) {
+        Instant2 = Instant0.now();
+      }
+      DateTime DateTime1 = null;
+      for (int i=0; i<27; i++) {
+        DateTime1 = Instant0.toDateTimeISO();
+      }
+      YearMonthDay YearMonthDay5 = DateTime1.toYearMonthDay();
+      Chronology Chronology0 = Instant0.getChronology();
+      MonthDay MonthDay8 = MonthDay0.withChronologyRetainFields(Chronology0);
+, 
+Sequence: 
+      DateMidnight DateMidnight0 = new DateMidnight();
+      Property Property3 = DateMidnight0.monthOfYear();
+      Instant Instant0 = new Instant();
+      Instant Instant2 = null;
+      for (int i=0; i<26; i++) {
+        Instant2 = Instant0.now();
+      }
+      DateTime DateTime1 = null;
+      for (int i=0; i<27; i++) {
+        DateTime1 = Instant0.toDateTimeISO();
+      }
+      YearMonthDay YearMonthDay5 = DateTime1.toYearMonthDay();
+      DateTime DateTime2 = null;
+      for (int i=0; i<74; i++) {
+        DateTime2 = DateTime1.withEarlierOffsetAtOverlap();
+      }
+      ZoneInfoProvider ZoneInfoProvider0 = new ZoneInfoProvider();
+      MutableInterval MutableInterval0 = new MutableInterval();
+      Object Object0 = null;
+      for (int i=0; i<86; i++) {
+        Object0 = MutableInterval0.clone();
+      }
+      Partial Partial0 = new Partial();
+      String String1 = Partial0.toString((String) null,(Locale) null);
+      MutableInterval MutableInterval1 = MutableInterval0.parse(String1);
+      DateTimeZone DateTimeZone0 = ZoneInfoProvider0.getZone(String1);
+      DateTime DateTime3 = DateTime2.parse(String1,(DateTimeFormatter) null);
+      DateMidnight DateMidnight4 = DateMidnight0.parse(String1);
+      DateTime DateTime6 = DateTime2.plus((ReadableDuration) null);
+      String String5 = Partial0.toString(String1,(Locale) null);
+      DateMidnight DateMidnight6 = DateMidnight0.plus((ReadablePeriod) null);
+      Property Property17 = DateMidnight0.yearOfEra();
+, 
+Sequence: 
+      PeriodFormatterBuilder PeriodFormatterBuilder0 = new PeriodFormatterBuilder();
+      PeriodFormatterBuilder PeriodFormatterBuilder4 = null;
+      for (int i=0; i<95; i++) {
+        PeriodFormatterBuilder4 = PeriodFormatterBuilder0.appendHours();
+      }
+>>>>>>> Stashed changes
 ]
