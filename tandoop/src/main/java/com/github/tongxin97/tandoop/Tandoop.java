@@ -4,6 +4,8 @@ import java.util.*;
 import java.io.*;
 import java.util.stream.Collectors;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.net.URLClassLoader;
 import java.net.URL;
 
@@ -34,8 +36,10 @@ public class Tandoop {
 
     public URLClassLoader classLoader;
 
-    String srcDir;
-    String prjDir;
+    private String srcDir;
+    private String prjDir;
+
+    private int numFailedTests;
 
     public Tandoop(String srcDir, String prjDir) throws Exception {
         if (srcDir == null || prjDir == null) {
@@ -51,6 +55,8 @@ public class Tandoop {
 
         this.srcDir = srcDir;
         this.prjDir = prjDir;
+
+        this.numFailedTests = 0;
 
         MethodParser.parseAndResolveDirectory(srcDir, prjDir, this.methodPool);
         // System.out.println(this.methodPool);
@@ -334,6 +340,9 @@ public class Tandoop {
             Object result = newSeq.runTest(this.prjDir, this.classLoader);
             if (result.toString().startsWith("[Tandoop] E: ") || result.toString().startsWith("[Tandoop] C: ")) {
                 writeErrTestsToFile();
+                errorSeqs.add(newSeq);
+                Files.move(Paths.get("src/test/java/com/github/tongxin97/tandoop/TandoopTest.java"), Paths.get("failed_test_classes/TandoopTest" + String.valueOf(numFailedTests) + ".java")); 
+            } else if (result.toString().startsWith("[Tandoop] C: ")) {
                 errorSeqs.add(newSeq);
             } else {
                 nonErrorSeqs.add(newSeq);
