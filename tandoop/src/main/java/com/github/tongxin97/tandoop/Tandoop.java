@@ -41,6 +41,8 @@ public class Tandoop {
 
     private int numFailedTests;
 
+    final private String tandoopTestFile = "src/test/java/com/github/tongxin97/tandoop/TandoopTest.java";
+
     public Tandoop(String srcDir, String prjDir) throws Exception {
         if (srcDir == null || prjDir == null) {
             throw new IllegalArgumentException(
@@ -277,10 +279,10 @@ public class Tandoop {
         }
     }
 
+    // TODO: generate junit test
     private void writeErrTestsToFile() {
         try {
-            String inFile = "src/test/java/com/github/tongxin97/tandoop/TandoopTest.java";
-            BufferedReader r = new BufferedReader(new FileReader(inFile));
+            BufferedReader r = new BufferedReader(new FileReader(tandoopTestFile));
             String outFile = String.format("%s/src/test/java/TandoopTest%d.java", this.prjDir, errorSeqs.size());
             BufferedWriter w = new BufferedWriter(new FileWriter(outFile));
             String line;
@@ -341,7 +343,6 @@ public class Tandoop {
             if (result.toString().startsWith("[Tandoop] E: ") || result.toString().startsWith("[Tandoop] C: ")) {
                 writeErrTestsToFile();
                 errorSeqs.add(newSeq);
-                Files.move(Paths.get("src/test/java/com/github/tongxin97/tandoop/TandoopTest.java"), Paths.get("failed_test_classes/TandoopTest" + String.valueOf(numFailedTests) + ".java")); 
             } else if (result.toString().startsWith("[Tandoop] C: ")) {
                 errorSeqs.add(newSeq);
             } else {
@@ -365,5 +366,8 @@ public class Tandoop {
             System.out.println("-----------------------");
         }
         writeSeqsToFile();
+        // remove TandoopTest.java
+        File testFile = new File(tandoopTestFile);
+        testFile.delete();
     }
 }
