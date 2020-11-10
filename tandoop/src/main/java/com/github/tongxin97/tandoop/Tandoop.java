@@ -271,6 +271,24 @@ public class Tandoop {
         }
     }
 
+    private void writeErrTestsToFile() {
+        try {
+            String inFile = "src/test/java/com/github/tongxin97/tandoop/TandoopTest.java";
+            BufferedReader r = new BufferedReader(new FileReader(inFile));
+            String outFile = String.format("%s/src/test/java/TandoopTest%d.java", this.prjDir, errorSeqs.size());
+            BufferedWriter w = new BufferedWriter(new FileWriter(outFile));
+            String line;
+            while ((line = r.readLine()) != null) {
+                line = line.replaceAll("TandoopTest", String.format("TandoopTest%d", errorSeqs.size()));
+                w.write(line);
+            }
+            r.close();
+            w.close();
+        } catch (Exception e) {
+            System.err.println("Failed to write error test: " + e.getMessage());
+        }
+    }
+
     // TODO add arguments: contracts, filters, timeLimits
     public void generateSequence(long timeLimits) throws Exception {
         long startTime = System.currentTimeMillis();
@@ -315,10 +333,10 @@ public class Tandoop {
             newSeq.generateTest();
             Object result = newSeq.runTest(this.prjDir, this.classLoader);
             if (result.toString().startsWith("[Tandoop] E: ") || result.toString().startsWith("[Tandoop] C: ")) {
+                writeErrTestsToFile();
                 errorSeqs.add(newSeq);
             } else {
                 nonErrorSeqs.add(newSeq);
-
                 setExtensibleFlag(newSeq, method, var, result);
                 if (var.Extensible) {
                     String returnType = method.getReturnType();

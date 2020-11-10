@@ -194,14 +194,15 @@ public class MethodParser {
     return isAbstractClass || !isPublicClass;
   }
 
+  // TODO: handle static method differently
   private class MethodCollector extends VoidVisitorAdapter<List<MethodInfo>> {
     @Override
     public void visit(MethodDeclaration md, List<MethodInfo> collector) {
       super.visit(md, collector);
 
-      // Skip if method is private
-      if (md.getModifiers().contains(Modifier.Keyword.PRIVATE)) {
-        // System.out.println("Encountered private method: " + md.getNameAsString());
+      // Skip if method is abstract or non-public
+      if (checkModifier(md, Modifier.Keyword.ABSTRACT) || !checkModifier(md, Modifier.Keyword.PUBLIC)) {
+        // System.out.println("Encountered abstract or non-public method: " + md.getNameAsString());
         return;
       }
       String methodName = md.getNameAsString();

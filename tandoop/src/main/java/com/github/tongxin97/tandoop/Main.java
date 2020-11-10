@@ -50,12 +50,26 @@ public class Main {
       File testClassDir = new File("target/test-classes");
       testClassDir.mkdir();
 
-      Tandoop tandoop = new Tandoop(cmd.getOptionValue("src"), prjDir);
-      tandoop.generateSequence(60*1000);
+      // remove previously genereated error tests
+      File folder = new File(String.format("%s/src/test/java/", prjDir));
+      File[] files = folder.listFiles( new FilenameFilter() {
+        @Override
+        public boolean accept(final File dir, final String name) {
+          return name.matches("^TandoopTest.*\\.java");
+        }
+      });
+      for (File f: files) {
+        if (!f.delete()) {
+          System.err.println("Can't remove " + f.getAbsolutePath());
+        }
+      }
 
-      // TODO: Check if need test file
-      // File testFile = new File("src/test/java/com/github/tongxin97/tandoop/TandoopTest.java");
-      // testFile.delete();
+      Tandoop tandoop = new Tandoop(cmd.getOptionValue("src"), prjDir);
+      tandoop.generateSequence(20*1000);
+
+      // remove TandoopTest.java
+      File testFile = new File("src/test/java/com/github/tongxin97/tandoop/TandoopTest.java");
+      testFile.delete();
 
     } catch (ParseException e) {
       System.err.println( "Unexpected exception:" + e.getMessage() );
