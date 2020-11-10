@@ -288,7 +288,7 @@ public class Tandoop {
             String line;
             while ((line = r.readLine()) != null) {
                 line = line.replaceAll("TandoopTest", String.format("TandoopTest%d", errorSeqs.size()));
-                w.write(line);
+                w.write(line + "\n");
             }
             r.close();
             w.close();
@@ -367,7 +367,7 @@ public class Tandoop {
         }
         writeSeqsToFile();
         // remove TandoopTest.java
-        File testFile = new File(tandoopTestFile);
-        testFile.delete();
+//        File testFile = new File(tandoopTestFile);
+//        testFile.delete();
     }
 }
