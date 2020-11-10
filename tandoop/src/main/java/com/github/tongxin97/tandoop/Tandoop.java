@@ -333,7 +333,7 @@ public class Tandoop {
                     System.out.printf("Non-extensible val: %s\n ", var.Val);
                 }
             }
-            System.out.println("---------------------");
+            System.out.println("-----------------------");
         }
         writeSeqsToFile();
     }
