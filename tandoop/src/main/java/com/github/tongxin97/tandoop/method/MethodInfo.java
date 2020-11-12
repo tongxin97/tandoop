@@ -34,6 +34,13 @@ public class MethodInfo {
         this.parameterTypes = new ArrayList<>();
     }
 
+    public String getFullyQualifiedMethodName() {
+        if (this.ClassName != this.Name) {
+            return this.PackageName + "." + this.ClassName + "." + this.Name;
+        }
+        return this.PackageName + "." + this.ClassName;
+    }
+
     public void addParameterType(String t) {
         this.parameterTypes.add(t);
     }
@@ -60,8 +67,8 @@ public class MethodInfo {
         return this.parameterTypes;
     }
 
-    public String getSimpleParameterTypeAtIdx(int i) {
-        return Str.getLastElementAfterSplit(this.parameterTypes.get(i), "\\.").replaceAll(">", "");
+    public String getParameterTypeAtIdx(int i) {
+        return this.parameterTypes.get(i);
     }
 
     public boolean IsConstructor() {

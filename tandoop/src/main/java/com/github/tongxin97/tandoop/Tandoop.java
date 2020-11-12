@@ -41,7 +41,7 @@ public class Tandoop {
 
     private int numFailedTests;
 
-    final private String tandoopTestFile = "src/test/java/com/github/tongxin97/tandoop/TandoopTest.java";
+    final public static String tandoopTestFile = "src/test/java/com/github/tongxin97/tandoop/TandoopTest.java";
 
     public Tandoop(String srcDir, String prjDir) throws Exception {
         if (srcDir == null || prjDir == null) {
@@ -178,14 +178,14 @@ public class Tandoop {
         // otherwise, sentence = Type Type1 = p0.methodName(p1,p2,...);\n
         StringBuilder b = new StringBuilder();
         if (method.returnType == null || !method.returnType.equals("void")) {
-            b.append(String.format("      %s %s = ", method.getSimpleReturnType(), var.getContent()));
+            b.append(String.format("      %s %s = ", method.getReturnType(), var.getContent()));
             newSeq.NewVar = var.getContent();
         }
         String typeDeclaration = b.toString();
 
         int start;
         if (method.IsConstructor()) {
-            b.append(String.format("new %s(", method.Name));
+            b.append(String.format("new %s(", method.getFullyQualifiedMethodName()));
             start = 0;
         } else {
             b.append(String.format("%s.%s(", vals.get(0).getContent(), method.Name));
@@ -196,7 +196,7 @@ public class Tandoop {
                 b.append(',');
             }
             if (vals.get(i) == null) {
-                b.append(String.format("(%s) null", method.getSimpleParameterTypeAtIdx(i)));
+                b.append(String.format("(%s) null", method.getParameterTypeAtIdx(i)));
                 newSeq.InputParamsWithNull = true;
             } else {
                 b.append(vals.get(i).getContent());
@@ -226,18 +226,6 @@ public class Tandoop {
         return repeatedStatement.toString();
     }
 
-    private void addImportStatement(String t, Sequence newSeq) {
-        if (!t.startsWith("java.lang")) { // if type is not included in the Java language
-            Set<String> nestedTypes = new HashSet<>();
-            Str.parseNestedTypes(t, nestedTypes);
-            for (String type: nestedTypes) {
-                if (!type.startsWith("java.lang")) { // if type is not included in the Java language
-                    newSeq.addImport(String.format("import %s;\n", type));
-                }
-            }
-        }
-    }
-
     public Sequence extend(MethodInfo method, VarInfo var, Set<Sequence> seqs, List<ValueInfo> vals) {
         Sequence newSeq = new Sequence();
         // merge seqs to one seq: methods, vals, and executable sequence string
@@ -252,13 +240,6 @@ public class Tandoop {
         }
         // add new method to newSeq
         newSeq.addMethod(method);
-        // add import statement for method
-        newSeq.addImport(String.format("import %s.%s;\n", method.PackageName, method.ClassName));
-        // add import statements for parameter types and return type
-        for (String t: method.getParameterTypes()) {
-            addImportStatement(t, newSeq);
-        }
-        addImportStatement(method.getReturnType(), newSeq);
 
         String newStatements = this.genNewStatements(method, newSeq, var, vals);
         System.out.println("New statements:\n " + newStatements);
@@ -276,24 +257,6 @@ public class Tandoop {
             writer.close();
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    // TODO: generate junit test
-    private void writeErrTestsToFile() {
-        try {
-            BufferedReader r = new BufferedReader(new FileReader(tandoopTestFile));
-            String outFile = String.format("%s/src/test/java/TandoopTest%d.java", this.prjDir, errorSeqs.size());
-            BufferedWriter w = new BufferedWriter(new FileWriter(outFile));
-            String line;
-            while ((line = r.readLine()) != null) {
-                line = line.replaceAll("TandoopTest", String.format("TandoopTest%d", errorSeqs.size()));
-                w.write(line + "\n");
-            }
-            r.close();
-            w.close();
-        } catch (Exception e) {
-            System.err.println("Failed to write error test: " + e.getMessage());
         }
     }
 
@@ -341,7 +304,10 @@ public class Tandoop {
             newSeq.generateTest();
             Object result = newSeq.runTest(this.prjDir, this.classLoader);
             if (result.toString().startsWith("[Tandoop] E: ") || result.toString().startsWith("[Tandoop] C: ")) {
-                writeErrTestsToFile();
+                newSeq.generateJUnitTest(
+                        String.format("%s/src/test/java/", this.prjDir),
+                        String.format("TandoopTest%d", errorSeqs.size())
+                );
                 errorSeqs.add(newSeq);
             } else if (result.toString().startsWith("[Tandoop] C: ")) {
                 errorSeqs.add(newSeq);
@@ -355,7 +321,6 @@ public class Tandoop {
                         this.valuePool.get(returnType).addValue(var.Val);
                     } else {
                         boolean isPrimitiveType = result.getClass().isPrimitive();
-                        // boolean isPrimitiveType = Class.forName(returnType, true, this.classLoader).isPrimitive();
                         this.valuePool.put(returnType, new TypedValuePool(returnType, isPrimitiveType, Arrays.asList(var.Val)));
                     }
                     System.out.println("Added extensible val:" + var.Val);
@@ -367,7 +332,7 @@ public class Tandoop {
         }
         writeSeqsToFile();
         // remove TandoopTest.java
-//        File testFile = new File(tandoopTestFile);
-//        testFile.delete();
+        File testFile = new File(tandoopTestFile);
+        testFile.delete();
     }
 }

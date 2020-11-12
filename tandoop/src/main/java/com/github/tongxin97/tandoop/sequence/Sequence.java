@@ -15,6 +15,7 @@ import java.io.*;
 import com.github.tongxin97.tandoop.method.MethodInfo;
 import com.github.tongxin97.tandoop.util.Rand;
 import com.github.tongxin97.tandoop.value.ValueInfo;
+import com.github.tongxin97.tandoop.Tandoop;
 
 /**
  * The class that stores a sequence
@@ -109,11 +110,11 @@ public class Sequence {
 	 * Generate a test and writes it to testDir/TandoopTest.java
 	 * Add contract checking into the test itself.
 	 */
-	public void generateTest() throws Exception {
+	public void generateTest() {
 		StringBuilder testString = new StringBuilder("");
-		for (String s: this.Imports) {
-			testString.append(s);
-		}
+//		for (String s: this.Imports) {
+//			testString.append(s);
+//		}
 		testString.append("\npublic class TandoopTest {\n");
 		testString.append("  public static Object test() {\n");
 		testString.append("    try {\n");
@@ -135,14 +136,46 @@ public class Sequence {
 		testString.append("}");
 
 		try {
-			String filename = "src/test/java/com/github/tongxin97/tandoop/TandoopTest.java";
-			BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
+			BufferedWriter writer = new BufferedWriter(new FileWriter(Tandoop.tandoopTestFile));
 			writer.write(testString.toString());
 			writer.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+	}
+
+	public void generateJUnitTest(String testDir, String testClass) {
+		StringBuilder testString = new StringBuilder("");
+		testString.append("import org.junit.Test;\n");
+		testString.append("import static org.junit.Assert.assertTrue;\n");
+//		for (String s: this.Imports) {
+//			testString.append(s);
+//		}
+		testString.append("\npublic class " + testClass + "{\n  @Test\n  public void test() {\n    try {\n");
+
+		StringBuilder postTestString = new StringBuilder("");
+		postTestString.append("      assertTrue(" + this.NewVar + ".equals(" + this.NewVar + "));\n");
+		postTestString.append("      " + this.NewVar + ".hashCode();\n");
+		postTestString.append("      " + this.NewVar + ".toString();\n");
+		postTestString.append("    }\n");
+		if (!this.InputParamsWithNull) {
+			postTestString.append("    catch (NullPointerException e) {}\n");
+		}
+		postTestString.append("    catch (Throwable t) { System.out.println(t.toString()); }\n");
+		postTestString.append("  }\n}");
+
+		testString.append(this.ExcSeq);
+		testString.append(postTestString);
+
+		try {
+			String filename = testDir + testClass + ".java";
+			BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
+			writer.write(testString.toString());
+			writer.close();
+		} catch (Exception e) {
+			System.err.println("Failed to write junit test: " + e.getMessage());
+			e.printStackTrace();
+		}
 	}
 
 	public Object runTest(String prjDir, ClassLoader parentClassLoader) throws Exception {
