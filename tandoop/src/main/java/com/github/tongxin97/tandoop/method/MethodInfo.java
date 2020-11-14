@@ -24,16 +24,6 @@ public class MethodInfo {
         this.parameterTypes = new ArrayList<>();
     }
 
-    public MethodInfo(List<String> params) throws IllegalArgumentException {
-        if (params == null || params.size() != 3) {
-            throw new IllegalArgumentException("Invalid argument to MethodInfo()");
-        }
-        this.Name = params.get(0);
-        this.ClassName = params.get(1);
-        this.PackageName = params.get(2);
-        this.parameterTypes = new ArrayList<>();
-    }
-
     public String getFullyQualifiedMethodName() {
         if (this.ClassName != this.Name) {
             return this.PackageName + "." + this.ClassName + "." + this.Name;
