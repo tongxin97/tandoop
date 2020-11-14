@@ -112,19 +112,16 @@ public class Sequence {
 	 */
 	public void generateTest() {
 		StringBuilder testString = new StringBuilder("");
-//		for (String s: this.Imports) {
-//			testString.append(s);
-//		}
 		testString.append("\npublic class TandoopTest {\n");
 		testString.append("  public static Object test() {\n");
 		testString.append("    try {\n");
 		testString.append(this.ExcSeq);
+		testString.append("      if (" + this.NewVar + " == null) { return \"[Tandoop] F: null\"; }\n");
 		testString.append("      try {\n");
 		testString.append("        assert(" + this.NewVar + ".equals(" + this.NewVar + "));\n");
 		testString.append("        " + this.NewVar + ".hashCode();\n");
 		testString.append("        " + this.NewVar + ".toString();\n");
 		testString.append("      } catch (Exception e) { return \"[Tandoop] C: \" + e; }\n");
-		testString.append("      if (null == " + this.NewVar + ") { return \"[Tandoop] F: null\"; }\n");
 		testString.append("      return " + this.NewVar + ";\n");
 		testString.append("    }\n");
 		testString.append("    catch (AssertionError e) { return \"[Tandoop] C: \" + e; }\n");
@@ -148,24 +145,23 @@ public class Sequence {
 		StringBuilder testString = new StringBuilder("");
 		testString.append("import org.junit.Test;\n");
 		testString.append("import static org.junit.Assert.assertTrue;\n");
-//		for (String s: this.Imports) {
-//			testString.append(s);
-//		}
+		testString.append("import static org.junit.Assert.fail;\n");
 		testString.append("\npublic class " + testClass + "{\n  @Test\n  public void test() {\n    try {\n");
-
-		StringBuilder postTestString = new StringBuilder("");
-		postTestString.append("      assertTrue(" + this.NewVar + ".equals(" + this.NewVar + "));\n");
-		postTestString.append("      " + this.NewVar + ".hashCode();\n");
-		postTestString.append("      " + this.NewVar + ".toString();\n");
-		postTestString.append("    }\n");
-		if (!this.InputParamsWithNull) {
-			postTestString.append("    catch (NullPointerException e) {}\n");
-		}
-		postTestString.append("    catch (Throwable t) { System.out.println(t.toString()); }\n");
-		postTestString.append("  }\n}");
-
 		testString.append(this.ExcSeq);
-		testString.append(postTestString);
+		testString.append("      if (" + this.NewVar + " == null) { System.out.println(\"" + this.NewVar + " is null.\\n\"); return; }\n");
+		testString.append("      try {\n");
+		testString.append("      	assertTrue(" + this.NewVar + ".equals(" + this.NewVar + "));\n");
+		testString.append("      	" + this.NewVar + ".hashCode();\n");
+		testString.append("      	" + this.NewVar + ".toString();\n");
+		testString.append("      } catch (Exception e) { e.printStackTrace(); fail(e.getMessage()); } \n");
+		testString.append("   }\n");
+		testString.append("    catch (AssertionError e) { e.printStackTrace(); fail(e.getMessage()); }\n");
+		if (!this.InputParamsWithNull) {
+			testString.append("    catch (NullPointerException e) { e.printStackTrace(); fail(e.getMessage()); }\n");
+		}
+		testString.append("    catch (Exception e) { e.printStackTrace(); }\n");
+		testString.append("  }\n");
+		testString.append("}");
 
 		try {
 			String filename = testDir + testClass + ".java";
