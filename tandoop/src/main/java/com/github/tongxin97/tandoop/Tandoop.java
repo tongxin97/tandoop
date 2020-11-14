@@ -303,15 +303,14 @@ public class Tandoop {
 
             newSeq.generateTest();
             Object result = newSeq.runTest(this.prjDir, this.classLoader);
-            // QUESTION
             if (result.toString().startsWith("[Tandoop] E: ") || result.toString().startsWith("[Tandoop] C: ")) {
                 newSeq.generateJUnitTest(
                         String.format("%s/src/test/java/", this.prjDir),
                         String.format("TandoopErrTest%d", errorSeqs.size())
                 );
-                errorSeqs.add(newSeq);
-            } else if (result.toString().startsWith("[Tandoop] C: ")) {
-                errorSeqs.add(newSeq);
+                if (result.toString().startsWith("[Tandoop] C: ")) {
+                    errorSeqs.add(newSeq);
+                }
             } else {
 //                newSeq.generateJUnitTest(
 //                        String.format("%s/src/test/java/", this.prjDir),
