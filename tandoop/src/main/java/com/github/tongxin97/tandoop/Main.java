@@ -13,6 +13,7 @@ public class Main {
     Options options = new Options();
     options.addOption("src", "srcDir", true, "Project src directory");
     options.addOption("prj", "projectDir", true, "Project directory");
+    options.addOption("limit", "timeLimit", true, "Time limit to run Tandoop for in seconds");
 
     try {
       // parse cmdline arguments
@@ -23,6 +24,10 @@ public class Main {
       }
       if (!cmd.hasOption("prj")) {
         System.err.println("Project directory not provided.");
+        return;
+      }
+      if (!cmd.hasOption("limit")) {
+        System.err.println("Time limit not provided.");
         return;
       }
 
@@ -51,21 +56,25 @@ public class Main {
       testClassDir.mkdir();
 
       // remove previously genereated error tests
-      File folder = new File(String.format("%s/src/test/java/", prjDir));
-      File[] files = folder.listFiles( new FilenameFilter() {
+      File testOutputDir = new File(String.format("%s/src/test/java", prjDir));
+      File[] files = testOutputDir.listFiles( new FilenameFilter() {
         @Override
         public boolean accept(final File dir, final String name) {
           return name.matches("^TandoopTest.*\\.java");
         }
       });
-      for (File f: files) {
-        if (!f.delete()) {
-          System.err.println("Can't remove " + f.getAbsolutePath());
+      if (files != null) {
+        for (File f: files) {
+          if (!f.delete()) {
+            System.err.println("Can't remove " + f.getAbsolutePath());
+          }
         }
       }
+      testOutputDir.mkdir();
 
       Tandoop tandoop = new Tandoop(cmd.getOptionValue("src"), prjDir);
-      tandoop.generateSequence(20*1000);
+      int timeLimit = Integer.parseInt(cmd.getOptionValue("limit"));
+      tandoop.generateSequence(timeLimit*1000);
 
     } catch (ParseException e) {
       System.err.println( "Unexpected exception:" + e.getMessage() );
