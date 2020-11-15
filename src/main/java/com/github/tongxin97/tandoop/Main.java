@@ -9,6 +9,11 @@ import java.io.*;
 
 public class Main {
   public static void main(String[] args) throws Exception {
+    System.out.println("------ Start Coverage testing ------");
+    // new CoverageAnalyzer(prjDir, System.out, this.classLoader).execute();
+    new CoverageAnalyzer(System.out).execute();
+    System.out.println("------ Finished Coverage testing ------");
+
     CommandLineParser parser = new DefaultParser();
     Options options = new Options();
     options.addOption("src", "srcDir", true, "Project src directory");

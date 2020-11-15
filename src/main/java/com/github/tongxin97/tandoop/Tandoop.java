@@ -68,17 +68,12 @@ public class Tandoop {
         // load target project dependencies
         File dir = new File(this.prjDir + "/target/dependency");
         File[] dirListing = dir.listFiles();
-        URL[] urls = new URL[dirListing.length + 1];
+        URL[] urls = new URL[dirListing.length];
         for (int i = 0; i < dirListing.length; ++i) {
             urls[i] = dirListing[i].toURI().toURL();
-            System.out.println(urls[i].toString());
         }
-        urls[dirListing.length] = new File(this.prjDir + "/target/classes").toURI().toURL();
+        // urls[dirListing.length] = new File(this.prjDir + "/target/classes").toURI().toURL();
         this.classLoader = new URLClassLoader(urls, this.getClass().getClassLoader());
-
-        System.out.println("------ Start Coverage testing ------");
-        new CoverageAnalyzer(prjDir, System.out, this.classLoader).execute();
-        System.out.println("------ Finished Coverage testing ------");
     }
 
     private void setExtensibleFlag(Sequence newSeq, MethodInfo method, VarInfo var, Object result) throws Exception {
