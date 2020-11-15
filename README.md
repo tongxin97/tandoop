@@ -15,5 +15,7 @@ mvn surefire:test -Dtest=TandoopTest
 ```
 
 ## Pending Questions/TODOs
+* Differentiate static methods in parser
 * Handle generic types
 * Handle class/method inheritance
+

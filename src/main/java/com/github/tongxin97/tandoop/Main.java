@@ -74,7 +74,7 @@ public class Main {
 
       Tandoop tandoop = new Tandoop(cmd.getOptionValue("src"), prjDir);
       int timeLimit = Integer.parseInt(cmd.getOptionValue("limit"));
-      tandoop.generateSequence(timeLimit*1000);
+      tandoop.generateSequences(timeLimit*1000);
 
     } catch (ParseException e) {
       System.err.println( "Unexpected exception:" + e.getMessage() );

@@ -277,8 +277,7 @@ public class Tandoop {
         }
     }
 
-    // TODO add arguments: contracts, filters, timeLimits
-    public void generateSequence(long timeLimits) throws Exception {
+    public void generateSequences(long timeLimits) throws Exception {
         long startTime = System.currentTimeMillis();
         long elapsedTime = 0L;
         while (elapsedTime < timeLimits) {
