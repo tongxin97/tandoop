@@ -16,6 +16,8 @@ import com.github.tongxin97.tandoop.method.MethodInfo;
 import com.github.tongxin97.tandoop.util.Rand;
 import com.github.tongxin97.tandoop.value.ValueInfo;
 import com.github.tongxin97.tandoop.Tandoop;
+import com.github.tongxin97.tandoop.CoverageAnalyzer;
+import com.github.tongxin97.tandoop.InstrumentedClassLoader;
 
 /**
  * The class that stores a sequence
@@ -174,7 +176,7 @@ public class Sequence {
 		}
 	}
 
-	public Object runTest(String prjDir, ClassLoader parentClassLoader) throws Exception {
+	public Object runTest(String prjDir, CoverageAnalyzer coverageAnalyzer) throws Exception {
 		try {
 			String cmd = "javac -cp '" + prjDir + "/target/dependency/*':" + prjDir + "/target/classes:target/dependency/gson-2.8.6.jar -d target/test-classes src/test/java/com/github/tongxin97/tandoop/TandoopTest.java";
 			// System.out.println(cmd);
@@ -196,17 +198,31 @@ public class Sequence {
 				return "[Tandoop] E: java compiler error";
 			}
 			
-			URLClassLoader classLoader = new URLClassLoader(new URL[]{ new File("target/test-classes/").toURI().toURL() }, parentClassLoader);
-			Class testClass = Class.forName("TandoopTest", false, classLoader);
-			
+			// URLClassLoader classLoader = new URLClassLoader(new URL[]{ new File("target/test-classes/").toURI().toURL() }, parentClassLoader);
+			// Class testClass = Class.forName("TandoopTest", false, classLoader);
+			String resource = "target/test-classes/TandoopTest.class";
+			InputStream original = new FileInputStream(new File(resource));
+			byte[] instrumented = coverageAnalyzer.instr.instrument(original, "TandoopTest");
+			original.close();
+
+			InstrumentedClassLoader classLoader = new InstrumentedClassLoader(coverageAnalyzer.classLoader);
+			classLoader.addDefinition("TandoopTest", instrumented);
+			// System.out.println("coverage classloader");
+			// Class tempClass1 = Class.forName("DataTime", false, coverageAnalyzer.classLoader);
+			// System.out.println(" classloader");
+			// Class tempClass2 = Class.forName("DataTime", false, classLoader);
+			Class<?> testClass = classLoader.loadClass("TandoopTest");
+
 			Method method = testClass.getMethod("test");
 			try {
 				Object result = method.invoke(null);
+				coverageAnalyzer.collect();
 				// System.out.println("Result: " + result.toString());
 				return result;
 			} catch (Exception e) {
 				System.out.println("Wrapper invoke exception: " + e);
 				System.out.println("Underlying invoke exception: " + e.getCause());
+				e.printStackTrace();
 				return "[Tandoop] E: " + e;
 			}
 		} catch (Exception e) {

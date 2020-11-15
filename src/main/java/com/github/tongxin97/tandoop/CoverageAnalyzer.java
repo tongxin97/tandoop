@@ -1,8 +1,7 @@
 package com.github.tongxin97.tandoop;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Set;
 import java.net.URLClassLoader;
 import java.lang.reflect.Method;
 
@@ -20,95 +19,59 @@ import org.jacoco.core.runtime.RuntimeData;
 public class CoverageAnalyzer {
     private PrintStream out;
 	private File targetClasses;
-	private URLClassLoader classLoader;
-	private Set<String> targetClasseNames;
-	private Instrumenter instr;
+	public InstrumentedClassLoader classLoader;
+	public Instrumenter instr;
+	private ExecutionDataStore executionData;
+	private SessionInfoStore sessionInfos;
+	private RuntimeData data;
+	private IRuntime runtime;
+	private String prefix;
     
-	public CoverageAnalyzer(String prjDir, PrintStream out, URLClassLoader classLoader, Set<String> targetClasseNames) {
+	public CoverageAnalyzer(String prjDir, PrintStream out, URLClassLoader classLoader) throws Exception{
         this.out = out;
 		this.targetClasses = new File(prjDir + "/target/classes");
 		this.classLoader = new InstrumentedClassLoader((ClassLoader) classLoader);
-		this.targetClasseNames = targetClasseNames;
 
         // For instrumentation and runtime we need a IRuntime instance to collect execution data
-		IRuntime runtime = new LoggerRuntime();
+		this.runtime = new LoggerRuntime();
 
 		this.instr = new Instrumenter(runtime);
 
-		loadTargetClasses();
+		this.prefix = prjDir + "/target/classes/";
+		loadTargetClasses(this.targetClasses);
 		
-		RuntimeData data = new RuntimeData();
-        runtime.startup(data);
+		this.data = new RuntimeData();
+		this.runtime.startup(data);
+		
+		this.executionData = new ExecutionDataStore();
+		this.sessionInfos = new SessionInfoStore();
 	}
 
-	private loadTargetClasses() {
-		for (String className: this.targetClasseNames) {
-			InputStream original = this.classLoader.getTargetClass(className);
-			byte[] instrumented = instr.instrument(original, testClassName);
-			original.close();
-			this.classLoader.addDefinition(className, instrumented);
-		}
-	}
-	
-	public static class InstrumentedClassLoader extends ClassLoader {
-		private InstrumentedClassLoader(ClassLoader parent) {
-			super(parent);
-		}
-
-		private Map<String, byte[]> definitions = new HashMap<String, byte[]>();
-
-		public void addDefinition(String name, final byte[] bytes) {
-			definitions.put(name, bytes);
-		}
-		
-		protected Class<?> loadClass(String name, byte[] bytes)
-				throws ClassNotFoundException {
-			definitions.put(name, bytes);
-			return defineClass(name, bytes, 0, bytes.length);
-		}
-
-		@Override
-		protected Class<?> loadClass(final String name, final boolean resolve)
-				throws ClassNotFoundException {
-			final byte[] bytes = definitions.get(name);
-			if (bytes != null) {
-				return defineClass(name, bytes, 0, bytes.length);
+	private void loadTargetClasses(File dir) throws Exception {
+		// walk through dir to find all .class file
+		File[] files = dir.listFiles();
+		for (File file : files) {
+			if (file.isDirectory()) {
+				loadTargetClasses(file); 
+			} else {
+                if (file.getName().endsWith(".class")) {
+					InputStream original = new FileInputStream(file);
+					String className = file.getPath().replaceFirst(prefix, "").replace("/", ".").split(".class")[0];
+					byte[] instrumented = instr.instrument(original, className);
+					original.close();
+					// System.out.println(className);
+					this.classLoader.addDefinition(className, instrumented);
+        	    }
 			}
-			return super.loadClass(name, resolve);
-		}
-
-		private InputStream getTargetClass(String name) {
-			String resource = '/' + name.replace('.', '/') + ".class";
-			return getResourceAsStream(resource);
 		}
 	}
 
-	public void execute() throws Exception {
-		String testClassName = TempTest.class.getName();
-
-        // The Instrumenter creates a modified version of our test target class that contains additional probes for execution data recording
-        Instrumenter instr = new Instrumenter(runtime);
-        InputStream original = getTargetClass(testClassName);
-        byte[] instrumented = instr.instrument(original, testClassName);
-        original.close();
-
-		Class<?> testClass = new InstrumentedClassLoader((ClassLoader) this.classLoader).loadClass(testClassName, instrumented);
-
-        Method method = testClass.getMethod("test");
-        try {
-            Object result = method.invoke(null);
-            System.out.println("Result: " + result.toString());
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-
-        // At the end of test execution we collect execution data and shutdown the runtime
-        ExecutionDataStore executionData = new ExecutionDataStore();
-		SessionInfoStore sessionInfos = new SessionInfoStore();
-		data.collect(executionData, sessionInfos, false);
+	// At the end of test execution we collect execution data and shutdown the runtime
+	public void collect() throws Exception {
+		data.collect(this.executionData, this.sessionInfos, false);
 	}
 
-	public void end() {
+	public void end() throws Exception {
         runtime.shutdown();
 
 		// Together with the original class definition we can calculate coverage information
@@ -120,16 +83,42 @@ public class CoverageAnalyzer {
 	}
     
     private void printCoverageInfo(CoverageBuilder coverageBuilder) {
+		int instruction_total = 0;
+		int instruction_missed = 0;
+		int branch_total = 0;
+		int branch_missed = 0;
+		int line_total = 0;
+		int line_missed = 0;
+		int method_total = 0;
+		int method_missed = 0;
         // Let's dump some metrics and line coverage information:
 		for (IClassCoverage cc : coverageBuilder.getClasses()) {
-			out.printf("Coverage of class %s%n", cc.getName());
+			// out.printf("Coverage of class %s%n", cc.getName());
 
-			printCounter("instructions", cc.getInstructionCounter());
-			printCounter("branches", cc.getBranchCounter());
-			printCounter("lines", cc.getLineCounter());
-			printCounter("methods", cc.getMethodCounter());
-			printCounter("complexity", cc.getComplexityCounter());
+			// printCounter("instructions", cc.getInstructionCounter());
+			// printCounter("branches", cc.getBranchCounter());
+			// printCounter("lines", cc.getLineCounter());
+			// printCounter("methods", cc.getMethodCounter());
+			// printCounter("complexity", cc.getComplexityCounter());
+
+			instruction_missed += cc.getInstructionCounter().getMissedCount();
+			instruction_total += cc.getInstructionCounter().getTotalCount();
+			
+			branch_missed += cc.getBranchCounter().getMissedCount();
+			branch_total += cc.getBranchCounter().getTotalCount();
+
+			line_missed += cc.getLineCounter().getMissedCount();
+			line_total += cc.getLineCounter().getTotalCount();
+
+			method_missed += cc.getMethodCounter().getMissedCount();
+			method_total += cc.getMethodCounter().getTotalCount();
 		}
+
+		out.printf("instruction: missed %d, total %d, coverage %f\n", instruction_missed, instruction_total, (1 - 1.0 * instruction_missed / instruction_total) * 100);
+		out.printf("branch: missed %d, total %d, coverage %f\n", branch_missed, branch_total, (1 - 1.0 * branch_missed / branch_total) * 100);
+		out.printf("line: missed %d, total %d, coverage %f\n", line_missed, line_total, (1 - 1.0 * line_missed / line_total) * 100);
+		out.printf("method: missed %d, total %d, coverage %f\n\n", method_missed, method_total, (1 - 1.0 * method_missed / method_total) * 100);
+		out.close();
     }
 
     private void printCounter(String unit, ICounter counter) {

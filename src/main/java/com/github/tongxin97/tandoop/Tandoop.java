@@ -34,13 +34,16 @@ public class Tandoop {
     private final int maxRepetition = 100;
     private final double repetitionProb = 0.1;
 
-    public URLClassLoader classLoader;
+    // public URLClassLoader classLoader;
     private Set<String> classNames;
 
     private String srcDir;
     private String prjDir;
 
     private int numFailedTests;
+
+    public CoverageAnalyzer coverageAnalyzer;
+    public PrintStream coverageInfoOut;
 
     final public static String tandoopTestFile = "src/test/java/com/github/tongxin97/tandoop/TandoopTest.java";
 
@@ -70,12 +73,16 @@ public class Tandoop {
         // load target project dependencies
         File dir = new File(this.prjDir + "/target/dependency");
         File[] dirListing = dir.listFiles();
-        URL[] urls = new URL[dirListing.length];
+        URL[] urls = new URL[dirListing.length + 1];
         for (int i = 0; i < dirListing.length; ++i) {
             urls[i] = dirListing[i].toURI().toURL();
         }
-        // urls[dirListing.length] = new File(this.prjDir + "/target/classes").toURI().toURL();
-        this.classLoader = new URLClassLoader(urls, this.getClass().getClassLoader());
+        urls[dirListing.length] = new File(this.prjDir + "/target/classes").toURI().toURL();
+        URLClassLoader classLoader = new URLClassLoader(urls, this.getClass().getClassLoader());
+
+        this.coverageInfoOut = new PrintStream(new FileOutputStream("coverageInfo", true));
+        this.coverageInfoOut.printf("prjDir: %s, ", prjDir);
+        this.coverageAnalyzer = new CoverageAnalyzer(prjDir, coverageInfoOut, classLoader);
     }
 
     private void setExtensibleFlag(Sequence newSeq, MethodInfo method, VarInfo var, Object result) throws Exception {
@@ -274,6 +281,8 @@ public class Tandoop {
 
     // TODO add arguments: contracts, filters, timeLimits
     public void generateSequence(long timeLimits) throws Exception {
+        this.coverageInfoOut.printf("timeLimits: %d s\n", timeLimits);
+        timeLimits *= 1000;
         long startTime = System.currentTimeMillis();
         long elapsedTime = 0L;
         while (elapsedTime < timeLimits) {
@@ -314,7 +323,7 @@ public class Tandoop {
             // System.out.println(newSeq.ExcSeq);
 
             newSeq.generateTest();
-            Object result = newSeq.runTest(this.prjDir, this.classLoader);
+            Object result = newSeq.runTest(this.prjDir, this.coverageAnalyzer);
             if (result.toString().startsWith("[Tandoop] E: ") || result.toString().startsWith("[Tandoop] C: ")) {
                 newSeq.generateJUnitTest(
                         String.format("%s/src/test/java/", this.prjDir),
@@ -350,5 +359,7 @@ public class Tandoop {
         // remove TandoopTest.java
         File testFile = new File(tandoopTestFile);
         testFile.delete();
+
+        this.coverageAnalyzer.end();
     }
 }

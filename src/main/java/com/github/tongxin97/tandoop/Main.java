@@ -9,10 +9,6 @@ import java.io.*;
 
 public class Main {
   public static void main(String[] args) throws Exception {
-    System.out.println("------ Start Coverage testing ------");
-    // new CoverageAnalyzer(prjDir, System.out, this.classLoader).execute();
-    new CoverageAnalyzer(System.out).execute();
-    System.out.println("------ Finished Coverage testing ------");
 
     CommandLineParser parser = new DefaultParser();
     Options options = new Options();
@@ -79,7 +75,7 @@ public class Main {
 
       Tandoop tandoop = new Tandoop(cmd.getOptionValue("src"), prjDir);
       int timeLimit = Integer.parseInt(cmd.getOptionValue("limit"));
-      tandoop.generateSequence(timeLimit*1000);
+      tandoop.generateSequence(timeLimit);
 
     } catch (ParseException e) {
       System.err.println( "Unexpected exception:" + e.getMessage() );
