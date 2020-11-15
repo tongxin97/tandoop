@@ -25,9 +25,9 @@ import com.github.javaparser.utils.SourceRoot;
 import com.github.javaparser.utils.ProjectRoot;
 import com.github.javaparser.symbolsolver.utils.SymbolSolverCollectionStrategy;
 
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.Set;
 import java.util.Optional;
 import java.io.FileInputStream;
 import java.io.File;
@@ -40,12 +40,14 @@ import com.github.tongxin97.tandoop.util.Str;
 
 public class MethodParser {
   private CompilationUnit cu;
+  private String packageName;
 
   public MethodParser(String filename, String srcDir) throws Exception {
     if (filename == null || srcDir == null) {
       throw new IllegalArgumentException(String.format("Parameters can't be null: filename=%s, srcDir=%s", filename, srcDir));
     }
     this.cu = StaticJavaParser.parse(new FileInputStream(filename));
+    this.packageName = getPackageName();
   }
 
   public MethodParser(CompilationUnit cu, String srcDir) throws Exception {
@@ -53,9 +55,10 @@ public class MethodParser {
       throw new IllegalArgumentException(String.format("Parameters can't be null: cu=%s, srcDir=%s", cu, srcDir));
     }
     this.cu = cu;
+    this.packageName = getPackageName();
   }
 
-  public static void parseAndResolveDirectory(String srcDir, String prjDir, MethodPool methodPool) throws Exception {
+  public static void parseAndResolveDirectory(String srcDir, String prjDir, MethodPool methodPool, Set<String> classNames) throws Exception {
     CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver();
     // add reflection solver
     combinedTypeSolver.add(new ReflectionTypeSolver());
@@ -85,12 +88,12 @@ public class MethodParser {
       sr.tryToParse();
       List<CompilationUnit> compilations = sr.getCompilationUnits();
       for (CompilationUnit cu: compilations) {
-          new MethodParser(cu, srcDir).collectMethodInfo(methodPool);
+          new MethodParser(cu, srcDir).collectMethodInfo(methodPool, classNames);
       }
     }
   }
 
-  public void collectMethodInfo(MethodPool methodPool) {
+  public void collectMethodInfo(MethodPool methodPool, Set<String> classNames) {
     try {
       if (isAbstractOrNonPublicClass(null)) {
         return; // skip if class is abstract or non-public
@@ -101,11 +104,12 @@ public class MethodParser {
     }
 
     VoidVisitor<List<MethodInfo>> methodCollector = new MethodCollector();
-    MethodInfo constructorInfo = this.getConstructorInfo();
-    if (constructorInfo == null) {
+    Set<MethodInfo> constructorInfo = new HashSet<>();
+    this.getConstructorInfo(constructorInfo, classNames);
+    if (constructorInfo.size() == 0) {
       return; // skip if no constructor info
     }
-    methodPool.MethodInfoList.add(constructorInfo);
+    methodPool.MethodInfoList.addAll(constructorInfo);
     methodCollector.visit(this.cu, methodPool.MethodInfoList);
   }
 
@@ -130,41 +134,41 @@ public class MethodParser {
   }
 
   /**
-   * getConstructorInfo creates a MethodInfo instance for the constructor.
+   * getConstructorInfo creates MethodInfo instances for the public, non-abstract constructors.
+   * As a side effect, it adds each of these classes' names to a set (used by the code coverage tool).
    * @return MethodInfo if a public constructor exists; null otherwise.
    */
-  private MethodInfo getConstructorInfo() {
+  private void getConstructorInfo(Set<MethodInfo> infoList, Set<String> classNames) {
     for (TypeDeclaration td: this.cu.getTypes()) {
-
       List<BodyDeclaration> bds = td.getMembers();
       if(bds != null) {
         for (BodyDeclaration bd: bds) {
           if (bd instanceof ConstructorDeclaration) {
               ConstructorDeclaration cd = (ConstructorDeclaration) bd;
-              // return null if contructor is abstract or non-public
+              // continue if constructor is abstract or non-public
               if (checkModifier(cd, Modifier.Keyword.ABSTRACT) || !checkModifier(cd, Modifier.Keyword.PUBLIC)) {
-                return null;
+                continue;
               }
               String constructorName = cd.getNameAsString();
               MethodInfo info = new MethodInfo(
                 constructorName,
                 constructorName,
-                this.getPackageName()
+                packageName
               );
               for (Parameter p : cd.getParameters()) {
                 String paramType = this.resolveType(p.getType());
                 if (paramType == null) {
                   System.err.printf("Unable to resolve parameter type %s at %s\n", p.getType(), constructorName);
-                  return null;
+                  continue;
                 }
                 info.addParameterType(paramType);
               }
-              return info;
+              infoList.add(info);
+              classNames.add(packageName + "." + constructorName);
           }
         }
       }
     }
-    return null;
   }
 
   private static boolean checkModifier(NodeWithModifiers n, Modifier.Keyword k) {
@@ -225,7 +229,6 @@ public class MethodParser {
           return;
         }
       }
-      String packageName = getPackageName();
       MethodInfo info = new MethodInfo(methodName, className, packageName);
       // store return type
       String returnType = resolveType(md.getType());

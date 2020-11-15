@@ -35,6 +35,7 @@ public class Tandoop {
     private final double repetitionProb = 0.1;
 
     public URLClassLoader classLoader;
+    private Set<String> classNames;
 
     private String srcDir;
     private String prjDir;
@@ -54,14 +55,15 @@ public class Tandoop {
         this.nonErrorSeqs = new LinkedHashSet<>();
         this.methodPool = new MethodPool();
         this.valuePool = new HashMap<>();
+        this.classNames = new HashSet<>();
 
         this.srcDir = srcDir;
         this.prjDir = prjDir;
 
         this.numFailedTests = 0;
 
-        MethodParser.parseAndResolveDirectory(srcDir, prjDir, this.methodPool);
-        // System.out.println(this.methodPool);
+        MethodParser.parseAndResolveDirectory(srcDir, prjDir, this.methodPool, this.classNames);
+//         System.out.println(this.classNames);
         this.initPrimitiveValuePool();
         // System.out.println("ValuePool:\n" + this.valuePool);
 
