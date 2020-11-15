@@ -279,7 +279,7 @@ public class Tandoop {
         }
     }
 
-    public void generateSequence(long timeLimits) throws Exception {
+    public void generateSequences(long timeLimits) throws Exception {
         this.coverageInfoOut.printf("timeLimits: %d s\n", timeLimits);
         timeLimits *= 1000;
         long startTime = System.currentTimeMillis();
