@@ -35,6 +35,7 @@ public class Tandoop {
     private final double repetitionProb = 0.1;
 
     public URLClassLoader classLoader;
+    private Set<String> classNames;
 
     private String srcDir;
     private String prjDir;
@@ -54,14 +55,15 @@ public class Tandoop {
         this.nonErrorSeqs = new LinkedHashSet<>();
         this.methodPool = new MethodPool();
         this.valuePool = new HashMap<>();
+        this.classNames = new HashSet<>();
 
         this.srcDir = srcDir;
         this.prjDir = prjDir;
 
         this.numFailedTests = 0;
 
-        MethodParser.parseAndResolveDirectory(srcDir, prjDir, this.methodPool);
-        // System.out.println(this.methodPool);
+        MethodParser.parseAndResolveDirectory(srcDir, prjDir, this.methodPool, this.classNames);
+//         System.out.println(this.classNames);
         this.initPrimitiveValuePool();
         // System.out.println("ValuePool:\n" + this.valuePool);
 
@@ -91,26 +93,38 @@ public class Tandoop {
     }
 
     private void initPrimitiveValuePool() {
-        // int type
-        TypedValuePool intValuePool = new TypedValuePool(int.class.getName(), Arrays.asList(
-            0, 1, -1, 1000, -1000, Integer.MAX_VALUE, Integer.MIN_VALUE
-        ));
-        this.valuePool.put(int.class.getName(), intValuePool);
-        // null type
-        TypedValuePool nullValueSingleton = new TypedValuePool("null", null);
-        this.valuePool.put("null", nullValueSingleton);
+        // boolean type
+        this.valuePool.put(boolean.class.getName(), new TypedValuePool(boolean.class.getName(), Arrays.asList(true, false)));
         // char type
-        TypedValuePool charValuePool = new TypedValuePool(char.class.getName(), Arrays.asList(
-            'a', 'z', 'B', '\t'
-        ));
-        this.valuePool.put(char.class.getName(), charValuePool);
+        this.valuePool.put(char.class.getName(), new TypedValuePool(char.class.getName(), Arrays.asList(
+                'a', 'z', 'B', '\t'
+        )));
+        // byte type
+        this.valuePool.put(byte.class.getName(), new TypedValuePool(byte.class.getName(), Arrays.asList(
+                -128, 0, 127
+        )));
+        // int type
+        this.valuePool.put(int.class.getName(), new TypedValuePool(int.class.getName(), Arrays.asList(
+                0, 1, -1, 1000, -1000, Integer.MAX_VALUE, Integer.MIN_VALUE
+        )));
+        // short type
+        this.valuePool.put(short.class.getName(), new TypedValuePool(short.class.getName(), Arrays.asList(
+                0, 1, -1, 100, -100, Short.MAX_VALUE, Short.MIN_VALUE
+        )));
+        // long type
+        this.valuePool.put(long.class.getName(), new TypedValuePool(long.class.getName(), Arrays.asList(
+                0, 1, -1, 100000, -100000, Long.MAX_VALUE, Long.MIN_VALUE
+        )));
+        // float type
+        this.valuePool.put(float.class.getName(), new TypedValuePool(float.class.getName(), Arrays.asList(
+                0.0, 3.14, -100, Float.MAX_VALUE, Float.MIN_VALUE, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY
+        )));
         // double type
-        TypedValuePool doubleValuePool = new TypedValuePool(double.class.getName(), Arrays.asList(
-            0.0, 3.14, -100, Double.MAX_VALUE, Double.MIN_VALUE, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY
-        ));
-        this.valuePool.put(double.class.getName(), doubleValuePool);
-
-        // TODO add more initial primitive types
+        this.valuePool.put(double.class.getName(), new TypedValuePool(double.class.getName(), Arrays.asList(
+                0.0, 3.14, -100, Double.MAX_VALUE, Double.MIN_VALUE, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY
+        )));
+        // null type
+        this.valuePool.put("null", new TypedValuePool("null", null));
     }
 
     private ValueInfo getRandomExtensibleValFromSequences(Set<Sequence> inputSeqs, Set<Sequence> outputSeqs, String type) {
