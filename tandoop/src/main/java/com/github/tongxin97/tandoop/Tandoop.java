@@ -74,8 +74,11 @@ public class Tandoop {
             System.out.println(urls[i].toString());
         }
         urls[dirListing.length] = new File(this.prjDir + "/target/classes").toURI().toURL();
-        // urls[dirListing.length] = new File("../joda-time/target/joda-time-2.10.9-SNAPSHOT.jar").toURI().toURL();
         this.classLoader = new URLClassLoader(urls, this.getClass().getClassLoader());
+
+        System.out.println("------ Start Coverage testing ------");
+        new CoverageAnalyzer(prjDir, System.out, this.classLoader).execute();
+        System.out.println("------ Finished Coverage testing ------");
     }
 
     private void setExtensibleFlag(Sequence newSeq, MethodInfo method, VarInfo var, Object result) throws Exception {
