@@ -279,7 +279,6 @@ public class Tandoop {
         }
     }
 
-    // TODO add arguments: contracts, filters, timeLimits
     public void generateSequence(long timeLimits) throws Exception {
         this.coverageInfoOut.printf("timeLimits: %d s\n", timeLimits);
         timeLimits *= 1000;
