@@ -105,10 +105,12 @@ public class MethodParser {
 
     VoidVisitor<List<MethodInfo>> methodCollector = new MethodCollector();
     Set<MethodInfo> constructorInfo = new HashSet<>();
-    this.getConstructorInfo(constructorInfo, classNames);
+    this.getConstructorInfo(constructorInfo);
     if (constructorInfo.size() == 0) {
       return; // skip if no constructor info
     }
+    // record a fully qualified classname
+    classNames.add(constructorInfo.iterator().next().getFullyQualifiedMethodName());
     methodPool.MethodInfoList.addAll(constructorInfo);
     methodCollector.visit(this.cu, methodPool.MethodInfoList);
   }
@@ -138,7 +140,7 @@ public class MethodParser {
    * As a side effect, it adds each of these classes' names to a set (used by the code coverage tool).
    * @return MethodInfo if a public constructor exists; null otherwise.
    */
-  private void getConstructorInfo(Set<MethodInfo> infoList, Set<String> classNames) {
+  private void getConstructorInfo(Set<MethodInfo> infoList) {
     for (TypeDeclaration td: this.cu.getTypes()) {
       List<BodyDeclaration> bds = td.getMembers();
       if(bds != null) {
@@ -164,7 +166,6 @@ public class MethodParser {
                 info.addParameterType(paramType);
               }
               infoList.add(info);
-              classNames.add(packageName + "." + constructorName);
           }
         }
       }
