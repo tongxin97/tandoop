@@ -22,6 +22,7 @@ import com.github.tongxin97.tandoop.sequence.Sequence;
  */
 
 public class Tandoop {
+    private URLClassLoader classLoader;
     private Map<String, Set<String>> inheritanceMap;
     private Map<String, TypedValuePool> valuePool;
     private MethodPool methodPool;
@@ -31,7 +32,6 @@ public class Tandoop {
 
     private final int maxRepetition = 100;
     private final double repetitionProb = 0.1;
-
 
     private String srcDir;
     private String prjDir;
@@ -48,39 +48,39 @@ public class Tandoop {
             );
         }
         // init error/non-error method sequences, and method/value pool
-        this.errorSeqs = new LinkedHashSet<>();
-        this.nonErrorSeqs = new LinkedHashSet<>();
-        this.methodPool = new MethodPool();
-        this.inheritanceMap = new HashMap<>();
-        this.valuePool = new HashMap<>();
+        errorSeqs = new LinkedHashSet<>();
+        nonErrorSeqs = new LinkedHashSet<>();
+        methodPool = new MethodPool();
+        inheritanceMap = new HashMap<>();
+        valuePool = new HashMap<>();
 
-        this.srcDir = srcDir;
-        this.prjDir = prjDir;
+        srcDir = srcDir;
+        prjDir = prjDir;
 
         // load target project dependencies
-        File dir = new File(this.prjDir + "/target/dependency");
+        File dir = new File(prjDir + "/target/dependency");
         File[] dirListing = dir.listFiles();
         URL[] urls = new URL[dirListing.length + 1];
         for (int i = 0; i < dirListing.length; ++i) {
             urls[i] = dirListing[i].toURI().toURL();
         }
-        urls[dirListing.length] = new File(this.prjDir + "/target/classes").toURI().toURL();
-        URLClassLoader classLoader = new URLClassLoader(urls, this.getClass().getClassLoader());
+        urls[dirListing.length] = new File(prjDir + "/target/classes").toURI().toURL();
+        classLoader = new URLClassLoader(urls, this.getClass().getClassLoader());
 
         // parse all accessible class methods in the target project
-        MethodParser.parseAndResolveDirectory(srcDir, prjDir, this.methodPool, this.inheritanceMap, classLoader);
-//        System.out.println("inheritance map: \n" + this.inheritanceMap);
+        MethodParser.parseAndResolveDirectory(srcDir, prjDir, methodPool, inheritanceMap, classLoader);
+//        System.out.println("inheritance map: \n" + inheritanceMap);
 
         this.initPrimitiveValuePool();
-        // System.out.println("ValuePool:\n" + this.valuePool);
+        // System.out.println("ValuePool:\n" + valuePool);
 
         // setup coverage analyzer
-        this.coverageInfoOut = new PrintStream(new FileOutputStream("coverageInfo", true));
-        this.coverageInfoOut.printf("prjDir: %s, ", prjDir);
-        this.coverageAnalyzer = new CoverageAnalyzer(prjDir, coverageInfoOut, classLoader);
+        coverageInfoOut = new PrintStream(new FileOutputStream("coverageInfo", true));
+        coverageInfoOut.printf("prjDir: %s, ", prjDir);
+        coverageAnalyzer = new CoverageAnalyzer(prjDir, coverageInfoOut, classLoader);
     }
 
-    private void setExtensibleFlag(Sequence newSeq, MethodInfo method, VarInfo var, Object result) throws Exception {
+    private void setExtensibleFlag(Sequence newSeq, MethodInfo method, VarInfo var, Object result) {
         // if runtime value is null, set extensible to false and return
         if (result.toString().startsWith("[Tandoop] F: ")) {
             var.Extensible = false;
@@ -132,7 +132,7 @@ public class Tandoop {
     private ValueInfo getRandomExtensibleValFromSequences(Set<Sequence> inputSeqs, Set<Sequence> outputSeqs, String type) {
         // filter inputSeqs by whether a seq has extensible values of the given type
         List<Sequence> seqsWithGivenType = inputSeqs.stream()
-            .filter(s -> s.hasExtensibleValOfType(type))
+            .filter(s -> s.hasExtensibleValOfType(type, inheritanceMap.get(type)))
             .collect(Collectors.toList());
 
 //        System.out.printf("seqsWithGivenType: %s, %s, %d\n", type, seqsWithGivenType, seqsWithGivenType.size());
@@ -141,7 +141,22 @@ public class Tandoop {
             int i = Rand.getRandomInt(seqsWithGivenType.size());
             Sequence s = seqsWithGivenType.get(i);
             outputSeqs.add(s); // add s to output seqs set
-            return s.getRandomExtensibleValOfType(type);
+            return s.getRandomExtensibleValOfType(type, inheritanceMap.get(type));
+        }
+        return null;
+    }
+
+    private ValueInfo getRandomPrimitiveValue(String type) {
+        if (valuePool.containsKey(type)) {
+            return new ValueInfo(type, valuePool.get(type).getRandomValue());
+        }
+        // if no exact match for the given type, try a random subtype
+        if (inheritanceMap.containsKey(type) && !inheritanceMap.get(type).isEmpty()) {
+            for (String subType : inheritanceMap.get(type)) {
+                if (valuePool.containsKey(subType)) {
+                    return new ValueInfo(type, valuePool.get(subType).getRandomValue());
+                }
+            }
         }
         return null;
     }
@@ -149,8 +164,15 @@ public class Tandoop {
     private void getRandomSeqsAndVals(Set<Sequence> seqs, List<ValueInfo> vals, final List<String> types) {
 //        System.out.println("types: " + types);
         for (String type: types) {
-            if (this.valuePool.containsKey(type) && this.valuePool.get(type).isPrimitiveType) {
-                vals.add(new ValueInfo(type, this.valuePool.get(type).getRandomValue()));
+            boolean isPrimitive = false;
+            try {
+                isPrimitive = Class.forName(type, true, classLoader).isPrimitive();
+            } catch (ClassNotFoundException e) {
+                System.err.println("Tandoop Class not found: " + e.getMessage());
+                System.exit(1);
+            }
+            if (isPrimitive) {
+                vals.add(getRandomPrimitiveValue(type));
             } else {
                 // 3 possible choices for v
                 // 1) v = null
