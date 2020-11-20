@@ -25,6 +25,7 @@ import com.github.tongxin97.tandoop.sequence.Sequence;
  */
 
 public class Tandoop {
+    private Map<String, Set<String>> inheritanceMap;
     private Map<String, TypedValuePool> valuePool;
     private MethodPool methodPool;
 
@@ -34,13 +35,9 @@ public class Tandoop {
     private final int maxRepetition = 100;
     private final double repetitionProb = 0.1;
 
-    // public URLClassLoader classLoader;
-    private Set<String> classNames;
 
     private String srcDir;
     private String prjDir;
-
-    private int numFailedTests;
 
     public CoverageAnalyzer coverageAnalyzer;
     public PrintStream coverageInfoOut;
@@ -57,18 +54,11 @@ public class Tandoop {
         this.errorSeqs = new LinkedHashSet<>();
         this.nonErrorSeqs = new LinkedHashSet<>();
         this.methodPool = new MethodPool();
+        this.inheritanceMap = new HashMap<>();
         this.valuePool = new HashMap<>();
-        this.classNames = new HashSet<>();
 
         this.srcDir = srcDir;
         this.prjDir = prjDir;
-
-        this.numFailedTests = 0;
-
-        MethodParser.parseAndResolveDirectory(srcDir, prjDir, this.methodPool, this.classNames);
-//         System.out.println(this.classNames);
-        this.initPrimitiveValuePool();
-        // System.out.println("ValuePool:\n" + this.valuePool);
 
         // load target project dependencies
         File dir = new File(this.prjDir + "/target/dependency");
@@ -80,6 +70,14 @@ public class Tandoop {
         urls[dirListing.length] = new File(this.prjDir + "/target/classes").toURI().toURL();
         URLClassLoader classLoader = new URLClassLoader(urls, this.getClass().getClassLoader());
 
+        // parse all accessible class methods in the target project
+        MethodParser.parseAndResolveDirectory(srcDir, prjDir, this.methodPool, this.inheritanceMap, classLoader);
+//        System.out.println("inheritance map: \n" + this.inheritanceMap);
+
+        this.initPrimitiveValuePool();
+        // System.out.println("ValuePool:\n" + this.valuePool);
+
+        // setup coverage analyzer
         this.coverageInfoOut = new PrintStream(new FileOutputStream("coverageInfo", true));
         this.coverageInfoOut.printf("prjDir: %s, ", prjDir);
         this.coverageAnalyzer = new CoverageAnalyzer(prjDir, coverageInfoOut, classLoader);

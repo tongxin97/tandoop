@@ -58,7 +58,13 @@ public class MethodParser {
     this.packageName = getPackageName();
   }
 
-  public static void parseAndResolveDirectory(String srcDir, String prjDir, MethodPool methodPool, Set<String> classNames) throws Exception {
+  public static void parseAndResolveDirectory(
+          String srcDir,
+          String prjDir,
+          MethodPool methodPool,
+          Map<String, Set<String>> inheritanceMap,
+          ClassLoader classLoader
+  ) throws Exception {
     CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver();
     // add reflection solver
     combinedTypeSolver.add(new ReflectionTypeSolver());
@@ -88,12 +94,12 @@ public class MethodParser {
       sr.tryToParse();
       List<CompilationUnit> compilations = sr.getCompilationUnits();
       for (CompilationUnit cu: compilations) {
-          new MethodParser(cu, srcDir).collectMethodInfo(methodPool, classNames);
+          new MethodParser(cu, srcDir).collectMethodInfo(methodPool, inheritanceMap, classLoader);
       }
     }
   }
 
-  public void collectMethodInfo(MethodPool methodPool, Set<String> classNames) {
+  public void collectMethodInfo(MethodPool methodPool, Map<String, Set<String>> inheritanceMap, ClassLoader classLoader) {
     try {
       if (isAbstractOrNonPublicClass(null)) {
         return; // skip if class is abstract or non-public
@@ -109,8 +115,29 @@ public class MethodParser {
     if (constructorInfo.size() == 0) {
       return; // skip if no constructor info
     }
-    // record a fully qualified classname
-    classNames.add(constructorInfo.iterator().next().getFullyQualifiedMethodName());
+
+    // add all superclasses' names in inheritanceMap (inverted mapping: super class -> set of sub classes)
+    String className = constructorInfo.iterator().next().getFullyQualifiedMethodName();
+    Set<String> tmpNames = new HashSet<>();
+    try {
+      Class c = Class.forName(className, true, classLoader);
+      while (c != null) {
+        String canoName = c.getCanonicalName(); // the canonical name is the name that would be used in an import statement
+        tmpNames.add(canoName);
+        if (inheritanceMap.containsKey(canoName)) {
+          inheritanceMap.get(canoName).addAll(tmpNames);
+        } else {
+          inheritanceMap.put(canoName, new HashSet<>(tmpNames));
+        }
+        c = c.getSuperclass();
+      }
+    } catch (ClassNotFoundException e) {
+      System.err.println("Class not found: " + e.getMessage());
+    } catch (Exception e) {
+      System.err.println("Class.forName: " + e.getMessage());
+    }
+
+    // record a fully qualified classname in methodPool and visit other methods in this class
     methodPool.MethodInfoList.addAll(constructorInfo);
     methodCollector.visit(this.cu, methodPool.MethodInfoList);
   }
