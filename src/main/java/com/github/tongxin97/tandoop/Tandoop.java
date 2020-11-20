@@ -3,9 +3,6 @@ package com.github.tongxin97.tandoop;
 import java.util.*;
 import java.io.*;
 import java.util.stream.Collectors;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.net.URLClassLoader;
 import java.net.URL;
 
@@ -330,10 +327,10 @@ public class Tandoop {
                     errorSeqs.add(newSeq);
                 }
             } else {
-//                newSeq.generateJUnitTest(
-//                        String.format("%s/src/test/java/", this.prjDir),
-//                        String.format("TandoopRegTest%d", nonErrorSeqs.size())
-//                );
+                newSeq.generateJUnitTest(
+                        String.format("%s/src/test/java/", this.prjDir),
+                        String.format("TandoopRegTest%d", nonErrorSeqs.size())
+                );
                 nonErrorSeqs.add(newSeq);
                 setExtensibleFlag(newSeq, method, var, result);
                 if (var.Extensible) {

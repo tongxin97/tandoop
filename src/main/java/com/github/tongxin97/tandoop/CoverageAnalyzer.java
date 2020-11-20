@@ -1,9 +1,7 @@
 package com.github.tongxin97.tandoop;
 
 import java.io.*;
-import java.util.Set;
 import java.net.URLClassLoader;
-import java.lang.reflect.Method;
 
 import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;

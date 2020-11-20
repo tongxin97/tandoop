@@ -19,16 +19,12 @@ import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.utils.SourceRoot;
 import com.github.javaparser.utils.ProjectRoot;
 import com.github.javaparser.symbolsolver.utils.SymbolSolverCollectionStrategy;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.Optional;
+import java.util.*;
 import java.io.FileInputStream;
 import java.io.File;
 import java.nio.file.Path;
@@ -36,7 +32,6 @@ import java.nio.file.Paths;
 
 import com.github.tongxin97.tandoop.method.MethodInfo;
 import com.github.tongxin97.tandoop.method.MethodPool;
-import com.github.tongxin97.tandoop.util.Str;
 
 public class MethodParser {
   private CompilationUnit cu;
