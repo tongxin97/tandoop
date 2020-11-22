@@ -45,15 +45,7 @@ public class TypedValuePool<T> {
             }
             // ValuePool can't be empty
         }
-        int idx = Rand.getRandomInt(values.size());
-        int i = 0;
-        for (T v: values) {
-            if (i == idx) {
-                return v;
-            }
-            i++;
-        }
-        return null; // won't reach here
+        return Rand.getRandomCollectionElement(values);
     }
 
     public void addValue(T value) {

@@ -18,4 +18,6 @@ mvn surefire:test -Dtest=TandoopTest
 * Differentiate static methods in parser
 * Handle generic types
 * Handle class/method inheritance
+    - For class/type inheritance, handle matching for compound types, eg. int[], Set<String>.
+    - Handle method inheritance
 

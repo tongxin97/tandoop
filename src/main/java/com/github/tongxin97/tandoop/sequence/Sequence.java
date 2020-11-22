@@ -95,8 +95,15 @@ public class Sequence {
 		if (!this.hasExtensibleValOfType(type, subTypes)) {
 			throw new IllegalArgumentException("Sequence doesn't have extensible values of type " + type);
 		}
-		List<ValueInfo> l = this.Vals.get(type);
-		return l.get(Rand.getRandomInt(l.size()));
+		if (this.Vals.containsKey(type)) {
+			return Rand.getRandomCollectionElement(this.Vals.get(type));
+		}
+		// Note: primitive types won't have intersection with the passed-in subTypes
+//		System.out.printf("err type %s, subTypes %s\n", type, subTypes);
+		Set<String> subTypeSet = new HashSet<>(Vals.keySet());
+		subTypeSet.retainAll(subTypes);
+		String subType = Rand.getRandomCollectionElement(subTypeSet);
+		return Rand.getRandomCollectionElement(this.Vals.get(subType));
 	}
 
 	/**
@@ -108,6 +115,10 @@ public class Sequence {
 	public boolean hasExtensibleValOfType(String type, final Set<String> subTypes) {
 		if (this.Vals.containsKey(type)) {
 			return true;
+		}
+		if (subTypes == null) {
+//			System.err.printf("subTypes for type %s is null\n", type);
+			return false;
 		}
 		return !Collections.disjoint(this.Vals.keySet(), subTypes);
 	}

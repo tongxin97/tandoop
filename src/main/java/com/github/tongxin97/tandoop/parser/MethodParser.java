@@ -30,8 +30,10 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import com.github.tongxin97.tandoop.Tandoop;
 import com.github.tongxin97.tandoop.method.MethodInfo;
 import com.github.tongxin97.tandoop.method.MethodPool;
+import com.github.tongxin97.tandoop.util.ClassUtils;
 
 public class MethodParser {
   private CompilationUnit cu;
@@ -56,9 +58,7 @@ public class MethodParser {
   public static void parseAndResolveDirectory(
           String srcDir,
           String prjDir,
-          MethodPool methodPool,
-          Map<String, Set<String>> inheritanceMap,
-          ClassLoader classLoader
+          MethodPool methodPool
   ) throws Exception {
     CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver();
     // add reflection solver
@@ -89,17 +89,18 @@ public class MethodParser {
       sr.tryToParse();
       List<CompilationUnit> compilations = sr.getCompilationUnits();
       for (CompilationUnit cu: compilations) {
-          new MethodParser(cu, srcDir).collectMethodInfo(methodPool, inheritanceMap, classLoader);
+          new MethodParser(cu, srcDir).collectMethodInfo(methodPool);
       }
     }
   }
 
-  public void collectMethodInfo(MethodPool methodPool, Map<String, Set<String>> inheritanceMap, ClassLoader classLoader) {
+  public void collectMethodInfo(MethodPool methodPool) {
     try {
       if (isAbstractOrNonPublicClass(null)) {
         return; // skip if class is abstract or non-public
       }
     } catch (Exception e) {
+      e.printStackTrace();
       System.err.println("collectMethodInfo exception: " + e.getMessage());
       return;
     }
@@ -111,26 +112,8 @@ public class MethodParser {
       return; // skip if no constructor info
     }
 
-    // add all superclasses' names in inheritanceMap (inverted mapping: super class -> set of sub classes)
     String className = constructorInfo.iterator().next().getFullyQualifiedMethodName();
-    Set<String> tmpNames = new HashSet<>();
-    try {
-      Class c = Class.forName(className, true, classLoader);
-      while (c != null) {
-        String canoName = c.getCanonicalName(); // the canonical name is the name that would be used in an import statement
-        tmpNames.add(canoName);
-        if (inheritanceMap.containsKey(canoName)) {
-          inheritanceMap.get(canoName).addAll(tmpNames);
-        } else {
-          inheritanceMap.put(canoName, new HashSet<>(tmpNames));
-        }
-        c = c.getSuperclass();
-      }
-    } catch (ClassNotFoundException e) {
-      System.err.println("Class not found: " + e.getMessage());
-    } catch (Exception e) {
-      System.err.println("Class.forName: " + e.getMessage());
-    }
+    ClassUtils.collectSubClassInfo(className, Tandoop.inheritanceMap, Tandoop.classLoader);
 
     // record a fully qualified classname in methodPool and visit other methods in this class
     methodPool.MethodInfoList.addAll(constructorInfo);
@@ -149,6 +132,9 @@ public class MethodParser {
   }
 
   private String resolveType(Type simpleType) {
+    if (simpleType.asString().contains("?")) {
+      return null;
+    }
     try {
       return simpleType.resolve().describe();
     } catch (Exception e) {
@@ -166,6 +152,7 @@ public class MethodParser {
     for (TypeDeclaration td: this.cu.getTypes()) {
       List<BodyDeclaration> bds = td.getMembers();
       if(bds != null) {
+        outerLoop:
         for (BodyDeclaration bd: bds) {
           if (bd instanceof ConstructorDeclaration) {
               ConstructorDeclaration cd = (ConstructorDeclaration) bd;
@@ -182,8 +169,8 @@ public class MethodParser {
               for (Parameter p : cd.getParameters()) {
                 String paramType = this.resolveType(p.getType());
                 if (paramType == null) {
-                  System.err.printf("Unable to resolve parameter type %s at %s\n", p.getType(), constructorName);
-                  continue;
+//                  System.err.printf("Unable to resolve parameter type %s at %s\n", p.getType(), constructorName);
+                  break outerLoop;
                 }
                 info.addParameterType(paramType);
               }
@@ -195,6 +182,9 @@ public class MethodParser {
   }
 
   private static boolean checkModifier(NodeWithModifiers n, Modifier.Keyword k) {
+    if (n == null) {
+      return false;
+    }
     for (Object m : n.getModifiers()) {
       if (((Modifier)m).getKeyword().equals(k)) {
         return true;
@@ -256,17 +246,18 @@ public class MethodParser {
       // store return type
       String returnType = resolveType(md.getType());
       if (returnType == null) {
-        System.err.printf("Unable to resolve return type %s at %s\n", md.getType(), methodName);
+//        System.err.printf("Unable to resolve return type %s at %s\n", md.getType(), methodName);
         return;
       }
       info.setReturnType(returnType);
+      ClassUtils.collectSubClassInfo(returnType, Tandoop.inheritanceMap, Tandoop.classLoader);
       // store parameter type
       // NOTE: add instance type to parameterTypes since we need it to construct a new method call.
       info.addParameterType(packageName + "." + className);
       for (Parameter p : md.getParameters()) {
         String paramType = resolveType(p.getType());
         if (paramType == null) {
-          System.err.printf("Unable to resolve parameter type %s at %s\n", p.getType(), methodName);
+//          System.err.printf("Unable to resolve parameter type %s at %s\n", p.getType(), methodName);
           return;
         }
         info.addParameterType(paramType);

@@ -24,8 +24,7 @@ public class MethodPool {
         if (MethodInfoList.isEmpty()) {
             throw new IllegalArgumentException("MethodPool is empty.");
         }
-        int i = Rand.getRandomInt(MethodInfoList.size());
-        return MethodInfoList.get(i);
+        return Rand.getRandomCollectionElement(MethodInfoList);
     }
 
     @Override
