@@ -261,6 +261,7 @@ public class MethodParser {
           return;
         }
         info.addParameterType(paramType);
+        ClassUtils.collectSubClassInfo(paramType, Tandoop.inheritanceMap, Tandoop.classLoader);
       }
       collector.add(info);
       // System.out.println("info: " + info);

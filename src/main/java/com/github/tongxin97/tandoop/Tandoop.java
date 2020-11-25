@@ -71,6 +71,15 @@ public class Tandoop {
         // parse all accessible class methods in the target project
         MethodParser.parseAndResolveDirectory(srcDir, prjDir, methodPool);
 //        System.out.println("inheritance map: \n" + inheritanceMap);
+        try {
+            String filename = "inheritance.txt";
+            BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
+            writer.write(inheritanceMap.toString());
+            writer.close();
+        } catch (Exception e) {
+            System.err.println("Failed to write inheritanceMap: " + e.getMessage());
+            e.printStackTrace();
+        }
 
         this.initPrimitiveValuePool();
         // System.out.println("ValuePool:\n" + valuePool);
