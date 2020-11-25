@@ -3,15 +3,13 @@ package com.github.tongxin97.tandoop;
 import java.util.*;
 import java.io.*;
 import java.util.stream.Collectors;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.net.URLClassLoader;
 import java.net.URL;
 
 import com.github.tongxin97.tandoop.parser.MethodParser;
 import com.github.tongxin97.tandoop.method.MethodInfo;
 import com.github.tongxin97.tandoop.method.MethodPool;
+import com.github.tongxin97.tandoop.util.ClassUtils;
 import com.github.tongxin97.tandoop.util.Rand;
 import com.github.tongxin97.tandoop.util.Str;
 import com.github.tongxin97.tandoop.value.*;
@@ -25,6 +23,8 @@ import com.github.tongxin97.tandoop.sequence.Sequence;
  */
 
 public class Tandoop {
+    public static URLClassLoader classLoader;
+    public static Map<String, Set<String>> inheritanceMap;
     private Map<String, TypedValuePool> valuePool;
     private MethodPool methodPool;
 
@@ -34,13 +34,8 @@ public class Tandoop {
     private final int maxRepetition = 100;
     private final double repetitionProb = 0.1;
 
-    // public URLClassLoader classLoader;
-    private Set<String> classNames;
-
     private String srcDir;
     private String prjDir;
-
-    private int numFailedTests;
 
     public CoverageAnalyzer coverageAnalyzer;
     public PrintStream coverageInfoOut;
@@ -54,38 +49,39 @@ public class Tandoop {
             );
         }
         // init error/non-error method sequences, and method/value pool
-        this.errorSeqs = new LinkedHashSet<>();
-        this.nonErrorSeqs = new LinkedHashSet<>();
-        this.methodPool = new MethodPool();
-        this.valuePool = new HashMap<>();
-        this.classNames = new HashSet<>();
+        errorSeqs = new LinkedHashSet<>();
+        nonErrorSeqs = new LinkedHashSet<>();
+        methodPool = new MethodPool();
+        inheritanceMap = new HashMap<>();
+        valuePool = new HashMap<>();
 
         this.srcDir = srcDir;
         this.prjDir = prjDir;
 
-        this.numFailedTests = 0;
-
-        MethodParser.parseAndResolveDirectory(srcDir, prjDir, this.methodPool, this.classNames);
-//         System.out.println(this.classNames);
-        this.initPrimitiveValuePool();
-        // System.out.println("ValuePool:\n" + this.valuePool);
-
         // load target project dependencies
-        File dir = new File(this.prjDir + "/target/dependency");
+        File dir = new File(prjDir + "/target/dependency");
         File[] dirListing = dir.listFiles();
         URL[] urls = new URL[dirListing.length + 1];
         for (int i = 0; i < dirListing.length; ++i) {
             urls[i] = dirListing[i].toURI().toURL();
         }
-        urls[dirListing.length] = new File(this.prjDir + "/target/classes").toURI().toURL();
-        URLClassLoader classLoader = new URLClassLoader(urls, this.getClass().getClassLoader());
+        urls[dirListing.length] = new File(prjDir + "/target/classes").toURI().toURL();
+        classLoader = new URLClassLoader(urls, this.getClass().getClassLoader());
 
-        this.coverageInfoOut = new PrintStream(new FileOutputStream("coverageInfo", true));
-        this.coverageInfoOut.printf("prjDir: %s, ", prjDir);
-        this.coverageAnalyzer = new CoverageAnalyzer(prjDir, coverageInfoOut, classLoader);
+        // parse all accessible class methods in the target project
+        MethodParser.parseAndResolveDirectory(srcDir, prjDir, methodPool);
+//        System.out.println("inheritance map: \n" + inheritanceMap);
+
+        this.initPrimitiveValuePool();
+        // System.out.println("ValuePool:\n" + valuePool);
+
+        // setup coverage analyzer
+        coverageInfoOut = new PrintStream(new FileOutputStream("coverageInfo", true));
+        coverageInfoOut.printf("prjDir: %s, ", prjDir);
+        coverageAnalyzer = new CoverageAnalyzer(prjDir, coverageInfoOut, classLoader);
     }
 
-    private void setExtensibleFlag(Sequence newSeq, MethodInfo method, VarInfo var, Object result) throws Exception {
+    private void setExtensibleFlag(Sequence newSeq, MethodInfo method, VarInfo var, Object result) {
         // if runtime value is null, set extensible to false and return
         if (result.toString().startsWith("[Tandoop] F: ")) {
             var.Extensible = false;
@@ -101,61 +97,85 @@ public class Tandoop {
 
     private void initPrimitiveValuePool() {
         // boolean type
-        this.valuePool.put(boolean.class.getName(), new TypedValuePool(boolean.class.getName(), Arrays.asList(true, false)));
+        String booleanType = boolean.class.getName();
+        this.valuePool.put(booleanType, new TypedValuePool(booleanType, Arrays.asList(true, false)));
+        inheritanceMap.put(booleanType, new HashSet<>(Arrays.asList(booleanType)));
+        ClassUtils.collectSubClassInfo(booleanType, inheritanceMap, classLoader);
         // char type
-        this.valuePool.put(char.class.getName(), new TypedValuePool(char.class.getName(), Arrays.asList(
+        String charType = char.class.getName();
+        this.valuePool.put(charType, new TypedValuePool(charType, Arrays.asList(
                 'a', 'z', 'B', '\t'
         )));
+        inheritanceMap.put(charType, new HashSet<>(Arrays.asList(charType)));
+
         // byte type
-        this.valuePool.put(byte.class.getName(), new TypedValuePool(byte.class.getName(), Arrays.asList(
+        String byteType = byte.class.getName();
+        this.valuePool.put(byteType, new TypedValuePool(byteType, Arrays.asList(
                 -128, 0, 127
         )));
+        inheritanceMap.put(byteType, new HashSet<>(Arrays.asList(byteType)));
+
         // int type
-        this.valuePool.put(int.class.getName(), new TypedValuePool(int.class.getName(), Arrays.asList(
+        String intType = int.class.getName();
+        this.valuePool.put(intType, new TypedValuePool(intType, Arrays.asList(
                 0, 1, -1, 1000, -1000, Integer.MAX_VALUE, Integer.MIN_VALUE
         )));
+        inheritanceMap.put(intType, new HashSet<>(Arrays.asList(intType)));
+
         // short type
-        this.valuePool.put(short.class.getName(), new TypedValuePool(short.class.getName(), Arrays.asList(
+        String shortType = short.class.getName();
+        this.valuePool.put(shortType, new TypedValuePool(shortType, Arrays.asList(
                 0, 1, -1, 100, -100, Short.MAX_VALUE, Short.MIN_VALUE
         )));
+        inheritanceMap.put(shortType, new HashSet<>(Arrays.asList(shortType)));
+
         // long type
-        this.valuePool.put(long.class.getName(), new TypedValuePool(long.class.getName(), Arrays.asList(
+        String longType = long.class.getName();
+        this.valuePool.put(longType, new TypedValuePool(longType, Arrays.asList(
                 0, 1, -1, 100000, -100000, Long.MAX_VALUE, Long.MIN_VALUE
         )));
+        inheritanceMap.put(longType, new HashSet<>(Arrays.asList(longType)));
+
         // float type
-        this.valuePool.put(float.class.getName(), new TypedValuePool(float.class.getName(), Arrays.asList(
+        String floatType = float.class.getName();
+        this.valuePool.put(floatType, new TypedValuePool(floatType, Arrays.asList(
                 0.0, 3.14, -100, Float.MAX_VALUE, Float.MIN_VALUE, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY
         )));
+        inheritanceMap.put(floatType, new HashSet<>(Arrays.asList(floatType)));
+
         // double type
-        this.valuePool.put(double.class.getName(), new TypedValuePool(double.class.getName(), Arrays.asList(
+        String doubleType = double.class.getName();
+        this.valuePool.put(doubleType, new TypedValuePool(doubleType, Arrays.asList(
                 0.0, 3.14, -100, Double.MAX_VALUE, Double.MIN_VALUE, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY
         )));
+        inheritanceMap.put(doubleType, new HashSet<>(Arrays.asList(doubleType)));
+
         // null type
         this.valuePool.put("null", new TypedValuePool("null", null));
+        inheritanceMap.put("null", new HashSet<>(Arrays.asList("null")));
     }
 
     private ValueInfo getRandomExtensibleValFromSequences(Set<Sequence> inputSeqs, Set<Sequence> outputSeqs, String type) {
         // filter inputSeqs by whether a seq has extensible values of the given type
         List<Sequence> seqsWithGivenType = inputSeqs.stream()
-            .filter(s -> s.hasExtensibleValOfType(type))
+            .filter(s -> s.hasExtensibleValOfType(type, inheritanceMap.get(type)))
             .collect(Collectors.toList());
 
 //        System.out.printf("seqsWithGivenType: %s, %s, %d\n", type, seqsWithGivenType, seqsWithGivenType.size());
 
         if (seqsWithGivenType.size() > 0) {
-            int i = Rand.getRandomInt(seqsWithGivenType.size());
-            Sequence s = seqsWithGivenType.get(i);
+            Sequence s = Rand.getRandomCollectionElement(seqsWithGivenType);
             outputSeqs.add(s); // add s to output seqs set
-            return s.getRandomExtensibleValOfType(type);
+            return s.getRandomExtensibleValOfType(type, inheritanceMap.get(type));
         }
         return null;
     }
 
-    private void getRandomSeqsAndVals(Set<Sequence> seqs, List<ValueInfo> vals, final List<String> types) {
+    private int getRandomSeqsAndVals(Set<Sequence> seqs, List<ValueInfo> vals, final List<String> types) {
 //        System.out.println("types: " + types);
         for (String type: types) {
-            if (this.valuePool.containsKey(type) && this.valuePool.get(type).isPrimitiveType) {
-                vals.add(new ValueInfo(type, this.valuePool.get(type).getRandomValue()));
+            if (ClassUtils.isPrimitiveType(type)) {
+                vals.add(new ValueInfo(type, valuePool.get(type).getRandomValue()));
             } else {
                 // 3 possible choices for v
                 // 1) v = null
@@ -169,7 +189,7 @@ public class Tandoop {
                 vals.add(v);
             }
         }
-//        System.out.println("vals: " + vals);
+        return 0;
     }
 
     /**
@@ -290,13 +310,15 @@ public class Tandoop {
             try {
                 method = methodPool.getRandomMethod();
             } catch (Exception e) {
-                System.err.println("Uncaught exception: " + e.getMessage());
+                System.err.println("getRandomMethod exception: " + e.getMessage());
                 break;
             }
             // System.out.printf("Selected random method: %s.%s\n", method.ClassName, method.Name);
             Set<Sequence> seqs = new LinkedHashSet<>();
             List<ValueInfo> vals = new ArrayList<>();
-            this.getRandomSeqsAndVals(seqs, vals, method.getParameterTypes());
+            if (this.getRandomSeqsAndVals(seqs, vals, method.getParameterTypes()) < 0) {
+                continue;
+            }
             // sanity check: instance val (vals[0]) can't be null when method is not constructor
             if (!method.IsConstructor() && vals.get(0) == null) {
 //                 System.out.printf("Instance val is null: %s.%s\n", method.ClassName, method.Name);

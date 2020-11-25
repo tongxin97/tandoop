@@ -4,12 +4,7 @@ import java.lang.IllegalArgumentException;
 import java.lang.reflect.Method;
 import java.net.URLClassLoader;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.HashSet;
+import java.util.*;
 import java.io.*;
 
 import com.github.tongxin97.tandoop.method.MethodInfo;
@@ -96,16 +91,36 @@ public class Sequence {
 		return this.ExcSeq.hashCode();
 	}
 
-	public ValueInfo getRandomExtensibleValOfType(String type) throws IllegalArgumentException {
-		if (!this.hasExtensibleValOfType(type)) {
+	public ValueInfo getRandomExtensibleValOfType(String type, final Set<String> subTypes) throws IllegalArgumentException {
+		if (!this.hasExtensibleValOfType(type, subTypes)) {
 			throw new IllegalArgumentException("Sequence doesn't have extensible values of type " + type);
 		}
-		List<ValueInfo> l = this.Vals.get(type);
-		return l.get(Rand.getRandomInt(l.size()));
+		if (this.Vals.containsKey(type)) {
+			return Rand.getRandomCollectionElement(this.Vals.get(type));
+		}
+		// Note: primitive types won't have intersection with the passed-in subTypes
+//		System.out.printf("err type %s, subTypes %s\n", type, subTypes);
+		Set<String> subTypeSet = new HashSet<>(Vals.keySet());
+		subTypeSet.retainAll(subTypes);
+		String subType = Rand.getRandomCollectionElement(subTypeSet);
+		return Rand.getRandomCollectionElement(this.Vals.get(subType));
 	}
 
-	public boolean hasExtensibleValOfType(String type) {
-		return this.Vals.containsKey(type);
+	/**
+	 * Checks whether this sequence contains values of the given type or its subtype.
+	 * @param type target type
+	 * @param subTypes known sub types of the target type
+	 * @return true if a value of the give type or its subtype exists in this sequence.
+	 */
+	public boolean hasExtensibleValOfType(String type, final Set<String> subTypes) {
+		if (this.Vals.containsKey(type)) {
+			return true;
+		}
+		if (subTypes == null) {
+//			System.err.printf("subTypes for type %s is null\n", type);
+			return false;
+		}
+		return !Collections.disjoint(this.Vals.keySet(), subTypes);
 	}
 
 	/**
@@ -182,15 +197,15 @@ public class Sequence {
 			// System.out.println(cmd);
 			Process p = Runtime.getRuntime().exec(new String[] {"bash", "-c", cmd});
 
-//			String s;
-//			BufferedReader out = new BufferedReader(new InputStreamReader(p.getInputStream()));
-//           	while ((s = out.readLine()) != null) {
-//				System.out.println("line: " + s);
-//			}
-//			BufferedReader err = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-//           	while ((s = err.readLine()) != null) {
-//				System.out.println("line: " + s);
-//			}
+			String s;
+			BufferedReader out = new BufferedReader(new InputStreamReader(p.getInputStream()));
+           	while ((s = out.readLine()) != null) {
+				System.out.println("line: " + s);
+			}
+			BufferedReader err = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+           	while ((s = err.readLine()) != null) {
+				System.out.println("line: " + s);
+			}
 
 			int cmdReturnValue = p.waitFor();
 			System.out.println("javacompile: " + cmdReturnValue);

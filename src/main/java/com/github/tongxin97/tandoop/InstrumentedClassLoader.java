@@ -1,6 +1,5 @@
 package com.github.tongxin97.tandoop;
 
-import java.io.*;
 import java.util.Map;
 import java.util.HashMap;
 
