@@ -1,5 +1,6 @@
 package com.github.tongxin97.tandoop;
 
+import java.lang.reflect.Array;
 import java.util.*;
 import java.io.*;
 import java.util.stream.Collectors;
@@ -166,8 +167,13 @@ public class Tandoop {
 
     private ValueInfo getRandomExtensibleValFromSequences(Set<Sequence> inputSeqs, Set<Sequence> outputSeqs, String type) {
         // filter inputSeqs by whether a seq has extensible values of the given type
+        Map<Sequence, Integer> matchTypes = new HashMap<>();
         List<Sequence> seqsWithGivenType = inputSeqs.stream()
-            .filter(s -> s.hasExtensibleValOfType(type, inheritanceMap.get(type)))
+            .filter(s -> {
+                int matchType = s.hasExtensibleValOfType(type, inheritanceMap);
+                matchTypes.put(s, matchType);
+                return matchType >= 0;
+            })
             .collect(Collectors.toList());
 
 //        System.out.printf("seqsWithGivenType: %s, %s, %d\n", type, seqsWithGivenType, seqsWithGivenType.size());
@@ -175,14 +181,14 @@ public class Tandoop {
         if (seqsWithGivenType.size() > 0) {
             Sequence s = Rand.getRandomCollectionElement(seqsWithGivenType);
             outputSeqs.add(s); // add s to output seqs set
-            return s.getRandomExtensibleValOfType(type, inheritanceMap.get(type));
+            return s.getRandomExtensibleValOfType(type, inheritanceMap, matchTypes.get(s));
         }
         return null;
     }
 
-    private int getRandomSeqsAndVals(Set<Sequence> seqs, List<ValueInfo> vals, final List<String> types) {
+    private int getRandomSeqsAndVals(Set<Sequence> seqs, List<ValueInfo> vals, final List<String> paramTypes) {
 //        System.out.println("types: " + types);
-        for (String type: types) {
+        for (String type: paramTypes) {
             if (ClassUtils.isPrimitiveType(type)) {
                 vals.add(new ValueInfo(type, valuePool.get(type).getRandomValue()));
             } else {
