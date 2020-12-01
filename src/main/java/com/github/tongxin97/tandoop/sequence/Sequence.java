@@ -8,6 +8,7 @@ import java.util.*;
 import java.io.*;
 
 import com.github.tongxin97.tandoop.method.MethodInfo;
+import com.github.tongxin97.tandoop.util.ClassUtils;
 import com.github.tongxin97.tandoop.util.Rand;
 import com.github.tongxin97.tandoop.value.ValueInfo;
 import com.github.tongxin97.tandoop.Tandoop;
@@ -91,36 +92,47 @@ public class Sequence {
 		return this.ExcSeq.hashCode();
 	}
 
-	public ValueInfo getRandomExtensibleValOfType(String type, final Set<String> subTypes) throws IllegalArgumentException {
-		if (!this.hasExtensibleValOfType(type, subTypes)) {
-			throw new IllegalArgumentException("Sequence doesn't have extensible values of type " + type);
+	public ValueInfo getRandomExtensibleValOfType(String type, final Map<String, Set<String>> inheritanceMap, int matchType) throws IllegalArgumentException {
+		Set<String> availableTypes = new HashSet<>(Vals.keySet());
+		switch (matchType) {
+			case 0:
+				return Rand.getRandomCollectionElement(this.Vals.get(type));
+			case 1:
+				availableTypes.retainAll(inheritanceMap.get(type));
+				String subType = Rand.getRandomCollectionElement(availableTypes);
+				return Rand.getRandomCollectionElement(this.Vals.get(subType));
+			case 2:
+				Set<String> subColTypes = ClassUtils.getSubCollectionsTypes(type, inheritanceMap);
+				availableTypes.retainAll(subColTypes);
+				String subColType = Rand.getRandomCollectionElement(availableTypes);
+				return Rand.getRandomCollectionElement(this.Vals.get(subColType));
+			default:
+				throw new IllegalArgumentException("Sequence doesn't have extensible values of type " + type);
 		}
-		if (this.Vals.containsKey(type)) {
-			return Rand.getRandomCollectionElement(this.Vals.get(type));
-		}
-		// Note: primitive types won't have intersection with the passed-in subTypes
-//		System.out.printf("err type %s, subTypes %s\n", type, subTypes);
-		Set<String> subTypeSet = new HashSet<>(Vals.keySet());
-		subTypeSet.retainAll(subTypes);
-		String subType = Rand.getRandomCollectionElement(subTypeSet);
-		return Rand.getRandomCollectionElement(this.Vals.get(subType));
 	}
 
 	/**
-	 * Checks whether this sequence contains values of the given type or its subtype.
+	 * Checks whether this sequence contains values of the given type or its subtype/sub-collection-type.
 	 * @param type target type
-	 * @param subTypes known sub types of the target type
-	 * @return true if a value of the give type or its subtype exists in this sequence.
+	 * @param inheritanceMap
+	 * @return 0 if exact match on type; 1 if subtype match; 2 if sub-collection-type match; -1 if no match.
 	 */
-	public boolean hasExtensibleValOfType(String type, final Set<String> subTypes) {
+	public int hasExtensibleValOfType(String type, final Map<String, Set<String>> inheritanceMap) {
+		// exact match
 		if (this.Vals.containsKey(type)) {
-			return true;
+			return 0;
 		}
-		if (subTypes == null) {
-//			System.err.printf("subTypes for type %s is null\n", type);
-			return false;
+		// match a subtype
+		Set<String> subTypes = inheritanceMap.get(type);
+		if (subTypes != null && !Collections.disjoint(this.Vals.keySet(), subTypes)) {
+			return 1;
 		}
-		return !Collections.disjoint(this.Vals.keySet(), subTypes);
+		// match a sub-collection-type
+		Set<String> subColTypes = ClassUtils.getSubCollectionsTypes(type, inheritanceMap);
+		if (subColTypes!= null && !Collections.disjoint(this.Vals.keySet(), subColTypes)) {
+			return 2;
+		}
+		return -1;
 	}
 
 	/**
