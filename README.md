@@ -21,7 +21,9 @@ java -ea -cp inputs/joda-time/target/joda-time-2.10.9-SNAPSHOT.jar:../libs/rando
 /Users/touhomaregen/viz/toradocu-coverage/toradocu/joda-time/build/classes/test
 javac -cp ../../../inputs/joda-time/target/joda-time-2.10.9-SNAPSHOT.jar:../../../../libs/junit-4.12.jar:. -d . ../../../src/test/java/RegressionTestDriver.java
 
-java -cp ../joda-time/target/joda-time-2.10.9-SNAPSHOT.jar:target/tandoop-1.0-SNAPSHOT-jar-with-dependencies.jar com.github.tongxin97.tandoop.Main -src ./src/main/java/ -prj ../tandoop -limit 10 
+java -cp ../joda-time/target/joda-time-2.10.9-SNAPSHOT.jar:target/tandoop-1.0-SNAPSHOT-jar-with-dependencies.jar com.github.tongxin97.tandoop.Main -src ../joda-time/src/main/java -prj ../joda-time -limit 10 
+
+java -cp ../commons-collections/target/commons-collections4-4.5-SNAPSHOT.jar:target/tandoop-1.0-SNAPSHOT-jar-with-dependencies.jar com.github.tongxin97.tandoop.Main -src ../commons-collections/src/main/java -prj ../commons-collections -limit 900
 ```
 
 ## Pending Questions/TODOs

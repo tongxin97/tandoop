@@ -359,9 +359,7 @@ public class Tandoop {
                         String.format("%s/src/test/java/", this.prjDir),
                         String.format("TandoopErrTest%d", errorSeqs.size())
                 );
-                if (result.toString().startsWith("[Tandoop] C: ")) {
-                    errorSeqs.add(newSeq);
-                }
+                errorSeqs.add(newSeq);
             } else {
 //                newSeq.generateJUnitTest(
 //                        String.format("%s/src/test/java/", this.prjDir),
