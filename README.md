@@ -30,6 +30,8 @@ java -cp ../commons-collections/target/commons-collections4-4.5-SNAPSHOT.jar:tar
 * Differentiate static methods in parser
 * Handle generic types
 * Handle class/method inheritance
-    - For class/type inheritance, handle matching for compound types, eg. int[], Set<String>.
+    - [DONE] For class/type inheritance, handle matching for compound types, eg. int[], Set<String>.
     - Handle method inheritance
+* Create new instances on the spot (to avoid having too many null parameters).
+* Deduplicate previous method sequences when constructing a new one. 
 
