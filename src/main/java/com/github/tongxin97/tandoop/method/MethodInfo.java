@@ -13,6 +13,7 @@ public class MethodInfo {
     public String Name;
     public List<String> parameterTypes;
     public String returnType;
+    public boolean isStatic;
 
     public MethodInfo(String name, String className, String packageName) throws IllegalArgumentException {
         if (name == null || className == null || packageName == null) {
@@ -22,6 +23,7 @@ public class MethodInfo {
         this.ClassName = className;
         this.PackageName = packageName;
         this.parameterTypes = new ArrayList<>();
+        this.isStatic = false;
     }
 
     public String getFullyQualifiedMethodName() {
