@@ -27,10 +27,10 @@ java -cp ../commons-collections/target/commons-collections4-4.5-SNAPSHOT.jar:tar
 ```
 
 ## Pending Questions/TODOs
-* Differentiate static methods in parser
+* [DONE] Differentiate static methods in parser
 * Handle generic types
 * Handle class/method inheritance
     - [DONE] For class/type inheritance, handle matching for compound types, eg. int[], Set<String>.
     - Handle method inheritance
-* Deduplicate previous method sequences when constructing a new one. 
+* [DONE] Deduplicate previous method sequences when constructing a new one. 
 
