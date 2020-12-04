@@ -23,21 +23,33 @@ import com.github.tongxin97.tandoop.InstrumentedClassLoader;
  */
 
 public class Sequence {
-	public Set<MethodInfo> Methods;
 	// map type to list of extensible vals
+	public LinkedHashSet<String> statements;
 	public Map<String, List<ValueInfo>> Vals;
 	public String ExcSeq;
 	public String NewVar;
-	public Set<String> Imports;
 	public boolean InputParamsWithNull;
 
 	public Sequence() {
-		this.Methods = new HashSet<>();
 		this.Vals = new HashMap<>();
+		this.statements = new LinkedHashSet<>();
 		this.ExcSeq = "";
 		this.NewVar = "";
-		this.Imports = new HashSet<>();
 		this.InputParamsWithNull = false;
+	}
+
+	public void addStatements(Sequence seq) {
+		for (String s: seq.statements) {
+			addStatement(s);
+		}
+	}
+
+	public void addStatement(String s) {
+		if (statements.contains(s)) {
+			return;
+		}
+		statements.add(s);
+		ExcSeq += s;
 	}
 
 	public void addVal(String type, ValueInfo v) {
@@ -56,22 +68,6 @@ public class Sequence {
 			this.Vals.put(type, new ArrayList<>());
 		}
 		this.Vals.get(type).addAll(vals);
-	}
-
-	public void addMethod(MethodInfo method) {
-		this.Methods.add(method);
-	}
-
-	public void addMethods(Set<MethodInfo> methods) {
-		this.Methods.addAll(methods);
-	}
-
-	public void addImport(String newImport) {
-		this.Imports.add(newImport);
-	}
-
-	public void addImports(Set<String> oldImports) {
-		this.Imports.addAll(oldImports);
 	}
 
 	@Override

@@ -227,7 +227,7 @@ public class Tandoop {
      * The new statement may be repeated up to maxRepetition-1 times.
      * @return the new statement as a string.
      */
-    private String genNewStatements(MethodInfo method, Sequence newSeq, VarInfo var, List<ValueInfo> vals) {
+    private String genNewStatement(MethodInfo method, Sequence newSeq, VarInfo var, List<ValueInfo> vals) {
         // if method is constructor, sentence = Type Type1 = new methodName(p0,p1,...);\n
         // otherwise, sentence = Type Type1 = p0.methodName(p1,p2,...);\n
         StringBuilder b = new StringBuilder();
@@ -289,21 +289,15 @@ public class Tandoop {
         // merge seqs to one seq: methods, vals, and executable sequence string
         // Q: how to generate equivalent sequences & how to set modulo variable names?
         for (Sequence seq: seqs) {
-            newSeq.addMethods(seq.Methods);
-            newSeq.addImports(seq.Imports);
             for (Map.Entry<String, List<ValueInfo>> entry: seq.Vals.entrySet()) {
                 newSeq.addVals(entry.getKey(), entry.getValue());
             }
-            if (!newSeq.ExcSeq.contains(seq.ExcSeq)) {
-                newSeq.ExcSeq += seq.ExcSeq;
-            }
+            newSeq.addStatements(seq);
         }
-        // add new method to newSeq
-        newSeq.addMethod(method);
 
-        String newStatements = this.genNewStatements(method, newSeq, var, vals);
-        System.out.println("New statements:\n " + newStatements);
-        newSeq.ExcSeq += newStatements;
+        String newStatement = this.genNewStatement(method, newSeq, var, vals);
+        System.out.println("New statements:\n " + newStatement);
+        newSeq.addStatement(newStatement);
         return newSeq;
     }
 
