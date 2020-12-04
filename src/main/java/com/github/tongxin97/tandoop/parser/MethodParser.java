@@ -108,12 +108,8 @@ public class MethodParser {
     VoidVisitor<List<MethodInfo>> methodCollector = new MethodCollector();
     Set<MethodInfo> constructorInfo = new HashSet<>();
     this.getConstructorInfo(constructorInfo);
-    if (constructorInfo.size() == 0) {
-      return; // skip if no constructor info
-    }
 
-    String className = constructorInfo.iterator().next().getFullyQualifiedMethodName();
-    ClassUtils.collectSubClassInfo(className, Tandoop.inheritanceMap, Tandoop.classLoader);
+    ClassUtils.collectSubClassInfo(getPackageName() + "." + getClassName(), Tandoop.inheritanceMap, Tandoop.classLoader);
 
     // record a fully qualified classname in methodPool and visit other methods in this class
     methodPool.MethodInfoList.addAll(constructorInfo);
@@ -139,6 +135,19 @@ public class MethodParser {
       return simpleType.resolve().describe();
     } catch (Exception e) {
 //       e.printStackTrace();
+    }
+    return null;
+  }
+
+  private String getClassName() {
+    for (TypeDeclaration td: this.cu.getTypes()) {
+      if (!(
+          td instanceof ClassOrInterfaceDeclaration &&
+          checkModifier(td, Modifier.Keyword.PUBLIC)
+      )) {
+        continue;
+      }
+      return td.getNameAsString();
     }
     return null;
   }
@@ -243,6 +252,8 @@ public class MethodParser {
         }
       }
       MethodInfo info = new MethodInfo(methodName, className, packageName);
+      // set if method is static
+      info.isStatic = checkModifier(md, Modifier.Keyword.STATIC);
       // store return type
       String returnType = resolveType(md.getType());
       if (returnType == null) {

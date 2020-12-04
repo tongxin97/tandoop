@@ -241,6 +241,10 @@ public class Tandoop {
         if (method.IsConstructor()) {
             b.append(String.format("new %s(", method.getFullyQualifiedMethodName()));
             start = 0;
+        } else if (method.isStatic) {
+            // if method is static, it uses the fully qualified classname in place of the instance variable
+            b.append(String.format("%s.%s(", method.getParameterTypeAtIdx(0), method.Name));
+            start = 1;
         } else {
             b.append(String.format("%s.%s(", vals.get(0).getContent(), method.Name));
             start = 1;
@@ -290,7 +294,9 @@ public class Tandoop {
             for (Map.Entry<String, List<ValueInfo>> entry: seq.Vals.entrySet()) {
                 newSeq.addVals(entry.getKey(), entry.getValue());
             }
-            newSeq.ExcSeq += seq.ExcSeq;
+            if (!newSeq.ExcSeq.contains(seq.ExcSeq)) {
+                newSeq.ExcSeq += seq.ExcSeq;
+            }
         }
         // add new method to newSeq
         newSeq.addMethod(method);
@@ -334,8 +340,8 @@ public class Tandoop {
             if (this.getRandomSeqsAndVals(seqs, vals, method.getParameterTypes()) < 0) {
                 continue;
             }
-            // sanity check: instance val (vals[0]) can't be null when method is not constructor
-            if (!method.IsConstructor() && vals.get(0) == null) {
+            // sanity check: instance val (vals[0]) can't be null when method is not constructor or static
+            if (!method.IsConstructor() && !method.isStatic && vals.get(0) == null) {
 //                 System.out.printf("Instance val is null: %s.%s\n", method.ClassName, method.Name);
                 continue;
             }

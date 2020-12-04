@@ -1,0 +1,158 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ----------------< com.github.tongxin97.tandoop:tandoop >----------------
+[INFO] Building tandoop 1.0-SNAPSHOT
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- exec-maven-plugin:3.0.0:java (default-cli) @ tandoop ---
+New statements:
+       org.apache.commons.collections4.map.ReferenceMap ReferenceMap0 = new org.apache.commons.collections4.map.ReferenceMap();
+
+javacompile: 0
+Added val [com.github.tongxin97.tandoop.value.VarInfo@1e521d44] of type org.apache.commons.collections4.map.ReferenceMap
+Added extensible val:{}
+-----------------------
+New statements:
+       org.apache.commons.collections4.map.ListOrderedMap ListOrderedMap0 = new org.apache.commons.collections4.map.ListOrderedMap();
+
+javacompile: 0
+Added val [com.github.tongxin97.tandoop.value.VarInfo@7f76e40b] of type org.apache.commons.collections4.map.ListOrderedMap
+Added extensible val:{}
+-----------------------
+New statements:
+       org.apache.commons.collections4.bag.TreeBag TreeBag0 = new org.apache.commons.collections4.bag.TreeBag();
+
+javacompile: 0
+Added val [com.github.tongxin97.tandoop.value.VarInfo@2015517b] of type org.apache.commons.collections4.bag.TreeBag
+Added extensible val:[]
+-----------------------
+New statements:
+       org.apache.commons.collections4.collection.CompositeCollection CompositeCollection0 = new org.apache.commons.collections4.collection.CompositeCollection();
+
+javacompile: 0
+Added val [com.github.tongxin97.tandoop.value.VarInfo@41c8b67d] of type org.apache.commons.collections4.collection.CompositeCollection
+Added extensible val:org.apache.commons.collections4.collection.CompositeCollection@44ad2d79
+-----------------------
+New statements:
+       org.apache.commons.collections4.bidimap.DualHashBidiMap DualHashBidiMap0 = new org.apache.commons.collections4.bidimap.DualHashBidiMap();
+
+javacompile: 0
+Added val [com.github.tongxin97.tandoop.value.VarInfo@4b583336] of type org.apache.commons.collections4.bidimap.DualHashBidiMap
+Added extensible val:{}
+-----------------------
+New statements:
+       org.apache.commons.collections4.bloomfilter.ArrayCountingBloomFilter ArrayCountingBloomFilter0 = new org.apache.commons.collections4.bloomfilter.ArrayCountingBloomFilter((org.apache.commons.collections4.bloomfilter.hasher.Hasher) null,(org.apache.commons.collections4.bloomfilter.hasher.Shape) null);
+
+javacompile: 0
+Non-extensible val: null
+ -----------------------
+New statements:
+       java.lang.Object[] Object0 = CompositeCollection0.toArray();
+
+javacompile: 0
+Added val [com.github.tongxin97.tandoop.value.VarInfo@50fa9b90] of type java.lang.Object[]
+Added extensible val:[Ljava.lang.Object;@33cc46df
+-----------------------
+New statements:
+       org.apache.commons.collections4.sequence.EditScript EditScript0 = new org.apache.commons.collections4.sequence.EditScript();
+
+javacompile: 0
+Added val [com.github.tongxin97.tandoop.value.VarInfo@16d2bcb8] of type org.apache.commons.collections4.sequence.EditScript
+Added extensible val:org.apache.commons.collections4.sequence.EditScript@2795185
+-----------------------
+New statements:
+       org.apache.commons.collections4.map.Flat3Map Flat3Map0 = new org.apache.commons.collections4.map.Flat3Map();
+
+javacompile: 0
+Added val [com.github.tongxin97.tandoop.value.VarInfo@3b8f9ea3] of type org.apache.commons.collections4.map.Flat3Map
+Added extensible val:{}
+-----------------------
+New statements:
+       org.apache.commons.collections4.bidimap.TreeBidiMap TreeBidiMap0 = new org.apache.commons.collections4.bidimap.TreeBidiMap();
+
+javacompile: 0
+Added val [com.github.tongxin97.tandoop.value.VarInfo@e144d3b] of type org.apache.commons.collections4.bidimap.TreeBidiMap
+Added extensible val:{}
+-----------------------
+New statements:
+       org.apache.commons.collections4.bag.HashBag HashBag0 = new org.apache.commons.collections4.bag.HashBag();
+
+javacompile: 0
+Added val [com.github.tongxin97.tandoop.value.VarInfo@3208ff0f] of type org.apache.commons.collections4.bag.HashBag
+Added extensible val:[]
+-----------------------
+New statements:
+       org.apache.commons.collections4.FunctorException FunctorException0 = new org.apache.commons.collections4.FunctorException((java.lang.String) null);
+
+javacompile: 0
+Added val [com.github.tongxin97.tandoop.value.VarInfo@71efc258] of type org.apache.commons.collections4.FunctorException
+Added extensible val:org.apache.commons.collections4.FunctorException
+-----------------------
+New statements:
+       org.apache.commons.collections4.map.LinkedMap LinkedMap0 = new org.apache.commons.collections4.map.LinkedMap();
+
+javacompile: 0
+Added val [com.github.tongxin97.tandoop.value.VarInfo@7131dd12] of type org.apache.commons.collections4.map.LinkedMap
+Added extensible val:{}
+-----------------------
+New statements:
+       org.apache.commons.collections4.map.CompositeMap CompositeMap0 = new org.apache.commons.collections4.map.CompositeMap();
+
+javacompile: 0
+Added val [com.github.tongxin97.tandoop.value.VarInfo@49332336] of type org.apache.commons.collections4.map.CompositeMap
+Added extensible val:org.apache.commons.collections4.map.CompositeMap@0
+-----------------------
+New statements:
+       org.apache.commons.collections4.comparators.NullComparator NullComparator0 = new org.apache.commons.collections4.comparators.NullComparator();
+
+javacompile: 0
+Added val [com.github.tongxin97.tandoop.value.VarInfo@134b6292] of type org.apache.commons.collections4.comparators.NullComparator
+Added extensible val:org.apache.commons.collections4.comparators.NullComparator@96846290
+-----------------------
+New statements:
+       org.apache.commons.collections4.iterators.TransformIterator TransformIterator0 = new org.apache.commons.collections4.iterators.TransformIterator();
+
+javacompile: 0
+Added val [com.github.tongxin97.tandoop.value.VarInfo@f250612] of type org.apache.commons.collections4.iterators.TransformIterator
+Added extensible val:org.apache.commons.collections4.iterators.TransformIterator@61234fca
+-----------------------
+New statements:
+       org.apache.commons.collections4.bloomfilter.HasherBloomFilter HasherBloomFilter0 = new org.apache.commons.collections4.bloomfilter.HasherBloomFilter((org.apache.commons.collections4.bloomfilter.hasher.Shape) null);
+
+javacompile: 0
+Added val [com.github.tongxin97.tandoop.value.VarInfo@4039e182] of type org.apache.commons.collections4.bloomfilter.HasherBloomFilter
+Added extensible val:org.apache.commons.collections4.bloomfilter.HasherBloomFilter@55e8d937
+-----------------------
+New statements:
+       org.apache.commons.collections4.queue.CircularFifoQueue CircularFifoQueue0 = new org.apache.commons.collections4.queue.CircularFifoQueue();
+
+javacompile: 0
+Added val [com.github.tongxin97.tandoop.value.VarInfo@432b7435] of type org.apache.commons.collections4.queue.CircularFifoQueue
+Added extensible val:[]
+-----------------------
+New statements:
+       org.apache.commons.collections4.map.Flat3Map Flat3Map1 = new org.apache.commons.collections4.map.Flat3Map();
+
+javacompile: 0
+Non-extensible val: {}
+ -----------------------
+New statements:
+       org.apache.commons.collections4.bloomfilter.hasher.function.Murmur128x64Cyclic Murmur128x64Cyclic0 = new org.apache.commons.collections4.bloomfilter.hasher.function.Murmur128x64Cyclic();
+
+javacompile: 0
+Added val [com.github.tongxin97.tandoop.value.VarInfo@41041453] of type org.apache.commons.collections4.bloomfilter.hasher.function.Murmur128x64Cyclic
+Added extensible val:org.apache.commons.collections4.bloomfilter.hasher.function.Murmur128x64Cyclic@2614fca6
+-----------------------
+New statements:
+       org.apache.commons.collections4.map.ReferenceIdentityMap ReferenceIdentityMap0 = new org.apache.commons.collections4.map.ReferenceIdentityMap();
+
+javacompile: 0
+Added val [com.github.tongxin97.tandoop.value.VarInfo@625e8aea] of type org.apache.commons.collections4.map.ReferenceIdentityMap
+Added extensible val:{}
+-----------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  15.756 s
+[INFO] Finished at: 2020-11-21T20:45:33-06:00
+[INFO] ------------------------------------------------------------------------
