@@ -96,8 +96,8 @@ public class MethodParser {
 
   public void collectMethodInfo(MethodPool methodPool) {
     try {
-      if (isAbstractOrNonPublicClass(null)) {
-        return; // skip if class is abstract or non-public
+      if (isNonPublicClass(null)) {
+        return; // skip if class is non-public
       }
     } catch (Exception e) {
       e.printStackTrace();
@@ -202,7 +202,7 @@ public class MethodParser {
     return false;
   }
 
-  private boolean isAbstractOrNonPublicClass(ClassOrInterfaceDeclaration cid) throws Exception {
+  private boolean isNonPublicClass(ClassOrInterfaceDeclaration cid) throws Exception {
     if (this.cu == null) {
       throw new Exception("Can't determine if class is abstract: this.cu is null.");
     }
@@ -214,10 +214,7 @@ public class MethodParser {
         }
       }
     }
-    boolean isAbstractClass = checkModifier(cid, Modifier.Keyword.ABSTRACT);
-    boolean isPublicClass = checkModifier(cid, Modifier.Keyword.PUBLIC);
-//    System.out.printf("class %s is abstract: %b, publicx: %b\n", cid.getNameAsString(), isAbstractClass, isPublicClass);
-    return isAbstractClass || !isPublicClass;
+    return !checkModifier(cid, Modifier.Keyword.PUBLIC);
   }
 
   // TODO: handle static method differently
