@@ -38,13 +38,15 @@ import com.github.tongxin97.tandoop.util.ClassUtils;
 public class MethodParser {
   private CompilationUnit cu;
   private String packageName;
+  private ClassOrInterfaceDeclaration cd;
 
   public MethodParser(String filename, String srcDir) throws Exception {
     if (filename == null || srcDir == null) {
       throw new IllegalArgumentException(String.format("Parameters can't be null: filename=%s, srcDir=%s", filename, srcDir));
     }
-    this.cu = StaticJavaParser.parse(new FileInputStream(filename));
-    this.packageName = getPackageName();
+    cu = StaticJavaParser.parse(new FileInputStream(filename));
+    packageName = getPackageName();
+    cd = getPublicClassDeclaration();
   }
 
   public MethodParser(CompilationUnit cu, String srcDir) throws Exception {
@@ -53,6 +55,7 @@ public class MethodParser {
     }
     this.cu = cu;
     this.packageName = getPackageName();
+    cd = getPublicClassDeclaration();
   }
 
   public static void parseAndResolveDirectory(
@@ -96,7 +99,7 @@ public class MethodParser {
 
   public void collectMethodInfo(MethodPool methodPool) {
     try {
-      if (isNonPublicClass(null)) {
+      if (cd == null) {
         return; // skip if class is non-public
       }
     } catch (Exception e) {
@@ -109,7 +112,7 @@ public class MethodParser {
     Set<MethodInfo> constructorInfo = new HashSet<>();
     this.getConstructorInfo(constructorInfo);
 
-    ClassUtils.collectSubClassInfo(getPackageName() + "." + getClassName(), Tandoop.inheritanceMap, Tandoop.classLoader);
+    ClassUtils.collectSubClassInfo(getPackageName() + "." + cd.getNameAsString(), Tandoop.inheritanceMap, Tandoop.classLoader);
 
     // record a fully qualified classname in methodPool and visit other methods in this class
     methodPool.MethodInfoList.addAll(constructorInfo);
@@ -139,25 +142,15 @@ public class MethodParser {
     return null;
   }
 
-  private String getClassName() {
-    for (TypeDeclaration td: this.cu.getTypes()) {
-      if (!(
-          td instanceof ClassOrInterfaceDeclaration &&
-          checkModifier(td, Modifier.Keyword.PUBLIC)
-      )) {
-        continue;
-      }
-      return td.getNameAsString();
-    }
-    return null;
-  }
-
   /**
    * getConstructorInfo creates MethodInfo instances for the public, non-abstract constructors.
    * As a side effect, it adds each of these classes' names to a set (used by the code coverage tool).
    * @return MethodInfo if a public constructor exists; null otherwise.
    */
   private void getConstructorInfo(Set<MethodInfo> infoList) {
+    if (checkModifier(cd, Modifier.Keyword.ABSTRACT)) {
+      return; // don't read constructor info for abstract class
+    }
     for (TypeDeclaration td: this.cu.getTypes()) {
       List<BodyDeclaration> bds = td.getMembers();
       if(bds != null) {
@@ -202,19 +195,15 @@ public class MethodParser {
     return false;
   }
 
-  private boolean isNonPublicClass(ClassOrInterfaceDeclaration cid) throws Exception {
-    if (this.cu == null) {
-      throw new Exception("Can't determine if class is abstract: this.cu is null.");
-    }
-    if (cid == null) {
-      for (TypeDeclaration td: this.cu.getTypes()) {
-        if (td instanceof ClassOrInterfaceDeclaration) {
-          cid = (ClassOrInterfaceDeclaration) td;
-          break;
+  private ClassOrInterfaceDeclaration getPublicClassDeclaration() {
+    for (TypeDeclaration td: this.cu.getTypes()) {
+      if (td instanceof ClassOrInterfaceDeclaration) {
+        if (!((ClassOrInterfaceDeclaration) td).isInterface() && checkModifier(td, Modifier.Keyword.PUBLIC)) {
+          return (ClassOrInterfaceDeclaration) td;
         }
       }
     }
-    return !checkModifier(cid, Modifier.Keyword.PUBLIC);
+    return null;
   }
 
   // TODO: handle static method differently
