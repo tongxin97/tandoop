@@ -108,7 +108,7 @@ public class MethodParser {
       return;
     }
 
-    VoidVisitor<List<MethodInfo>> methodCollector = new MethodCollector();
+    VoidVisitor<MethodPool> methodCollector = new MethodCollector();
     Set<MethodInfo> constructorInfo = new HashSet<>();
     this.getConstructorInfo(constructorInfo);
 
@@ -116,7 +116,7 @@ public class MethodParser {
 
     // record a fully qualified classname in methodPool and visit other methods in this class
     methodPool.MethodInfoList.addAll(constructorInfo);
-    methodCollector.visit(this.cu, methodPool.MethodInfoList);
+    methodCollector.visit(this.cu, methodPool);
   }
 
   private String getPackageName() {
@@ -207,10 +207,10 @@ public class MethodParser {
   }
 
   // TODO: handle static method differently
-  private class MethodCollector extends VoidVisitorAdapter<List<MethodInfo>> {
+  private class MethodCollector extends VoidVisitorAdapter<MethodPool> {
     @Override
-    public void visit(MethodDeclaration md, List<MethodInfo> collector) {
-      super.visit(md, collector);
+    public void visit(MethodDeclaration md, MethodPool methodPool) {
+      super.visit(md, methodPool);
 
       // Skip if method is abstract or non-public
       if (checkModifier(md, Modifier.Keyword.ABSTRACT) || !checkModifier(md, Modifier.Keyword.PUBLIC)) {
@@ -260,7 +260,7 @@ public class MethodParser {
         info.addParameterType(paramType);
         ClassUtils.collectSubClassInfo(paramType, Tandoop.inheritanceMap, Tandoop.classLoader);
       }
-      collector.add(info);
+      methodPool.addMethod(info);
       // System.out.println("info: " + info);
     }
   }

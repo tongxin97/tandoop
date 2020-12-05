@@ -35,7 +35,6 @@ public class Tandoop {
     private final int maxRepetition = 100;
     private final double repetitionProb = 0.1;
 
-    private String srcDir;
     private String prjDir;
 
     public CoverageAnalyzer coverageAnalyzer;
@@ -56,7 +55,6 @@ public class Tandoop {
         inheritanceMap = new HashMap<>();
         valuePool = new HashMap<>();
 
-        this.srcDir = srcDir;
         this.prjDir = prjDir;
 
         // load target project dependencies
@@ -71,7 +69,28 @@ public class Tandoop {
 
         // parse all accessible class methods in the target project
         MethodParser.parseAndResolveDirectory(srcDir, prjDir, methodPool);
-//        System.out.println("inheritance map: \n" + inheritanceMap);
+        System.out.println(methodPool);
+        try {
+            String filename = "oldMethodPool.txt";
+            BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
+            writer.write(methodPool.toString());
+            writer.close();
+        } catch (Exception e) {
+            System.err.println("Failed to write methodPool: " + e.getMessage());
+            e.printStackTrace();
+        }
+        methodPool.addParentMethodsToSubClasses();
+        try {
+            String filename = "newMethodPool.txt";
+            BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
+            writer.write(methodPool.toString());
+            writer.close();
+        } catch (Exception e) {
+            System.err.println("Failed to write methodPool: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        // System.out.println("inheritance map: \n" + inheritanceMap);
         try {
             String filename = "inheritance.txt";
             BufferedWriter writer = new BufferedWriter(new FileWriter(filename));

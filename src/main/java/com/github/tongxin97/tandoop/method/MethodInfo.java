@@ -26,10 +26,23 @@ public class MethodInfo {
         this.isStatic = false;
     }
 
+    public MethodInfo(MethodInfo copy, String className, String packageName) {
+        this.Name = copy.Name;
+        this.ClassName = className;
+        this.PackageName = packageName;
+        this.parameterTypes = new ArrayList<>(copy.parameterTypes);
+        this.returnType = copy.returnType;
+        this.isStatic = copy.isStatic;
+    }
+
     public String getFullyQualifiedMethodName() {
         if (this.ClassName != this.Name) {
             return this.PackageName + "." + this.ClassName + "." + this.Name;
         }
+        return this.PackageName + "." + this.ClassName;
+    }
+
+    public String getFullyQualifiedClassName() {
         return this.PackageName + "." + this.ClassName;
     }
 
@@ -43,7 +56,7 @@ public class MethodInfo {
 
     public String getReturnType() {
         if (this.returnType == null) { // constructors don't have returnType
-            return this.PackageName + "." + this.ClassName;
+            return getFullyQualifiedClassName();
         }
         return this.returnType;
     }
@@ -70,15 +83,15 @@ public class MethodInfo {
     @Override
     public String toString() {
         StringBuilder b = new StringBuilder();
-        b.append(String.format("Class name: %s\tMethod name: %s\n", this.ClassName, this.Name));
-        if (this.parameterTypes != null) {
+        b.append(String.format("Class name: %s, is static: %b, Method name: %s, ", ClassName, isStatic, Name));
+        if (parameterTypes != null) {
             b.append("Param types: ");
-            for (String t: this.parameterTypes) {
+            for (String t: parameterTypes) {
                 b.append(t + ", ");
             }
         }
-        if (this.returnType != null) {
-            b.append(String.format("\nReturn type: %s\n", this.returnType));
+        if (returnType != null) {
+            b.append(String.format("Return type: %s\n", returnType));
         }
         return b.toString();
     }
