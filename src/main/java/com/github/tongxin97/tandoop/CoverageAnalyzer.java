@@ -82,46 +82,34 @@ public class CoverageAnalyzer {
     
     private void printCoverageInfo(CoverageBuilder coverageBuilder) {
 		int instruction_total = 0;
-		int instruction_missed = 0;
+		int instruction_covered = 0;
 		int branch_total = 0;
-		int branch_missed = 0;
+		int branch_covered = 0;
 		int line_total = 0;
-		int line_missed = 0;
+		int line_covered = 0;
 		int method_total = 0;
-		int method_missed = 0;
-        // Let's dump some metrics and line coverage information:
+		int method_covered = 0;
+    // Let's dump some metrics and line coverage information:
 		for (IClassCoverage cc : coverageBuilder.getClasses()) {
-			// out.printf("Coverage of class %s%n", cc.getName());
 
-			// printCounter("instructions", cc.getInstructionCounter());
-			// printCounter("branches", cc.getBranchCounter());
-			// printCounter("lines", cc.getLineCounter());
-			// printCounter("methods", cc.getMethodCounter());
-			// printCounter("complexity", cc.getComplexityCounter());
-
-			instruction_missed += cc.getInstructionCounter().getMissedCount();
+			instruction_covered += cc.getInstructionCounter().getCoveredCount();
 			instruction_total += cc.getInstructionCounter().getTotalCount();
 			
-			branch_missed += cc.getBranchCounter().getMissedCount();
+			branch_covered += cc.getBranchCounter().getCoveredCount();
 			branch_total += cc.getBranchCounter().getTotalCount();
 
-			line_missed += cc.getLineCounter().getMissedCount();
+			line_covered += cc.getLineCounter().getCoveredCount();
 			line_total += cc.getLineCounter().getTotalCount();
 
-			method_missed += cc.getMethodCounter().getMissedCount();
+			method_covered += cc.getMethodCounter().getCoveredCount();
 			method_total += cc.getMethodCounter().getTotalCount();
 		}
 
-		out.printf("instruction: missed %d, total %d, coverage %f\n", instruction_missed, instruction_total, (1 - 1.0 * instruction_missed / instruction_total) * 100);
-		out.printf("branch: missed %d, total %d, coverage %f\n", branch_missed, branch_total, (1 - 1.0 * branch_missed / branch_total) * 100);
-		out.printf("line: missed %d, total %d, coverage %f\n", line_missed, line_total, (1 - 1.0 * line_missed / line_total) * 100);
-		out.printf("method: missed %d, total %d, coverage %f\n\n", method_missed, method_total, (1 - 1.0 * method_missed / method_total) * 100);
+		out.printf("instruction: covered %d, total %d, coverage %f\n", instruction_covered, instruction_total, 100.0 * instruction_covered / instruction_total);
+		out.printf("branch: covered %d, total %d, coverage %f\n", branch_covered, branch_total, 100.0 * branch_covered / branch_total);
+		out.printf("line: covered %d, total %d, coverage %f\n", line_covered, line_total, 100.0 * line_covered / line_total);
+		out.printf("method: covered %d, total %d, coverage %f\n\n", method_covered, method_total, 100.0 * method_covered / method_total);
 		out.close();
     }
-
-    private void printCounter(String unit, ICounter counter) {
-		Integer missed = Integer.valueOf(counter.getMissedCount());
-		Integer total = Integer.valueOf(counter.getTotalCount());
-		out.printf("%s of %s %s missed%n", missed, total, unit);
 	}
 }

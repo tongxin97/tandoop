@@ -74,6 +74,7 @@ public class ClassUtils {
         Set<String> types = parseCompoundType(className);
 
         for (String type: types) {
+            type = type.trim();
             Set<String> tmpNames = new HashSet<>();
             try {
                 Class c = Class.forName(type, true, classLoader);
