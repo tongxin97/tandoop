@@ -108,6 +108,8 @@ public class MethodParser {
       return;
     }
 
+//    System.out.printf("collectMethodInfo: %s\n", cd.getNameAsString());
+
     VoidVisitor<MethodPool> methodCollector = new MethodCollector();
     Set<MethodInfo> constructorInfo = new HashSet<>();
     this.getConstructorInfo(constructorInfo);
@@ -115,7 +117,9 @@ public class MethodParser {
     ClassUtils.collectSubClassInfo(getPackageName() + "." + cd.getNameAsString(), Tandoop.inheritanceMap, Tandoop.classLoader);
 
     // record a fully qualified classname in methodPool and visit other methods in this class
-    methodPool.MethodInfoList.addAll(constructorInfo);
+    for (MethodInfo m: constructorInfo) {
+      methodPool.addMethod(m);
+    }
     methodCollector.visit(this.cu, methodPool);
   }
 
@@ -177,6 +181,7 @@ public class MethodParser {
                 info.addParameterType(paramType);
               }
               infoList.add(info);
+//              System.out.println(info);
           }
         }
       }
