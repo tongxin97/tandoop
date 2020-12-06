@@ -46,6 +46,9 @@ public class MethodPool {
                     continue;
                 }
                 for (MethodInfo m: copyOfClassToMethods.get(superClass)) {
+                    if (m.isConstructor) {
+                        continue; // don't inherit constructors
+                    }
                     int p = subClass.lastIndexOf(".");
                     String packageName = subClass.substring(0, p);
                     String className = subClass.substring(p+1);

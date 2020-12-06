@@ -304,8 +304,7 @@ public class Tandoop {
             b.append(String.format("new %s(", method.getFullyQualifiedMethodName()));
             start = 0;
         } else if (method.isStatic) {
-            // if method is static, it uses the fully qualified classname in place of the instance variable
-            b.append(String.format("%s.%s(", method.getParameterTypeAtIdx(0), method.Name));
+            b.append(String.format("%s.%s(", method.getFullyQualifiedClassName(), method.Name));
             start = 0;
         } else {
             b.append(String.format("%s.%s(", vals.get(0).getContent(), method.Name));
