@@ -8,15 +8,22 @@ import java.util.stream.Collectors;
 
 public class ClassUtils {
     private static final Set<String> PRIMITIVE_TYPES = new HashSet(Arrays.asList(
-            boolean.class.getName(),
-            char.class.getName(),
-            byte.class.getName(),
-            short.class.getName(),
-            int.class.getName(),
-            long.class.getName(),
-            float.class.getName(),
-            double.class.getName(),
-            void.class.getName()
+        Boolean.class.getName(),
+        Character.class.getName(),
+        Byte.class.getName(),
+        Short.class.getName(),
+        Long.class.getName(),
+        Float.class.getName(),
+        Double.class.getName(),
+        boolean.class.getName(),
+        char.class.getName(),
+        byte.class.getName(),
+        short.class.getName(),
+        int.class.getName(),
+        long.class.getName(),
+        float.class.getName(),
+        double.class.getName(),
+        void.class.getName()
     ));
 
     private static final Set<String> BASIC_TYPES = new HashSet<>(Arrays.asList(
@@ -27,6 +34,9 @@ public class ClassUtils {
             Long.class.getName(),
             Float.class.getName(),
             Double.class.getName(),
+            Number.class.getName(),
+            String.class.getName(),
+            Object.class.getName(),
             boolean.class.getName(),
             char.class.getName(),
             byte.class.getName(),
@@ -108,10 +118,10 @@ public class ClassUtils {
                     String nestedClassName = type.substring(0, lastDot) + '$' + type.substring(lastDot + 1);
                     c = Class.forName(nestedClassName, true, classLoader);
                 } catch (Exception e2) {
-                    System.err.println("[Error] collectSuperClassAndInterfaces: " + e2.getMessage());
+                    System.err.println("[Error] collectInheritanceInfo: " + e2.getMessage());
                 }   
             } catch (Exception e2) {
-                System.err.println("[Error] collectSuperClassAndInterfaces: " + e2.getMessage());
+                System.err.println("[Error] collectInheritanceInfo: " + e2.getMessage());
             }
 
             inheritanceMap.put(type, collectSuperClassAndInterfaces(c, inheritanceMap, classLoader));

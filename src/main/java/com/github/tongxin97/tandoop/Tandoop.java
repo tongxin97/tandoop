@@ -3,6 +3,7 @@ package com.github.tongxin97.tandoop;
 import java.lang.reflect.Constructor;
 import java.util.*;
 import java.io.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.net.URLClassLoader;
 import java.net.URL;
@@ -194,7 +195,7 @@ public class Tandoop {
 //        )));
 //        inheritanceMap.put(doubleType, new HashSet<>(Arrays.asList(doubleType)));
 
-        this.valuePool.put("basic", new TypedValuePool("basic", Arrays.asList(
+        this.valuePool.put("primitive", new TypedValuePool("primative", Arrays.asList(
                 'a', 'z', 'B', '\t',
                 -128, 0, 127,
                 0, 1, -1, 1000, -1000, Integer.MAX_VALUE, Integer.MIN_VALUE,
@@ -204,7 +205,7 @@ public class Tandoop {
                 11.0, 7.14285, -92, Double.MAX_VALUE, Double.MIN_VALUE,
                 13.0, 0.333, -12, Double.MAX_VALUE, Double.MIN_VALUE
         )));
-        inheritanceMap.get(Object.class.getName()).add("basic");
+        inheritanceMap.get(Object.class.getName()).add("primitive");
 
         String stringType = String.class.getName();
         this.valuePool.put(stringType, new TypedValuePool<String>(stringType, Arrays.asList(
@@ -243,31 +244,72 @@ public class Tandoop {
     private ValueInfo generateExternalType(Set<Sequence> outputSeqs, String type) {
         // if v is outside of package and v has constructor without parameters, construct v and add it to sequence
         if (checkExtenalType(type)) {
-            System.out.println("Extenal type needed: " + type);
             try {
                 // Constructor[] constructors = Class.forName(type).getConstructors();
                 // only use the constructor without parameters
-                Constructor constructor = Class.forName(type).getConstructor();
-                StringBuilder b = new StringBuilder("      " + type + " = " + constructor.getName() + "(");
-
-                b.append(");\n");
-                
-                System.out.println(type + " " + "type0 = " + constructor.getName() + "();");
-                
-            } catch (Exception e) {
-                System.out.println("Failed to generated type " + type + ": " + e.getMessage());
-            }
-            // Class.forName(type).getMethod("getInstance");
+                if (type.endsWith("[]")) {
+                    type = type.substring(0, type.length() - 2);
+                    VarInfo var = new VarInfo(type.replaceAll(Pattern.quote("."), ""));
+                    String statement = type + "[] " + var.getContent() + " = new " + type + "[" + Rand.getRandomInt(5) + 1 + "];\n";
+                    Sequence s = new Sequence();
+                    s.addStatement(statement);
+                    outputSeqs.add(s);
+                    return var;
+                }
+                Constructor[] constructors = Class.forName(type).getConstructors();
+                Constructor constructor = null;
+                for (Constructor c: constructors) {
+                    boolean valid = true;
+                    for (Class p: c.getParameterTypes()) {
+                        if (!ClassUtils.isBasicType(p.getName())) {
+                            valid = false;
+                            break;
+                        }
+                    }
+                    if (valid && (constructor == null || c.getParameterCount() < constructor.getParameterCount())) {
+                        constructor = c;
+                    }
+                }
+                if (constructor != null) {
+                    VarInfo var = new VarInfo(type.replaceAll(Pattern.quote("."), "_"));
+                    StringBuilder b = new StringBuilder("      " + type + " ");
+                    b.append(var.getContent() + " = new " + constructor.getName() + "(");
+                    Class[] cs = constructor.getParameterTypes();
+                    for (int i = 0; i < constructor.getParameterCount(); ++i) {
+                        if (i > 0) {
+                            b.append(", ");
+                        }
+                        if (ClassUtils.isPrimitiveType(cs[i].getName())) {
+                            b.append(new ValueInfo(cs[i].getName(), valuePool.get("primitive").getRandomValue()).getContent());
+                        } else if (cs[i].getName().equals(String.class.getName())) {
+                            b.append(new ValueInfo(cs[i].getName(), valuePool.get(cs[i].getName()).getRandomValue()).getContent());
+                        } else{
+                            Object o = valuePool.get("primitive").getRandomValue();
+                            if (o.getClass().getName().equals(Character.class.getName())) {
+                                b.append(new ValueInfo(type, Character.getNumericValue((Character) o)).getContent());
+                            } else {
+                                b.append(new ValueInfo(type, o).getContent());
+                            }
+                        }
+                    }
+                    b.append(");\n");
+                    Sequence s = new Sequence();
+                    s.addStatement(b.toString());
+                    outputSeqs.add(s);
+                    return var;
+                }
+            } catch (Exception e) { }
         }
         return null;
     }
 
     private int getRandomSeqsAndVals(Set<Sequence> seqs, List<ValueInfo> vals, final MethodInfo method) throws Exception {
 //        System.out.println("types: " + types);
+        int returnVal = 0;
         int i = 0;
         for (String type: method.getParameterTypes()) {
-            if (ClassUtils.isBasicType(type)) {
-                vals.add(new ValueInfo(type, valuePool.get("basic").getRandomValue()));
+            if (ClassUtils.isPrimitiveType(type)) {
+                vals.add(new ValueInfo(type, valuePool.get("primitive").getRandomValue()));
             } else {
                 boolean useStrictType = i == 0 && method.isInstanceMethod();
                 // 3 possible choices for v
@@ -280,10 +322,10 @@ public class Tandoop {
                     v = this.getRandomExtensibleValFromSequences(this.nonErrorSeqs, seqs, type, useStrictType);
                 }
                 if (v == null) {
-                    if (type.equals(String.class.getName())) {
+                    if (type.equals(String.class.getName()) || type.equals(Object.class.getName())) {
                         v = new ValueInfo(type, valuePool.get(type).getRandomValue());
                     } else if (type.equals(Number.class.getName())) {
-                        Object o = valuePool.get("basic").getRandomValue();
+                        Object o = valuePool.get("primitive").getRandomValue();
                         if (o.getClass().getName().equals(Character.class.getName())) {
                             v = new ValueInfo(type, Character.getNumericValue((Character) o));
                         } else {
@@ -291,11 +333,16 @@ public class Tandoop {
                         }
                     }
                 }
+                if (v == null) {
+                    v = generateExternalType(seqs, type);
+                    returnVal = 1;
+                }
+
                 vals.add(v);
             }
             i++;
         }
-        return 0;
+        return returnVal;
     }
 
     private boolean checkExtenalType(String type) {
@@ -493,8 +540,8 @@ public class Tandoop {
                 if (var.Extensible) {
                     String returnType = method.getReturnType();
                     newSeq.addVal(returnType, var);
-                    if (ClassUtils.isBasicType(returnType)) {
-                        this.valuePool.get("basic").addValue(var.Val);
+                    if (ClassUtils.isPrimitiveType(returnType)) {
+                        this.valuePool.get("primitive").addValue(var.Val);
                     } else {
                         if (this.valuePool.containsKey(returnType)) {
                             this.valuePool.get(returnType).addValue(var.Val);

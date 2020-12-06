@@ -26,12 +26,12 @@ mvn compile assembly:single && java -cp ../commons-collections/target/commons-co
 * [DONE] Deduplicate previous method sequences when constructing a new one. 
 * [DONE] Handle interface
 * [DONE] Static nested class
-* On-demand construction of external types
+* [Done] On-demand construction of external types (no improvements)
 * BloodHound
 * Heuristic on constructor selection
 * [Done] Primitive type casting
-    * Debug "basic" type compilation error
-    * Update primitive type variable selection
+    * [Done] Debug "basic" type compilation error
+    * [Done] Update primitive type variable selection
 * [Done] Init String value pool
 * Debug extensible flag
 
