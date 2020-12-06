@@ -26,6 +26,9 @@ public class ValueInfo {
     if (this.Val instanceof String) {
       return String.format("\"%s\"", StringEscapeUtils.escapeJava((String) Val));
     }
+    if (this.Val instanceof Character) {
+      return String.format("'%s'", Val);
+    }
     return String.valueOf(this.Val);
   }
 }
