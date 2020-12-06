@@ -24,11 +24,11 @@ java -cp ../commons-collections/target/commons-collections4-4.5-SNAPSHOT.jar:tar
 * Handle generic types
 * Handle class/method inheritance
     - [DONE] For class/type inheritance, handle matching for compound types, eg. int[], Set<String>.
-    - Handle method inheritance
+    - [DONE] Handle method inheritance
 * [DONE/SomethingWrong] Deduplicate previous method sequences when constructing a new one. 
-* Handle interface
-* Static nested class
-* On-demand construction of external types
+* [DONE] Handle interface
+* [DONE] Static nested class
+* On-demand construDction of external types
 * BloodHound
 
 ## Related works:

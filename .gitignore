@@ -26,8 +26,6 @@ tandoop/src/test/java/com/github/tongxin97/tandoop/TandoopTest.java
 
 # test output
 failed_test_classes
-err_seqs.txt
-non_err_seqs.txt
+*.txt
 coverageInfo
 RandoopCoverage
-inheritance.txt
