@@ -210,7 +210,7 @@ public class MethodParser {
 
       // Skip if method is abstract or non-public
       if (checkModifier(md, Modifier.Keyword.ABSTRACT) || !checkModifier(md, Modifier.Keyword.PUBLIC)) {
-        // System.out.println("Encountered abstract or non-public method: " + md.getNameAsString());
+        // System.out.println("Encountered abstract πor non-public method: " + md.getNameAsString());
         return;
       }
       String methodName = md.getNameAsString();

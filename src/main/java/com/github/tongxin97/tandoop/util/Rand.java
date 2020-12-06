@@ -2,8 +2,6 @@ package com.github.tongxin97.tandoop.util;
 
 import java.util.Collection;
 import java.util.Random;
-import java.util.List;
-import java.util.Set;
 
 public class Rand {
   static Random rand = new Random();

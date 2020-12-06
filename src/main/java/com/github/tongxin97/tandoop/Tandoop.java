@@ -72,7 +72,18 @@ public class Tandoop {
 
         // parse all accessible class methods in the target project
         MethodParser.parseAndResolveDirectory(srcDir, prjDir, methodPool);
-//        System.out.println(methodPool);
+        this.invertInheritanceMap();
+
+        try {
+            String filename = "inheritance.txt";
+            BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
+            writer.write(inheritanceMap.toString());
+            writer.close();
+        } catch (Exception e) {
+            System.err.println("Failed to write inheritanceMap: " + e.getMessage());
+            e.printStackTrace();
+        }
+
         try {
             String filename = "oldMethodPool.txt";
             BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
@@ -82,8 +93,7 @@ public class Tandoop {
             System.err.println("Failed to write methodPool: " + e.getMessage());
             e.printStackTrace();
         }
-        // TODO: added parent methods leading to reduced performance
-        // methodPool.addParentMethodsToSubClasses();
+        methodPool.addParentMethodsToSubClasses();
         try {
             String filename = "newMethodPool.txt";
             BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
@@ -91,17 +101,6 @@ public class Tandoop {
             writer.close();
         } catch (Exception e) {
             System.err.println("Failed to write methodPool: " + e.getMessage());
-            e.printStackTrace();
-        }
-
-        this.invertInheritanceMap();
-        try {
-            String filename = "inheritance.txt";
-            BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
-            writer.write(inheritanceMap.toString());
-            writer.close();
-        } catch (Exception e) {
-            System.err.println("Failed to write inheritanceMap: " + e.getMessage());
             e.printStackTrace();
         }
 
@@ -146,7 +145,6 @@ public class Tandoop {
         String booleanType = boolean.class.getName();
         this.valuePool.put(booleanType, new TypedValuePool(booleanType, Arrays.asList(true, false)));
         inheritanceMap.put(booleanType, new HashSet<>(Arrays.asList(booleanType)));
-        ClassUtils.collectInheritanceInfo(booleanType, inheritanceMap, classLoader);
         // char type
         String charType = char.class.getName();
         this.valuePool.put(charType, new TypedValuePool(charType, Arrays.asList(

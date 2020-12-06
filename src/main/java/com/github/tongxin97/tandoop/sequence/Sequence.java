@@ -151,7 +151,7 @@ public class Sequence {
 		testString.append("    }\n");
 		testString.append("    catch (AssertionError e) { return \"[Tandoop] C: \" + e; }\n");
 		if (!InputParamsWithNull) {
-			testString.append("    catch (NullPointerException e) { return \"[Tandoop] C\" + e; }\n");
+			testString.append("    catch (NullPointerException e) { return \"[Tandoop] C: \" + e; }\n");
 		}
 		testString.append("    catch (Exception e) { return \"[Tandoop] F: \" + e; }\n");
 		testString.append("  }\n");

@@ -26,8 +26,9 @@ mvn compile assembly:single && java -cp ../commons-collections/target/commons-co
 * [DONE/SomethingWrong] Deduplicate previous method sequences when constructing a new one. 
 * [DONE] Handle interface
 * [DONE] Static nested class
-* On-demand construDction of external types
+* On-demand construction of external types
 * BloodHound
+* primative type casting
 
 ## Related works:
 https://people.kth.se/~artho/papers/lei-ase2015.pdf
