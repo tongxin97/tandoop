@@ -1,5 +1,6 @@
 package com.github.tongxin97.tandoop.value;
 
+import com.github.tongxin97.tandoop.util.ClassUtils;
 import org.apache.commons.text.StringEscapeUtils;
 
 public class ValueInfo {
@@ -29,6 +30,6 @@ public class ValueInfo {
     if (this.Val instanceof Character) {
       return String.format("'%s'", Val);
     }
-    return String.valueOf(this.Val);
+    return "(" + this.Type + ") " + this.Val.toString();
   }
 }

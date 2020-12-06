@@ -27,8 +27,6 @@ public class ClassUtils {
             Long.class.getName(),
             Float.class.getName(),
             Double.class.getName(),
-            Number.class.getName(),
-            Object.class.getName(),
             boolean.class.getName(),
             char.class.getName(),
             byte.class.getName(),

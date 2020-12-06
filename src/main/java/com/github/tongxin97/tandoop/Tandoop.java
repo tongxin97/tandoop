@@ -200,18 +200,18 @@ public class Tandoop {
                 0, 1, -1, 1000, -1000, Integer.MAX_VALUE, Integer.MIN_VALUE,
                 12.0, 5, -5, 100, -100, Short.MAX_VALUE, Short.MIN_VALUE,
                 24.0, 10, -10, 100000, -100000, Long.MAX_VALUE, Long.MIN_VALUE,
-                36.0, 3.14, -72.0, Float.MAX_VALUE, Float.MIN_VALUE, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY,
-                11.0, 7.14285, -92, Double.MAX_VALUE, Double.MIN_VALUE, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY,
-                13.0, 0.333, -12, Double.MAX_VALUE, Double.MIN_VALUE, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY
+                36.0, 3.14, -72.0, Float.MAX_VALUE, Float.MIN_VALUE,
+                11.0, 7.14285, -92, Double.MAX_VALUE, Double.MIN_VALUE,
+                13.0, 0.333, -12, Double.MAX_VALUE, Double.MIN_VALUE
         )));
         inheritanceMap.get(Object.class.getName()).add("basic");
 
         String stringType = String.class.getName();
         this.valuePool.put(stringType, new TypedValuePool<String>(stringType, Arrays.asList(
-            "en", "zh",
-            "0", "1", "12", "2020",
-            "New York", "Chicago",
-            "/", ".", "~"
+            "en",
+            "0", "1", "12", "2020", "12:00",
+            "New York",
+            "/", "."
         )));
 
         // null type
@@ -279,8 +279,17 @@ public class Tandoop {
                 if (v == null) {
                     v = this.getRandomExtensibleValFromSequences(this.nonErrorSeqs, seqs, type, useStrictType);
                 }
-                if (v == null && type.equals(String.class.getName())) {
-                    v = new ValueInfo(type, valuePool.get(type).getRandomValue());
+                if (v == null) {
+                    if (type.equals(String.class.getName())) {
+                        v = new ValueInfo(type, valuePool.get(type).getRandomValue());
+                    } else if (type.equals(Number.class.getName())) {
+                        Object o = valuePool.get("basic").getRandomValue();
+                        if (o.getClass().getName().equals(Character.class.getName())) {
+                            v = new ValueInfo(type, Character.getNumericValue((Character) o));
+                        } else {
+                            v = new ValueInfo(type, o);
+                        }
+                    }
                 }
                 vals.add(v);
             }
@@ -290,7 +299,7 @@ public class Tandoop {
     }
 
     private boolean checkExtenalType(String type) {
-        for (String pkg: this.pkgs) {
+        for (String pkg: pkgs) {
             if (type.startsWith(pkg)) {
                 return false;
             }
@@ -326,7 +335,6 @@ public class Tandoop {
             b.append(String.format("      %s %s = ", method.getReturnType(), var.getContent()));
             newSeq.NewVar = var.getContent();
         }
-        String typeDeclaration = b.toString();
 
         int start;
         if (method.isConstructor) {
@@ -463,11 +471,14 @@ public class Tandoop {
                 if (var.Extensible) {
                     String returnType = method.getReturnType();
                     newSeq.addVal(returnType, var);
-                    if (this.valuePool.containsKey(returnType)) {
-                        this.valuePool.get(returnType).addValue(var.Val);
+                    if (ClassUtils.isBasicType(returnType)) {
+                        this.valuePool.get("basic").addValue(var.Val);
                     } else {
-                        boolean isPrimitiveType = result.getClass().isPrimitive();
-                        this.valuePool.put(returnType, new TypedValuePool(returnType, isPrimitiveType, Arrays.asList(var.Val)));
+                        if (this.valuePool.containsKey(returnType)) {
+                            this.valuePool.get(returnType).addValue(var.Val);
+                        } else {
+                            this.valuePool.put(returnType, new TypedValuePool(returnType, false, Arrays.asList(var.Val)));
+                        }
                     }
                     System.out.println("Added extensible val:" + var.Val);
                 } else {
