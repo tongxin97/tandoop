@@ -261,24 +261,25 @@ public class Tandoop {
 //        System.out.println("types: " + types);
         int i = 0;
         for (String type: method.getParameterTypes()) {
-            if (ClassUtils.isBasicType(type)) {
-                vals.add(new ValueInfo(type, valuePool.get("basic").getRandomValue()));
-            } else {
-                boolean useStrictType = i == 0 && method.isInstanceMethod();
-                // 3 possible choices for v
-                // 1) v = null
-                ValueInfo v = null;
-                // 2) use a value v from a sequence that is already in seqs
-                v = this.getRandomExtensibleValFromSequences(seqs, seqs, type, useStrictType);
-                // 3) select a (possibly duplicate) sequence from nonErrorSeqs, add it to seqs, and use a value from it
-                if (v == null) {
-                    v = this.getRandomExtensibleValFromSequences(this.nonErrorSeqs, seqs, type, useStrictType);
-                }
-//                if (v == null) {
-//                    v = this.generateExternalType(seqs, type);
-//                }
-                vals.add(v);
+            boolean useStrictType = i == 0 && method.isInstanceMethod();
+            // 3 possible choices for v
+            // 1) v = null
+            ValueInfo v = null;
+            // 2) use a value v from a sequence that is already in seqs
+            v = this.getRandomExtensibleValFromSequences(seqs, seqs, type, useStrictType);
+            // 3) select a (possibly duplicate) sequence from nonErrorSeqs, add it to seqs, and use a value from it
+            if (v == null) {
+                v = this.getRandomExtensibleValFromSequences(this.nonErrorSeqs, seqs, type, useStrictType);
             }
+            if (v == null) {
+                if (ClassUtils.isBasicType(type)) {
+                    v = new ValueInfo(type, valuePool.get("basic").getRandomValue());
+                } else if (type.equals(String.class.getName())) {
+                    v = new ValueInfo(type, valuePool.get(type).getRandomValue());
+                }
+
+            }
+            vals.add(v);
             i++;
         }
         return 0;
