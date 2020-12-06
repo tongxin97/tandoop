@@ -19,8 +19,30 @@ public class ClassUtils {
             void.class.getName()
     ));
 
+    private static final Set<String> BASIC_TYPES = new HashSet<>(Arrays.asList(
+            Boolean.class.getName(),
+            Character.class.getName(),
+            Byte.class.getName(),
+            Short.class.getName(),
+            Long.class.getName(),
+            Float.class.getName(),
+            Double.class.getName(),
+            boolean.class.getName(),
+            char.class.getName(),
+            byte.class.getName(),
+            short.class.getName(),
+            int.class.getName(),
+            long.class.getName(),
+            float.class.getName(),
+            double.class.getName()
+    ));
+
     public static boolean isPrimitiveType(String c) {
         return PRIMITIVE_TYPES.contains(c);
+    }
+
+    public static boolean isBasicType(String c) {
+        return BASIC_TYPES.contains(c);
     }
 
     /**

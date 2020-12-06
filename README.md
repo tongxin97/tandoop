@@ -20,7 +20,7 @@ mvn compile assembly:single && java -cp ../commons-collections/target/commons-co
 ## Pending Questions/TODOs
 * [DONE] Differentiate static methods in parser
 * Handle generic types
-* Handle class/method inheritance
+* [DONE] Handle class/method inheritance
     - [DONE] For class/type inheritance, handle matching for compound types, eg. int[], Set<String>.
     - [DONE] Handle method inheritance
 * [DONE/SomethingWrong] Deduplicate previous method sequences when constructing a new one. 
@@ -28,7 +28,9 @@ mvn compile assembly:single && java -cp ../commons-collections/target/commons-co
 * [DONE] Static nested class
 * On-demand construction of external types
 * BloodHound
-* primative type casting
+* Heuristic on constructor selection
+* [Done] Primative type casting
+* [Done] Init String value pool
 
 ## Related works:
 https://people.kth.se/~artho/papers/lei-ase2015.pdf

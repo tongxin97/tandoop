@@ -141,58 +141,79 @@ public class Tandoop {
     }
 
     private void initPrimitiveValuePool() {
-        // boolean type
-        String booleanType = boolean.class.getName();
-        this.valuePool.put(booleanType, new TypedValuePool(booleanType, Arrays.asList(true, false)));
-        inheritanceMap.put(booleanType, new HashSet<>(Arrays.asList(booleanType)));
-        // char type
-        String charType = char.class.getName();
-        this.valuePool.put(charType, new TypedValuePool(charType, Arrays.asList(
-                'a', 'z', 'B', '\t'
-        )));
-        inheritanceMap.put(charType, new HashSet<>(Arrays.asList(charType)));
+//        // boolean type
+//        String booleanType = boolean.class.getName();
+//        this.valuePool.put(booleanType, new TypedValuePool(booleanType, Arrays.asList(true, false)));
+//        inheritanceMap.put(booleanType, new HashSet<>(Arrays.asList(booleanType)));
+//        // char type
+//        String charType = char.class.getName();
+//        this.valuePool.put(charType, new TypedValuePool(charType, Arrays.asList(
+//                'a', 'z', 'B', '\t'
+//        )));
+//        inheritanceMap.put(charType, new HashSet<>(Arrays.asList(charType)));
+//
+//        // byte type
+//        String byteType = byte.class.getName();
+//        this.valuePool.put(byteType, new TypedValuePool(byteType, Arrays.asList(
+//                -128, 0, 127
+//        )));
+//        inheritanceMap.put(byteType, new HashSet<>(Arrays.asList(byteType)));
+//
+//        // int type
+//        String intType = int.class.getName();
+//        this.valuePool.put(intType, new TypedValuePool(intType, Arrays.asList(
+//                0, 1, -1, 1000, -1000, Integer.MAX_VALUE, Integer.MIN_VALUE
+//        )));
+//        inheritanceMap.put(intType, new HashSet<>(Arrays.asList(intType)));
+//
+//        // short type
+//        String shortType = short.class.getName();
+//        this.valuePool.put(shortType, new TypedValuePool(shortType, Arrays.asList(
+//                0, 1, -1, 100, -100, Short.MAX_VALUE, Short.MIN_VALUE
+//        )));
+//        inheritanceMap.put(shortType, new HashSet<>(Arrays.asList(shortType)));
+//
+//        // long type
+//        String longType = long.class.getName();
+//        this.valuePool.put(longType, new TypedValuePool(longType, Arrays.asList(
+//                0, 1, -1, 100000, -100000, Long.MAX_VALUE, Long.MIN_VALUE
+//        )));
+//        inheritanceMap.put(longType, new HashSet<>(Arrays.asList(longType)));
+//
+//        // float type
+//        String floatType = float.class.getName();
+//        this.valuePool.put(floatType, new TypedValuePool(floatType, Arrays.asList(
+//                0.0, 3.14, -100, Float.MAX_VALUE, Float.MIN_VALUE, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY
+//        )));
+//        inheritanceMap.put(floatType, new HashSet<>(Arrays.asList(floatType)));
+//
+//        // double type
+//        String doubleType = double.class.getName();
+//        this.valuePool.put(doubleType, new TypedValuePool(doubleType, Arrays.asList(
+//                0.0, 3.14, -100, Double.MAX_VALUE, Double.MIN_VALUE, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY
+//        )));
+//        inheritanceMap.put(doubleType, new HashSet<>(Arrays.asList(doubleType)));
 
-        // byte type
-        String byteType = byte.class.getName();
-        this.valuePool.put(byteType, new TypedValuePool(byteType, Arrays.asList(
-                -128, 0, 127
+        this.valuePool.put("basic", new TypedValuePool("basic", Arrays.asList(
+                'a', 'z', 'B', '\t',
+                -128, 0, 127,
+                0, 1, -1, 1000, -1000, Integer.MAX_VALUE, Integer.MIN_VALUE,
+                12.0, 5, -5, 100, -100, Short.MAX_VALUE, Short.MIN_VALUE,
+                24.0, 10, -10, 100000, -100000, Long.MAX_VALUE, Long.MIN_VALUE,
+                36.0, 3.14, -72.0, Float.MAX_VALUE, Float.MIN_VALUE, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY,
+                11.0, 7.14285, -92, Double.MAX_VALUE, Double.MIN_VALUE, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY,
+                13.0, 0.333, -12, Double.MAX_VALUE, Double.MIN_VALUE, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY
         )));
-        inheritanceMap.put(byteType, new HashSet<>(Arrays.asList(byteType)));
+        inheritanceMap.get(Object.class.getName()).add("basic");
 
-        // int type
-        String intType = int.class.getName();
-        this.valuePool.put(intType, new TypedValuePool(intType, Arrays.asList(
-                0, 1, -1, 1000, -1000, Integer.MAX_VALUE, Integer.MIN_VALUE
+        String stringType = String.class.getName();
+        this.valuePool.put(stringType, new TypedValuePool(stringType, Arrays.asList(
+            "en", "zh",
+            "0", "1", "12", "36",
+            "cat", "dog",
+            "New York", "Chicago",
+            "/", ".", "~"
         )));
-        inheritanceMap.put(intType, new HashSet<>(Arrays.asList(intType)));
-
-        // short type
-        String shortType = short.class.getName();
-        this.valuePool.put(shortType, new TypedValuePool(shortType, Arrays.asList(
-                0, 1, -1, 100, -100, Short.MAX_VALUE, Short.MIN_VALUE
-        )));
-        inheritanceMap.put(shortType, new HashSet<>(Arrays.asList(shortType)));
-
-        // long type
-        String longType = long.class.getName();
-        this.valuePool.put(longType, new TypedValuePool(longType, Arrays.asList(
-                0, 1, -1, 100000, -100000, Long.MAX_VALUE, Long.MIN_VALUE
-        )));
-        inheritanceMap.put(longType, new HashSet<>(Arrays.asList(longType)));
-
-        // float type
-        String floatType = float.class.getName();
-        this.valuePool.put(floatType, new TypedValuePool(floatType, Arrays.asList(
-                0.0, 3.14, -100, Float.MAX_VALUE, Float.MIN_VALUE, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY
-        )));
-        inheritanceMap.put(floatType, new HashSet<>(Arrays.asList(floatType)));
-
-        // double type
-        String doubleType = double.class.getName();
-        this.valuePool.put(doubleType, new TypedValuePool(doubleType, Arrays.asList(
-                0.0, 3.14, -100, Double.MAX_VALUE, Double.MIN_VALUE, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY
-        )));
-        inheritanceMap.put(doubleType, new HashSet<>(Arrays.asList(doubleType)));
 
         // null type
         this.valuePool.put("null", new TypedValuePool("null", null));
@@ -239,8 +260,8 @@ public class Tandoop {
     private int getRandomSeqsAndVals(Set<Sequence> seqs, List<ValueInfo> vals, final List<String> paramTypes) throws Exception {
 //        System.out.println("types: " + types);
         for (String type: paramTypes) {
-            if (ClassUtils.isPrimitiveType(type)) {
-                vals.add(new ValueInfo(type, valuePool.get(type).getRandomValue()));
+            if (ClassUtils.isBasicType(type)) {
+                vals.add(new ValueInfo(type, valuePool.get("basic").getRandomValue()));
             } else {
                 // 3 possible choices for v
                 // 1) v = null
