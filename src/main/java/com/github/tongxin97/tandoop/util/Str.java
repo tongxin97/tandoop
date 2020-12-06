@@ -5,6 +5,8 @@ import java.util.HashSet;
 
 public class Str {
 
+  static String specialSymbols = "[]<>";
+
   public static boolean isGenericType(String type) {
     return !type.contains(".");
   }
@@ -14,8 +16,17 @@ public class Str {
     return l[l.length-1];
   }
 
-  public static String sanatizeTypeString(String type) {
-    return type.replaceAll("\\p{P}",""); // remove all punctuations
+  /**
+   * replace all occurences of a special symbol (defined in specialSymbols) by its ascii code.
+   * @param type
+   * @return
+   */
+  public static String sanitizeTypeString(String type) {
+    String res = type;
+    for (int i = 0; i < specialSymbols.length(); i++) {
+      res = res.replaceAll(String.format("\\%c", specialSymbols.charAt(i)), String.valueOf((int) specialSymbols.charAt(i)));
+    }
+    return res;
   }
 
   /**
