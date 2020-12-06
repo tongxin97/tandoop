@@ -28,3 +28,4 @@ tandoop/src/test/java/com/github/tongxin97/tandoop/TandoopTest.java
 failed_test_classes
 *.txt
 coverageInfo
+RandoopCoverage

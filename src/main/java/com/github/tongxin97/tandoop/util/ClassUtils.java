@@ -29,7 +29,7 @@ public class ClassUtils {
      * @return Set of simple types
      */
     public static Set<String> parseCompoundType(String cType) {
-        cType = cType.replace("[", "").replace("]", "");
+        cType = cType.replace("[", "").replace("]", "").replace(" ", "");
         return new HashSet<>(Arrays.asList(cType.split("<|>|,")));
     }
 
@@ -70,31 +70,47 @@ public class ClassUtils {
      * @param inheritanceMap
      * @param classLoader
      */
-    public static void collectSubClassInfo(String className, Map<String, Set<String>> inheritanceMap, ClassLoader classLoader) {
+    public static void collectInheritanceInfo(String className, Map<String, Set<String>> inheritanceMap, ClassLoader classLoader) {
         Set<String> types = parseCompoundType(className);
 
         for (String type: types) {
-            type = type.trim();
-            Set<String> tmpNames = new HashSet<>();
-            try {
-                Class c = Class.forName(type, true, classLoader);
-                while (c != null) {
-                    String canoName = c.getCanonicalName(); // the canonical name is the name that would be used in an import statement
-                    tmpNames.add(canoName);
-                    if (inheritanceMap.containsKey(canoName)) {
-                        inheritanceMap.get(canoName).addAll(tmpNames);
-                    } else {
-                        inheritanceMap.put(canoName, new HashSet<>(tmpNames));
-                    }
-                    c = c.getSuperclass();
-                }
-            } catch (ClassNotFoundException e) {
-                if (!isPrimitiveType(type)) {
-                    System.err.printf("Class %s not found.\n", type);
-                }
-            } catch (Exception e) {
-                System.err.println("Class.forName: " + e.getMessage());
+            if (isPrimitiveType(type) || inheritanceMap.containsKey(type)) {
+                continue;
             }
+            Class c = null;
+            try {
+                c = Class.forName(type, true, classLoader);
+            } catch (ClassNotFoundException e1) {
+                try {
+                    int lastDot = type.lastIndexOf('.');
+                    String nestedClassName = type.substring(0, lastDot) + '$' + type.substring(lastDot + 1);
+                    c = Class.forName(nestedClassName, true, classLoader);
+                } catch (Exception e2) {
+                    System.err.println("[Error] collectSuperClassAndInterfaces: " + e2.getMessage());
+                }   
+            } catch (Exception e2) {
+                System.err.println("[Error] collectSuperClassAndInterfaces: " + e2.getMessage());
+            }
+
+            inheritanceMap.put(type, collectSuperClassAndInterfaces(c, inheritanceMap, classLoader));
         }
+    }
+
+    private static Set<String> collectSuperClassAndInterfaces(Class c, Map<String, Set<String>> inheritanceMap, ClassLoader classLoader) {
+        if (c == null) {
+            return new HashSet<String>();
+        }
+        String name = c.getCanonicalName();
+        if (inheritanceMap.containsKey(name)) {
+            return inheritanceMap.get(name);
+        }
+        Set<String> superClassAndInterfaces = new HashSet<>();
+        superClassAndInterfaces.add(name);
+        superClassAndInterfaces.addAll(collectSuperClassAndInterfaces(c.getSuperclass(), inheritanceMap, classLoader));
+        for (Class i: c.getInterfaces()) {
+            superClassAndInterfaces.addAll(collectSuperClassAndInterfaces(i, inheritanceMap, classLoader));
+        }
+        inheritanceMap.put(name, superClassAndInterfaces);
+        return superClassAndInterfaces;
     }
 }

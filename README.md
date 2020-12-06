@@ -22,6 +22,12 @@ mvn compile assembly:single && java -cp ../commons-collections/target/commons-co
 * Handle generic types
 * Handle class/method inheritance
     - [DONE] For class/type inheritance, handle matching for compound types, eg. int[], Set<String>.
-    - Handle method inheritance
-* [DONE] Deduplicate previous method sequences when constructing a new one. 
-* Remove abstract class constructor.
+    - [DONE] Handle method inheritance
+* [DONE/SomethingWrong] Deduplicate previous method sequences when constructing a new one. 
+* [DONE] Handle interface
+* [DONE] Static nested class
+* On-demand construDction of external types
+* BloodHound
+
+## Related works:
+https://people.kth.se/~artho/papers/lei-ase2015.pdf

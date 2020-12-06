@@ -1,8 +1,6 @@
 package com.github.tongxin97.tandoop;
 
 import com.github.tongxin97.tandoop.util.ClassUtils;
-import com.github.tongxin97.tandoop.value.ValueInfo;
-import com.github.tongxin97.tandoop.value.VarInfo;
 import org.junit.Test;
 
 import java.util.*;
@@ -17,11 +15,6 @@ public class ClassUtilsTest {
                 types.toString().equals("[java.util.Set, org.joda.time.DateTimeFieldType]") ||
                         types.toString().equals("[org.joda.time.DateTimeFieldType, java.util.Set]")
         );
-
-//        HashSet<ArrayList<VarInfo>> v = new HashSet<>();
-//        Set<ArrayList<VarInfo>> s = (Set<ArrayList<VarInfo>>) v;
-//        VarInfo[] v = new VarInfo[3];
-//        ValueInfo[] vi = (ValueInfo[]) v;
     }
 
     @Test

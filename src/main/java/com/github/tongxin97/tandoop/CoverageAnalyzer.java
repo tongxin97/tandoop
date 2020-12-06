@@ -15,7 +15,7 @@ import org.jacoco.core.runtime.LoggerRuntime;
 import org.jacoco.core.runtime.RuntimeData;
 
 public class CoverageAnalyzer {
-    private PrintStream out;
+  private PrintStream out;
 	private File targetClasses;
 	public InstrumentedClassLoader classLoader;
 	public Instrumenter instr;
@@ -25,12 +25,12 @@ public class CoverageAnalyzer {
 	private IRuntime runtime;
 	private String prefix;
     
-	public CoverageAnalyzer(String prjDir, PrintStream out, URLClassLoader classLoader) throws Exception{
-        this.out = out;
+	public CoverageAnalyzer(String prjDir, PrintStream out, URLClassLoader classLoader) throws Exception {
+    this.out = out;
 		this.targetClasses = new File(prjDir + "/target/classes");
 		this.classLoader = new InstrumentedClassLoader((ClassLoader) classLoader);
 
-        // For instrumentation and runtime we need a IRuntime instance to collect execution data
+    // For instrumentation and runtime we need a IRuntime instance to collect execution data
 		this.runtime = new LoggerRuntime();
 
 		this.instr = new Instrumenter(runtime);
@@ -52,14 +52,14 @@ public class CoverageAnalyzer {
 			if (file.isDirectory()) {
 				loadTargetClasses(file); 
 			} else {
-                if (file.getName().endsWith(".class")) {
+        if (file.getName().endsWith(".class")) {
 					InputStream original = new FileInputStream(file);
 					String className = file.getPath().replaceFirst(prefix, "").replace("/", ".").split(".class")[0];
 					byte[] instrumented = instr.instrument(original, className);
 					original.close();
 					// System.out.println(className);
 					this.classLoader.addDefinition(className, instrumented);
-        	    }
+				}
 			}
 		}
 	}
@@ -70,17 +70,16 @@ public class CoverageAnalyzer {
 	}
 
 	public void end() throws Exception {
-        runtime.shutdown();
+		runtime.shutdown();
 
 		// Together with the original class definition we can calculate coverage information
 		CoverageBuilder coverageBuilder = new CoverageBuilder();
 		Analyzer analyzer = new Analyzer(executionData, coverageBuilder);
 		analyzer.analyzeAll(targetClasses);
-        
-        printCoverageInfo(coverageBuilder);
+		printCoverageInfo(coverageBuilder);
 	}
     
-    private void printCoverageInfo(CoverageBuilder coverageBuilder) {
+  private void printCoverageInfo(CoverageBuilder coverageBuilder) {
 		int instruction_total = 0;
 		int instruction_covered = 0;
 		int branch_total = 0;
@@ -110,5 +109,5 @@ public class CoverageAnalyzer {
 		out.printf("line: covered %d, total %d, coverage %f\n", line_covered, line_total, 100.0 * line_covered / line_total);
 		out.printf("method: covered %d, total %d, coverage %f\n\n", method_covered, method_total, 100.0 * method_covered / method_total);
 		out.close();
-    }
+  }
 }
