@@ -25,7 +25,6 @@ import com.github.javaparser.utils.ProjectRoot;
 import com.github.javaparser.symbolsolver.utils.SymbolSolverCollectionStrategy;
 
 import java.util.*;
-import java.io.FileInputStream;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -40,21 +39,13 @@ public class MethodParser {
   private String packageName;
   private ClassOrInterfaceDeclaration cd;
 
-  public MethodParser(String filename, String srcDir) throws Exception {
-    if (filename == null || srcDir == null) {
-      throw new IllegalArgumentException(String.format("Parameters can't be null: filename=%s, srcDir=%s", filename, srcDir));
-    }
-    cu = StaticJavaParser.parse(new FileInputStream(filename));
-    packageName = getPackageName();
-    cd = getPublicClassDeclaration();
-  }
-
   public MethodParser(CompilationUnit cu, String srcDir) throws Exception {
     if (cu == null || srcDir == null) {
       throw new IllegalArgumentException(String.format("Parameters can't be null: cu=%s, srcDir=%s", cu, srcDir));
     }
     this.cu = cu;
     this.packageName = getPackageName();
+    Tandoop.pkgs.add(this.packageName);
     cd = getPublicClassDeclaration();
   }
 
@@ -92,7 +83,7 @@ public class MethodParser {
       sr.tryToParse();
       List<CompilationUnit> compilations = sr.getCompilationUnits();
       for (CompilationUnit cu: compilations) {
-          new MethodParser(cu, srcDir).collectMethodInfo(methodPool);
+        new MethodParser(cu, srcDir).collectMethodInfo(methodPool);
       }
     }
   }
@@ -112,7 +103,7 @@ public class MethodParser {
     Set<MethodInfo> constructorInfo = new HashSet<>();
     this.getConstructorInfo(constructorInfo);
 
-    ClassUtils.collectSubClassInfo(getPackageName() + "." + cd.getNameAsString(), Tandoop.inheritanceMap, Tandoop.classLoader);
+    ClassUtils.collectInheritanceInfo(getPackageName() + "." + cd.getNameAsString(), Tandoop.inheritanceMap, Tandoop.classLoader);
 
     // record a fully qualified classname in methodPool and visit other methods in this class
     methodPool.MethodInfoList.addAll(constructorInfo);
@@ -233,7 +224,7 @@ public class MethodParser {
           }
           className = t.getNameAsString();
         } catch (Exception e) {
-          System.err.printf("Failed to get class name for method: %s\n", methodName);
+          System.err.println("[Error] MethodCollector: " + e.getMessage());
           return;
         }
       }
@@ -247,7 +238,7 @@ public class MethodParser {
         return;
       }
       info.setReturnType(returnType);
-      ClassUtils.collectSubClassInfo(returnType, Tandoop.inheritanceMap, Tandoop.classLoader);
+      ClassUtils.collectInheritanceInfo(returnType, Tandoop.inheritanceMap, Tandoop.classLoader);
       // store parameter type
       // NOTE: add instance type to parameterTypes since we need it to construct a new method call.
       info.addParameterType(packageName + "." + className);
@@ -258,7 +249,7 @@ public class MethodParser {
           return;
         }
         info.addParameterType(paramType);
-        ClassUtils.collectSubClassInfo(paramType, Tandoop.inheritanceMap, Tandoop.classLoader);
+        ClassUtils.collectInheritanceInfo(paramType, Tandoop.inheritanceMap, Tandoop.classLoader);
       }
       methodPool.addMethod(info);
       // System.out.println("info: " + info);

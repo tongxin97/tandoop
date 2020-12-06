@@ -1,6 +1,6 @@
 package com.github.tongxin97.tandoop;
 
-import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
 import java.util.*;
 import java.io.*;
 import java.util.stream.Collectors;
@@ -25,9 +25,11 @@ import com.github.tongxin97.tandoop.sequence.Sequence;
 
 public class Tandoop {
     public static URLClassLoader classLoader;
-    public static Map<String, Set<String>> inheritanceMap;
+    public static Map<String, Set<String>> inheritanceMap; // superclass/interface: subclasses
     private Map<String, TypedValuePool> valuePool;
     private MethodPool methodPool;
+
+    public static Set<String> pkgs;
 
     private Set<Sequence> errorSeqs;
     private Set<Sequence> nonErrorSeqs;
@@ -54,6 +56,7 @@ public class Tandoop {
         methodPool = new MethodPool();
         inheritanceMap = new HashMap<>();
         valuePool = new HashMap<>();
+        pkgs = new HashSet<>();
 
         this.prjDir = prjDir;
 
@@ -69,7 +72,6 @@ public class Tandoop {
 
         // parse all accessible class methods in the target project
         MethodParser.parseAndResolveDirectory(srcDir, prjDir, methodPool);
-        System.out.println(methodPool);
         try {
             String filename = "oldMethodPool.txt";
             BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
@@ -79,7 +81,8 @@ public class Tandoop {
             System.err.println("Failed to write methodPool: " + e.getMessage());
             e.printStackTrace();
         }
-        methodPool.addParentMethodsToSubClasses();
+        // TODO: added parent methods leading to reduced performance
+        // methodPool.addParentMethodsToSubClasses();
         try {
             String filename = "newMethodPool.txt";
             BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
@@ -90,7 +93,7 @@ public class Tandoop {
             e.printStackTrace();
         }
 
-        // System.out.println("inheritance map: \n" + inheritanceMap);
+        this.invertInheritanceMap();
         try {
             String filename = "inheritance.txt";
             BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
@@ -108,6 +111,19 @@ public class Tandoop {
         coverageInfoOut = new PrintStream(new FileOutputStream("coverageInfo", true));
         coverageInfoOut.printf("prjDir: %s, ", prjDir);
         coverageAnalyzer = new CoverageAnalyzer(prjDir, coverageInfoOut, classLoader);
+    }
+
+    private void invertInheritanceMap() {
+        Map<String, Set<String>> newInheritanceMap = new HashMap<String, Set<String>>();
+        for (Map.Entry<String, Set<String>> entry: inheritanceMap.entrySet()) {
+            for (String superClassOrInterface: entry.getValue()) {
+                if (!newInheritanceMap.containsKey(superClassOrInterface)) {
+                    newInheritanceMap.put(superClassOrInterface, new HashSet<String>());
+                }
+                newInheritanceMap.get(superClassOrInterface).add(entry.getKey());
+            }
+        }
+        inheritanceMap = newInheritanceMap;
     }
 
     private void setExtensibleFlag(Sequence newSeq, MethodInfo method, VarInfo var, Object result) {
@@ -129,7 +145,7 @@ public class Tandoop {
         String booleanType = boolean.class.getName();
         this.valuePool.put(booleanType, new TypedValuePool(booleanType, Arrays.asList(true, false)));
         inheritanceMap.put(booleanType, new HashSet<>(Arrays.asList(booleanType)));
-        ClassUtils.collectSubClassInfo(booleanType, inheritanceMap, classLoader);
+        ClassUtils.collectInheritanceInfo(booleanType, inheritanceMap, classLoader);
         // char type
         String charType = char.class.getName();
         this.valuePool.put(charType, new TypedValuePool(charType, Arrays.asList(
@@ -205,7 +221,23 @@ public class Tandoop {
         return null;
     }
 
-    private int getRandomSeqsAndVals(Set<Sequence> seqs, List<ValueInfo> vals, final List<String> paramTypes) {
+    private ValueInfo generateExternalType(Set<Sequence> outputSeqs, String type) {
+        // if v is outside of package and v has constructor without parameters, construct v and add it to sequence
+        if (checkExtenalType(type)) {
+            System.out.println("Extenal type needed: " + type);
+            try {
+                // Constructor[] constructors = Class.forName(type).getConstructors();
+                // only use the constructor without parameters
+                Constructor constructor = Class.forName(type).getConstructor();
+                System.out.println(type + " " + "type0 = " + constructor.getName() + "();");
+            } catch (Exception e) {
+                System.out.println("Failed to generated type " + type + ": " + e.getMessage());
+            }
+        }
+        return null;
+    }
+
+    private int getRandomSeqsAndVals(Set<Sequence> seqs, List<ValueInfo> vals, final List<String> paramTypes) throws Exception {
 //        System.out.println("types: " + types);
         for (String type: paramTypes) {
             if (ClassUtils.isPrimitiveType(type)) {
@@ -220,10 +252,22 @@ public class Tandoop {
                 if (v == null) {
                     v = this.getRandomExtensibleValFromSequences(this.nonErrorSeqs, seqs, type);
                 }
+//                if (v == null) {
+//                    v = this.generateExternalType(seqs, type);
+//                }
                 vals.add(v);
             }
         }
         return 0;
+    }
+
+    private boolean checkExtenalType(String type) {
+        for (String pkg: this.pkgs) {
+            if (type.startsWith(pkg)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -281,26 +325,27 @@ public class Tandoop {
         }
         b.append(");\n");
 
-        // skip constructor for statement repetition
-        if (method.IsConstructor()) {
-            return b.toString();
-        }
+        // // skip constructor for statement repetition
+        // if (method.IsConstructor()) {
+        //     return b.toString();
+        // }
 
-        int repeat = this.getNumOfRepetition();
-        if (repeat == 0) {
-            return "";
-        }
-        if (repeat == 1) {
-            return b.toString();
-        }
-        // create string for repeated statement
-        StringBuilder repeatedStatement = new StringBuilder(typeDeclaration + "null;\n");
-        repeatedStatement.append(String.format("      for (int i=0; i<%d; i++) {\n", repeat));
-        String methodCall = b.toString().substring(typeDeclaration.length());
-        repeatedStatement.append(String.format("        %s = %s", var.getContent(), methodCall));
-        repeatedStatement.append("      }\n");
+        // int repeat = this.getNumOfRepetition();
+        // if (repeat == 0) {
+        //     return "";
+        // }
+        // if (repeat == 1) {
+        //     return b.toString();
+        // }
+        // // create string for repeated statement
+        // StringBuilder repeatedStatement = new StringBuilder(typeDeclaration + "null;\n");
+        // repeatedStatement.append(String.format("      for (int i=0; i<%d; i++) {\n", repeat));
+        // String methodCall = b.toString().substring(typeDeclaration.length());
+        // repeatedStatement.append(String.format("        %s = %s", var.getContent(), methodCall));
+        // repeatedStatement.append("      }\n");
 
-        return repeatedStatement.toString();
+        // return repeatedStatement.toString();
+        return b.toString();
     }
 
     public Sequence extend(MethodInfo method, VarInfo var, Set<Sequence> seqs, List<ValueInfo> vals) {

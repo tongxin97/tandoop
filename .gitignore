@@ -29,3 +29,5 @@ failed_test_classes
 err_seqs.txt
 non_err_seqs.txt
 coverageInfo
+RandoopCoverage
+inheritance.txt
