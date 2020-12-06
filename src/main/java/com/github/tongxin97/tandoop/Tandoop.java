@@ -220,12 +220,12 @@ public class Tandoop {
         inheritanceMap.put("null", new HashSet<>(Arrays.asList("null")));
     }
 
-    private ValueInfo getRandomExtensibleValFromSequences(Set<Sequence> inputSeqs, Set<Sequence> outputSeqs, String type) {
+    private ValueInfo getRandomExtensibleValFromSequences(Set<Sequence> inputSeqs, Set<Sequence> outputSeqs, String type, boolean useStrictType) {
         // filter inputSeqs by whether a seq has extensible values of the given type
         Map<Sequence, Integer> matchTypes = new HashMap<>();
         List<Sequence> seqsWithGivenType = inputSeqs.stream()
             .filter(s -> {
-                int matchType = s.hasExtensibleValOfType(type, inheritanceMap);
+                int matchType = s.hasExtensibleValOfType(type, inheritanceMap, useStrictType);
                 matchTypes.put(s, matchType);
                 return matchType >= 0;
             })
@@ -257,26 +257,29 @@ public class Tandoop {
         return null;
     }
 
-    private int getRandomSeqsAndVals(Set<Sequence> seqs, List<ValueInfo> vals, final List<String> paramTypes) throws Exception {
+    private int getRandomSeqsAndVals(Set<Sequence> seqs, List<ValueInfo> vals, final MethodInfo method) throws Exception {
 //        System.out.println("types: " + types);
-        for (String type: paramTypes) {
+        int i = 0;
+        for (String type: method.getParameterTypes()) {
             if (ClassUtils.isBasicType(type)) {
                 vals.add(new ValueInfo(type, valuePool.get("basic").getRandomValue()));
             } else {
+                boolean useStrictType = i == 0 && method.isInstanceMethod();
                 // 3 possible choices for v
                 // 1) v = null
                 ValueInfo v = null;
                 // 2) use a value v from a sequence that is already in seqs
-                v = this.getRandomExtensibleValFromSequences(seqs, seqs, type);
+                v = this.getRandomExtensibleValFromSequences(seqs, seqs, type, useStrictType);
                 // 3) select a (possibly duplicate) sequence from nonErrorSeqs, add it to seqs, and use a value from it
                 if (v == null) {
-                    v = this.getRandomExtensibleValFromSequences(this.nonErrorSeqs, seqs, type);
+                    v = this.getRandomExtensibleValFromSequences(this.nonErrorSeqs, seqs, type, useStrictType);
                 }
 //                if (v == null) {
 //                    v = this.generateExternalType(seqs, type);
 //                }
                 vals.add(v);
             }
+            i++;
         }
         return 0;
     }
@@ -414,7 +417,7 @@ public class Tandoop {
             // System.out.printf("Selected random method: %s.%s\n", method.ClassName, method.Name);
             Set<Sequence> seqs = new LinkedHashSet<>();
             List<ValueInfo> vals = new ArrayList<>();
-            if (this.getRandomSeqsAndVals(seqs, vals, method.getParameterTypes()) < 0) {
+            if (this.getRandomSeqsAndVals(seqs, vals, method) < 0) {
                 continue;
             }
             // sanity check: instance val (vals[0]) can't be null when method is not constructor or static

@@ -111,22 +111,25 @@ public class Sequence {
 	 * Checks whether this sequence contains values of the given type or its subtype/sub-collection-type.
 	 * @param type target type
 	 * @param inheritanceMap
+	 * @param useStrictType
 	 * @return 0 if exact match on type; 1 if subtype match; 2 if sub-collection-type match; -1 if no match.
 	 */
-	public int hasExtensibleValOfType(String type, final Map<String, Set<String>> inheritanceMap) {
+	public int hasExtensibleValOfType(String type, final Map<String, Set<String>> inheritanceMap, boolean useStrictType) {
 		// exact match
 		if (this.Vals.containsKey(type)) {
 			return 0;
 		}
-		// match a subtype
-		Set<String> subTypes = inheritanceMap.get(type);
-		if (subTypes != null && !Collections.disjoint(this.Vals.keySet(), subTypes)) {
-			return 1;
-		}
-		// match a sub-collection-type
-		Set<String> subColTypes = ClassUtils.getSubCollectionsTypes(type, inheritanceMap);
-		if (subColTypes!= null && !Collections.disjoint(this.Vals.keySet(), subColTypes)) {
-			return 2;
+		if (!useStrictType) {
+			// match a subtype
+			Set<String> subTypes = inheritanceMap.get(type);
+			if (subTypes != null && !Collections.disjoint(this.Vals.keySet(), subTypes)) {
+				return 1;
+			}
+			// match a sub-collection-type
+			Set<String> subColTypes = ClassUtils.getSubCollectionsTypes(type, inheritanceMap);
+			if (subColTypes!= null && !Collections.disjoint(this.Vals.keySet(), subColTypes)) {
+				return 2;
+			}
 		}
 		return -1;
 	}

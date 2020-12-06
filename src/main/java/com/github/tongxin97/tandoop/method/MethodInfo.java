@@ -80,6 +80,10 @@ public class MethodInfo {
         return this.parameterTypes.get(i);
     }
 
+    public boolean isInstanceMethod() {
+        return !isConstructor && !isStatic;
+    }
+
     @Override
     public String toString() {
         StringBuilder b = new StringBuilder();
