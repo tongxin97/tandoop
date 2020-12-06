@@ -40,16 +40,17 @@ public class MethodPool {
         Map<String, Set<MethodInfo>> copyOfClassToMethods = classToMethods.entrySet().stream().collect(
                 Collectors.toMap(e -> e.getKey(), e -> new HashSet<>(e.getValue()))
         );
-        for (String parentClass: Tandoop.inheritanceMap.keySet()) {
-            for (String subClass: Tandoop.inheritanceMap.get(parentClass)) {
-                if (!copyOfClassToMethods.containsKey(parentClass)) {
+        for (String superClass: Tandoop.inheritanceMap.keySet()) {
+            for (String subClass: Tandoop.inheritanceMap.get(superClass)) {
+                if (!copyOfClassToMethods.containsKey(superClass) || subClass.equals(superClass)) {
                     continue;
                 }
-                for (MethodInfo m: copyOfClassToMethods.get(parentClass)) {
+                for (MethodInfo m: copyOfClassToMethods.get(superClass)) {
                     int p = subClass.lastIndexOf(".");
                     String packageName = subClass.substring(0, p);
                     String className = subClass.substring(p+1);
                     MethodInfo newMethod = new MethodInfo(m, className, packageName);
+//                    System.out.printf("Added %s to subclass %s of %s\n", m.Name, subClass, superClass);
                     addMethod(newMethod);
                 }
             }

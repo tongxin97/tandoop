@@ -111,5 +111,4 @@ public class CoverageAnalyzer {
 		out.printf("method: covered %d, total %d, coverage %f\n\n", method_covered, method_total, 100.0 * method_covered / method_total);
 		out.close();
     }
-	}
 }

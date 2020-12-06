@@ -69,7 +69,7 @@ public class Tandoop {
 
         // parse all accessible class methods in the target project
         MethodParser.parseAndResolveDirectory(srcDir, prjDir, methodPool);
-        System.out.println(methodPool);
+//        System.out.println(methodPool);
         try {
             String filename = "oldMethodPool.txt";
             BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
