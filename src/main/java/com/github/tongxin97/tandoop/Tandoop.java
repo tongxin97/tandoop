@@ -300,13 +300,13 @@ public class Tandoop {
         String typeDeclaration = b.toString();
 
         int start;
-        if (method.IsConstructor()) {
+        if (method.isConstructor) {
             b.append(String.format("new %s(", method.getFullyQualifiedMethodName()));
             start = 0;
         } else if (method.isStatic) {
             // if method is static, it uses the fully qualified classname in place of the instance variable
             b.append(String.format("%s.%s(", method.getParameterTypeAtIdx(0), method.Name));
-            start = 1;
+            start = 0;
         } else {
             b.append(String.format("%s.%s(", vals.get(0).getContent(), method.Name));
             start = 1;
@@ -398,7 +398,7 @@ public class Tandoop {
                 continue;
             }
             // sanity check: instance val (vals[0]) can't be null when method is not constructor or static
-            if (!method.IsConstructor() && !method.isStatic && vals.get(0) == null) {
+            if (!method.isConstructor && !method.isStatic && vals.get(0) == null) {
 //                 System.out.printf("Instance val is null: %s.%s\n", method.ClassName, method.Name);
                 continue;
             }

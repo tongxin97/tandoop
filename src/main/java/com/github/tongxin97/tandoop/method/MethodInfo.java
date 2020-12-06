@@ -13,7 +13,8 @@ public class MethodInfo {
     public String Name;
     public List<String> parameterTypes;
     public String returnType;
-    public boolean isStatic;
+    public boolean isStatic = false;
+    public boolean isConstructor = false;
 
     public MethodInfo(String name, String className, String packageName) throws IllegalArgumentException {
         if (name == null || className == null || packageName == null) {
@@ -23,20 +24,23 @@ public class MethodInfo {
         this.ClassName = className;
         this.PackageName = packageName;
         this.parameterTypes = new ArrayList<>();
-        this.isStatic = false;
+    }
+
+    public MethodInfo(String name, String className, String packageName, boolean isConstructor) throws IllegalArgumentException {
+        this(name, className, packageName);
+        this.isConstructor = isConstructor;
     }
 
     public MethodInfo(MethodInfo copy, String className, String packageName) {
-        this.Name = copy.Name;
-        this.ClassName = className;
-        this.PackageName = packageName;
-        this.parameterTypes = new ArrayList<>(copy.parameterTypes);
+        this(copy.Name, className, packageName);
+        this.parameterTypes.addAll(copy.parameterTypes);
         this.returnType = copy.returnType;
         this.isStatic = copy.isStatic;
+        this.isConstructor = copy.isConstructor;
     }
 
     public String getFullyQualifiedMethodName() {
-        if (this.ClassName != this.Name) {
+        if (!isConstructor) {
             return this.PackageName + "." + this.ClassName + "." + this.Name;
         }
         return this.PackageName + "." + this.ClassName;
@@ -76,14 +80,10 @@ public class MethodInfo {
         return this.parameterTypes.get(i);
     }
 
-    public boolean IsConstructor() {
-        return this.ClassName.equals(this.Name);
-    }
-
     @Override
     public String toString() {
         StringBuilder b = new StringBuilder();
-        b.append(String.format("Class name: %s, is static: %b, Method name: %s, ", ClassName, isStatic, Name));
+        b.append(String.format("Method name: %s, is static: %b, isConstructor: %b, ", getFullyQualifiedMethodName(), isStatic, isConstructor));
         if (parameterTypes != null) {
             b.append("Param types: ");
             for (String t: parameterTypes) {

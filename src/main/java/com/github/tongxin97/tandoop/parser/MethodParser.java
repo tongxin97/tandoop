@@ -158,11 +158,7 @@ public class MethodParser {
                 continue;
               }
               String constructorName = cd.getNameAsString();
-              MethodInfo info = new MethodInfo(
-                constructorName,
-                constructorName,
-                packageName
-              );
+              MethodInfo info = new MethodInfo(constructorName, constructorName, packageName, true);
               for (Parameter p : cd.getParameters()) {
                 String paramType = this.resolveType(p.getType());
                 if (paramType == null) {
@@ -246,7 +242,9 @@ public class MethodParser {
       ClassUtils.collectInheritanceInfo(returnType, Tandoop.inheritanceMap, Tandoop.classLoader);
       // store parameter type
       // NOTE: add instance type to parameterTypes since we need it to construct a new method call.
-      info.addParameterType(packageName + "." + className);
+      if (!info.isStatic) {
+        info.addParameterType(packageName + "." + className);
+      }
       for (Parameter p : md.getParameters()) {
         String paramType = resolveType(p.getType());
         if (paramType == null) {
