@@ -60,6 +60,13 @@ public class MethodPool {
         }
     }
 
+    public Set<MethodInfo> getConstructorsOfClass(String className) {
+        if (!classToMethods.containsKey(className)) {
+            return null;
+        }
+        return classToMethods.get(className).stream().filter(m -> m.isConstructor).collect(Collectors.toSet());
+    }
+
     public MethodInfo getRandomMethod() throws IllegalArgumentException {
         if (MethodInfoList.isEmpty()) {
             throw new IllegalArgumentException("MethodPool is empty.");
