@@ -207,7 +207,7 @@ public class Tandoop {
         inheritanceMap.get(Object.class.getName()).add("basic");
 
         String stringType = String.class.getName();
-        this.valuePool.put(stringType, new TypedValuePool(stringType, Arrays.asList(
+        this.valuePool.put(stringType, new TypedValuePool<String>(stringType, Arrays.asList(
             "en", "zh",
             "0", "1", "12", "36",
             "cat", "dog",
