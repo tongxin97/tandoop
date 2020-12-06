@@ -405,6 +405,26 @@ public class Tandoop {
         }
     }
 
+    /**
+     * Prefer constructors with no parameters or only primitive ones.
+     * @param m
+     * @return
+     */
+    private MethodInfo selectConstructor(MethodInfo m) {
+        if (!m.isConstructor) {
+            return m;
+        }
+        Set<MethodInfo> constructors = methodPool.getConstructorsOfClass(m.getFullyQualifiedClassName());
+        if (constructors != null) {
+            for (MethodInfo c : constructors) {
+                if (!c.hasParameters() || c.hasOnlyPrimitiveParameters()) {
+                    return c;
+                }
+            }
+        }
+        return m;
+    }
+
     public void generateSequences(long timeLimits) throws Exception {
         this.coverageInfoOut.printf("timeLimits: %d s\n", timeLimits);
         timeLimits *= 1000;
@@ -419,6 +439,7 @@ public class Tandoop {
                 System.err.println("getRandomMethod exception: " + e.getMessage());
                 break;
             }
+            method = selectConstructor(method);
             // System.out.printf("Selected random method: %s.%s\n", method.ClassName, method.Name);
             Set<Sequence> seqs = new LinkedHashSet<>();
             List<ValueInfo> vals = new ArrayList<>();
@@ -457,6 +478,7 @@ public class Tandoop {
                         String.format("TandoopErrTest%d", errorSeqs.size())
                 );
                 errorSeqs.add(newSeq);
+                var.Extensible = false;
             } else {
                 nonErrorSeqs.add(newSeq);
                 setExtensibleFlag(newSeq, method, var, result);

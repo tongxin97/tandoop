@@ -5,21 +5,15 @@ import org.apache.commons.text.StringEscapeUtils;
 public class ValueInfo {
   public String Type; // type name
   public Object Val; // runtime value
-  public boolean Extensible;
+  public boolean Extensible = false;
 
   public ValueInfo(String type) {
-    this.Type = type;
+    Type = type;
   }
 
   public ValueInfo(String type, Object val) {
-    this.Type = type;
-    this.Val = val;
-  }
-
-  public ValueInfo(String type, Object val, boolean extensible) {
-    this.Type = type;
-    this.Val = val;
-    this.Extensible = extensible;
+    Type = type;
+    Val = val;
   }
 
   public String getContent() {

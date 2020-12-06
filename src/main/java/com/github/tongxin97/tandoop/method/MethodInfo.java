@@ -80,6 +80,23 @@ public class MethodInfo {
         return this.parameterTypes.get(i);
     }
 
+    public boolean hasParameters() {
+        return parameterTypes.size() > 0;
+    }
+
+    public boolean hasOnlyPrimitiveParameters() {
+        for (String t: parameterTypes) {
+            try {
+                if (!Class.forName(t).isPrimitive()) {
+                    return false;
+                }
+            } catch (ClassNotFoundException e) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public boolean isInstanceMethod() {
         return !isConstructor && !isStatic;
     }
