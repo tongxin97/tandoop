@@ -23,14 +23,17 @@ mvn compile assembly:single && java -cp ../commons-collections/target/commons-co
 * [DONE] Handle class/method inheritance
     - [DONE] For class/type inheritance, handle matching for compound types, eg. int[], Set<String>.
     - [DONE] Handle method inheritance
-* [DONE/SomethingWrong] Deduplicate previous method sequences when constructing a new one. 
+* [DONE] Deduplicate previous method sequences when constructing a new one. 
 * [DONE] Handle interface
 * [DONE] Static nested class
 * On-demand construction of external types
 * BloodHound
 * Heuristic on constructor selection
-* [Done] Primative type casting
+* [Done] Primitive type casting
+    * Debug "basic" type compilation error
+    * Update primitive type variable selection
 * [Done] Init String value pool
+* Debug extensible flag
 
 ## Related works:
 https://people.kth.se/~artho/papers/lei-ase2015.pdf
