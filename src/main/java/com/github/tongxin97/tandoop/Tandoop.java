@@ -209,8 +209,7 @@ public class Tandoop {
         String stringType = String.class.getName();
         this.valuePool.put(stringType, new TypedValuePool<String>(stringType, Arrays.asList(
             "en", "zh",
-            "0", "1", "12", "36",
-            "cat", "dog",
+            "0", "1", "12", "2020",
             "New York", "Chicago",
             "/", ".", "~"
         )));
@@ -249,10 +248,16 @@ public class Tandoop {
                 // Constructor[] constructors = Class.forName(type).getConstructors();
                 // only use the constructor without parameters
                 Constructor constructor = Class.forName(type).getConstructor();
+                StringBuilder b = new StringBuilder("      " + type + " = " + constructor.getName() + "(");
+
+                b.append(");\n");
+                
                 System.out.println(type + " " + "type0 = " + constructor.getName() + "();");
+                
             } catch (Exception e) {
                 System.out.println("Failed to generated type " + type + ": " + e.getMessage());
             }
+            // Class.forName(type).getMethod("getInstance");
         }
         return null;
     }
@@ -261,25 +266,24 @@ public class Tandoop {
 //        System.out.println("types: " + types);
         int i = 0;
         for (String type: method.getParameterTypes()) {
-            boolean useStrictType = i == 0 && method.isInstanceMethod();
-            // 3 possible choices for v
-            // 1) v = null
-            ValueInfo v = null;
-            // 2) use a value v from a sequence that is already in seqs
-            v = this.getRandomExtensibleValFromSequences(seqs, seqs, type, useStrictType);
-            // 3) select a (possibly duplicate) sequence from nonErrorSeqs, add it to seqs, and use a value from it
-            if (v == null) {
-                v = this.getRandomExtensibleValFromSequences(this.nonErrorSeqs, seqs, type, useStrictType);
-            }
-            if (v == null) {
-                if (ClassUtils.isBasicType(type)) {
-                    v = new ValueInfo(type, valuePool.get("basic").getRandomValue());
-                } else if (type.equals(String.class.getName())) {
+            if (ClassUtils.isBasicType(type)) {
+                vals.add(new ValueInfo(type, valuePool.get("basic").getRandomValue()));
+            } else {
+                boolean useStrictType = i == 0 && method.isInstanceMethod();
+                // 3 possible choices for v
+                // 1) v = null
+                ValueInfo v = null;
+                // 2) use a value v from a sequence that is already in seqs
+                v = this.getRandomExtensibleValFromSequences(seqs, seqs, type, useStrictType);
+                // 3) select a (possibly duplicate) sequence from nonErrorSeqs, add it to seqs, and use a value from it
+                if (v == null) {
+                    v = this.getRandomExtensibleValFromSequences(this.nonErrorSeqs, seqs, type, useStrictType);
+                }
+                if (v == null && type.equals(String.class.getName())) {
                     v = new ValueInfo(type, valuePool.get(type).getRandomValue());
                 }
-
+                vals.add(v);
             }
-            vals.add(v);
             i++;
         }
         return 0;
@@ -454,10 +458,6 @@ public class Tandoop {
                 );
                 errorSeqs.add(newSeq);
             } else {
-//                newSeq.generateJUnitTest(
-//                        String.format("%s/src/test/java/", this.prjDir),
-//                        String.format("TandoopRegTest%d", nonErrorSeqs.size())
-//                );
                 nonErrorSeqs.add(newSeq);
                 setExtensibleFlag(newSeq, method, var, result);
                 if (var.Extensible) {
