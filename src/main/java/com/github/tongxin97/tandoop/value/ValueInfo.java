@@ -28,8 +28,8 @@ public class ValueInfo {
     if (this.Val instanceof Character) {
       return String.format("'%s'", Val);
     }
-    if (!Type.equals(Number.class.getName())) {
-      return "(" + this.Type + ") " + this.Val.toString();
+    if (ClassUtils.isPrimitiveOrWrapper(this.Type)) {
+      return "(" + ClassUtils.WRAPPER_PRIMITIVE_MAPPER.get(this.Type) + ") " + this.Val.toString();
     }
     return this.Val.toString();
   }

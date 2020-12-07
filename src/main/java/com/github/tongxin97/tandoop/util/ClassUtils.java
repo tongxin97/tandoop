@@ -1,17 +1,37 @@
 package com.github.tongxin97.tandoop.util;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ClassUtils {
+    public static Map<String, String> WRAPPER_PRIMITIVE_MAPPER = new HashMap<String, String>(){{
+        put(Character.class.getName(), char.class.getName());
+        put(char.class.getName(), char.class.getName());
+        put(Byte.class.getName(), byte.class.getName());
+        put(byte.class.getName(), byte.class.getName());
+        put(Short.class.getName(), short.class.getName());
+        put(short.class.getName(), short.class.getName());
+        put(Integer.class.getName(), int.class.getName());
+        put(int.class.getName(), int.class.getName());
+        put(Long.class.getName(), long.class.getName());
+        put(long.class.getName(), long.class.getName());
+        put(Float.class.getName(), float.class.getName());
+        put(float.class.getName(), float.class.getName());
+        put(Double.class.getName(), double.class.getName());
+        put(double.class.getName(), double.class.getName());
+    }};
+
+
     private static final Set<String> PRIMITIVE_OR_WRAPPER_TYPES = new HashSet(Arrays.asList(
         Boolean.class.getName(),
         Character.class.getName(),
         Byte.class.getName(),
         Short.class.getName(),
+        Integer.class.getName(),
         Long.class.getName(),
         Float.class.getName(),
         Double.class.getName(),
@@ -75,7 +95,7 @@ public class ClassUtils {
         return PRIMITIVE_TYPES.contains(c);
     }
 
-    public static boolean isPrimitiveOrWapper(String c) {
+    public static boolean isPrimitiveOrWrapper(String c) {
         return PRIMITIVE_TYPES.contains(c);
     }
 
@@ -83,7 +103,7 @@ public class ClassUtils {
         return BASIC_TYPES.contains(c);
     }
 
-    public static boolean isBooleanType(String c) {
+    public static boolean isBooleanOrWrapper(String c) {
         return BOOLEAN_TYPES.contains(c);
     }
 

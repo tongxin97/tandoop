@@ -187,16 +187,20 @@ public class Tandoop {
 //    )));
 //    inheritanceMap.put(doubleType, new HashSet<>(Arrays.asList(doubleType)));
 
-    this.valuePool.put("primitive", new TypedValuePool("primative", Arrays.asList(
-        'a', 'z', 'B', '\t',
-        -128, 0, 127,
-        0, 1, -1, 1000, -1000, Integer.MAX_VALUE, Integer.MIN_VALUE,
-        12.0, 5, -5, 100, -100, Short.MAX_VALUE, Short.MIN_VALUE,
-        24.0, 10, -10, 100000, -100000, Long.MAX_VALUE, Long.MIN_VALUE,
-        36.0, 3.14, -72.0, Float.MAX_VALUE, Float.MIN_VALUE,
-        11.0, 7.14285, -92, Double.MAX_VALUE, Double.MIN_VALUE,
-        13.0, 0.333, -12, Double.MAX_VALUE, Double.MIN_VALUE
-    )));
+    double[] primitives = {'a', 'z', 'B', '\t',
+            -128, 0, 127,
+            0, 1, -1, 1000, -1000, Integer.MAX_VALUE, Integer.MIN_VALUE,
+            12.0, 5, -5, 100, -100, Short.MAX_VALUE, Short.MIN_VALUE,
+            24.0, 10, -10, 100000, -100000, Long.MAX_VALUE, Long.MIN_VALUE,
+            36.0, 3.14, -72.0, Float.MAX_VALUE, Float.MIN_VALUE,
+            11.0, 7.14285, -92, Double.MAX_VALUE, Double.MIN_VALUE,
+            13.0, 0.333, -12, Double.MAX_VALUE, Double.MIN_VALUE
+    };
+    List<Object> primitivesList = new ArrayList<>();
+    for (double no: primitives) {
+      primitivesList.add(no);
+    }
+    this.valuePool.put("primitive", new TypedValuePool("primative", primitivesList));
     inheritanceMap.get(Object.class.getName()).add("primitive");
 
     String stringType = String.class.getName();
@@ -283,14 +287,16 @@ public class Tandoop {
             if (i > 0) {
               b.append(", ");
             }
-            if (ClassUtils.isPrimitiveOrWapper(cs[i].getName())) {
-              if (ClassUtils.isBooleanType(cs[i].getName())) {
-                b.append(new ValueInfo(boolean.class.getName(), valuePool.get(boolean.class.getName()).getRandomValue()).getContent()));
+            if (ClassUtils.isPrimitiveOrWrapper(cs[i].getName())) {
+              if (ClassUtils.isBooleanOrWrapper(cs[i].getName())) {
+                b.append(new ValueInfo(boolean.class.getName(), valuePool.get(boolean.class.getName()).getRandomValue()).getContent());
               } else {
                 b.append(new ValueInfo(cs[i].getName(), valuePool.get("primitive").getRandomValue()).getContent());  
               }
-            } else if (cs[i].getName().equals(String.class.getName())) {
-              b.append(new ValueInfo(cs[i].getName(), valuePool.get(cs[i].getName()).getRandomValue()).getContent());
+            } else if (cs[i].getName().equals(String.class.getName()) || cs[i].getName().equals(Object.class.getName())) {
+              b.append(new ValueInfo(cs[i].getName(), valuePool.get(String.class.getName()).getRandomValue()).getContent());
+            } else if (cs[i].getName().equals(Number.class.getName())) {
+              b.append(new ValueInfo(cs[i].getName(), valuePool.get("primitive").getRandomValue()).getContent());  
             } else {
               b.append("null");
             }
@@ -299,7 +305,7 @@ public class Tandoop {
           Sequence s = new Sequence();
           s.addStatement(b.toString());
           outputSeqs.add(s);
-          System.out.println(b.toString());
+//          System.out.println(b.toString());
           return var;
         }
       } catch (Exception e) {
@@ -315,8 +321,8 @@ public class Tandoop {
     int returnVal = 0;
     int i = 0;
     for (String type: method.getParameterTypes()) {
-      if (ClassUtils.isPrimitiveOrWapper(type)) {
-        if (ClassUtils.isBooleanType(type)) {
+      if (ClassUtils.isPrimitiveOrWrapper(type)) {
+        if (ClassUtils.isBooleanOrWrapper(type)) {
           vals.add(new ValueInfo(type, valuePool.get(boolean.class.getName()).getRandomValue()));
         } else {
           vals.add(new ValueInfo(type, valuePool.get("primitive").getRandomValue()));
@@ -337,7 +343,7 @@ public class Tandoop {
             v = new ValueInfo(type, valuePool.get(type).getRandomValue());
           } else if (type.equals(Number.class.getName())) {
             Object o = valuePool.get("primitive").getRandomValue();
-            if (o.getClass().getName().equals(Character.class.getName())) {
+            if (o.getClass().getName().equals(Character.class.getName()) || o.getClass().getName().equals(char.class.getName())) {
               v = new ValueInfo(type, Character.getNumericValue((Character) o));
             } else {
               v = new ValueInfo(type, o);
@@ -499,6 +505,7 @@ public class Tandoop {
       // System.out.printf("Selected random method: %s.%s\n", method.ClassName, method.Name);
       Set<Sequence> seqs = new LinkedHashSet<>();
       List<ValueInfo> vals = new ArrayList<>();
+      // TODO: add external value to value pool
       if (this.getRandomSeqsAndVals(seqs, vals, method) < 0) {
         continue;
       }
@@ -539,8 +546,10 @@ public class Tandoop {
         if (var.Extensible) {
           String returnType = method.getReturnType();
           newSeq.addVal(returnType, var);
-          if (ClassUtils.isPrimitiveType(returnType)) {
-            this.valuePool.get("primitive").addValue(var.Val);
+          if (ClassUtils.isPrimitiveOrWrapper(returnType)) {
+            if (!ClassUtils.isBooleanOrWrapper(returnType)) {
+              this.valuePool.get("primitive").addValue(Double.valueOf(var.Val.toString()).doubleValue());
+            }
           } else {
             if (this.valuePool.containsKey(returnType)) {
               this.valuePool.get(returnType).addValue(var.Val);
