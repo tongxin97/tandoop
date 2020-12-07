@@ -31,6 +31,7 @@ mvn compile assembly:single && java -cp ../commons-collections/target/commons-co
 * [Done] Primitive type casting
     * [Done] Debug "basic" type compilation error
     * [Done] Update primitive type variable selection
+    * Fix more casting error
 * [Done] Init String value pool
 * Handle generic types
 * BloodHound

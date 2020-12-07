@@ -17,6 +17,10 @@ public class ValueInfo {
     Val = val;
   }
 
+  public boolean hasPrimitiveType() {
+    return ClassUtils.isPrimitiveType(Type);
+  }
+
   public String getContent() {
     if (this.Val instanceof String) {
       return String.format("\"%s\"", StringEscapeUtils.escapeJava((String) Val));

@@ -371,7 +371,7 @@ public class Tandoop {
         StringBuilder b = new StringBuilder();
         if (method.returnType == null || !method.returnType.equals("void")) {
             b.append(String.format("      %s %s = ", method.getReturnType(), var.getContent()));
-            newSeq.NewVar = var.getContent();
+            newSeq.NewVar = var;
         }
 
         int start;
@@ -428,6 +428,9 @@ public class Tandoop {
         for (Sequence seq: seqs) {
             for (Map.Entry<String, List<ValueInfo>> entry: seq.Vals.entrySet()) {
                 newSeq.addVals(entry.getKey(), entry.getValue());
+            }
+            for (String g: seq.genericTypes) {
+                newSeq.genericTypes.add(g);
             }
             newSeq.addStatements(seq);
         }
@@ -500,15 +503,12 @@ public class Tandoop {
 
             VarInfo var = new VarInfo(method.getSimpleReturnType());
             Sequence newSeq = this.extend(method, var, seqs, vals);
-            // Skip method if any of its associated types is generic (for now)
-            boolean hasGenericType = false;
+
+            // handle generic types
             for (String paramType: method.getParameterTypes()) {
-                hasGenericType |= Str.parseNestedTypes(paramType, null, newSeq.genericTypes);
+                Str.parseNestedTypes(paramType, newSeq.genericTypes);
             }
-            hasGenericType |= Str.parseNestedTypes(method.getReturnType(), null, newSeq.genericTypes);
-//            if (hasGenericType) {
-//                continue;
-//            }
+            Str.parseNestedTypes(method.getReturnType(), newSeq.genericTypes);
 
             // Check if newSeq is duplicate
             if (this.errorSeqs.contains(newSeq) || this.nonErrorSeqs.contains(newSeq)) {

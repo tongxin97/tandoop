@@ -14,6 +14,7 @@ import com.github.tongxin97.tandoop.value.ValueInfo;
 import com.github.tongxin97.tandoop.Tandoop;
 import com.github.tongxin97.tandoop.CoverageAnalyzer;
 import com.github.tongxin97.tandoop.InstrumentedClassLoader;
+import com.github.tongxin97.tandoop.value.VarInfo;
 
 /**
  * The class that stores a sequence
@@ -27,7 +28,7 @@ public class Sequence {
 	public LinkedHashSet<String> statements;
 	public Map<String, List<ValueInfo>> Vals;
 	public String ExcSeq;
-	public String NewVar;
+	public VarInfo NewVar;
 	public boolean InputParamsWithNull;
 	public Set<String> genericTypes;
 
@@ -35,7 +36,6 @@ public class Sequence {
 		this.Vals = new HashMap<>();
 		this.statements = new LinkedHashSet<>();
 		this.ExcSeq = "";
-		this.NewVar = "";
 		this.InputParamsWithNull = false;
 		genericTypes = new HashSet<>();
 	}
@@ -162,13 +162,16 @@ public class Sequence {
 		testString.append("  public Object test() {\n");
 		testString.append("    try {\n");
 		testString.append(this.ExcSeq);
-		testString.append("      if (" + this.NewVar + " == null) { return \"[Tandoop] F: null\"; }\n");
-		testString.append("      try {\n");
-		testString.append("        assert(" + this.NewVar + ".equals(" + this.NewVar + "));\n");
-		testString.append("        " + this.NewVar + ".hashCode();\n");
-		testString.append("        " + this.NewVar + ".toString();\n");
-		testString.append("      } catch (Exception e) { return \"[Tandoop] C: \" + e; }\n");
-		testString.append("      return " + this.NewVar + ";\n");
+		String newVarContent = NewVar.getContent();
+		if (newVarContent != "" && !NewVar.hasPrimitiveType()) {
+			testString.append("      if (" + newVarContent + " == null) { return \"[Tandoop] F: null\"; }\n");
+			testString.append("      try {\n");
+			testString.append("        assert(" + newVarContent + ".equals(" + newVarContent + "));\n");
+			testString.append("        " + newVarContent + ".hashCode();\n");
+			testString.append("        " + newVarContent + ".toString();\n");
+			testString.append("      } catch (Exception e) { return \"[Tandoop] C: \" + e; }\n");
+		}
+		testString.append("      return " + newVarContent+ ";\n");
 		testString.append("    }\n");
 		testString.append("    catch (AssertionError e) { return \"[Tandoop] C: \" + e; }\n");
 		if (!InputParamsWithNull) {
@@ -195,12 +198,16 @@ public class Sequence {
 		appendTestClassHeader(testString, testClass);
 		testString.append("  @Test\n  public void test() {\n    try {\n");
 		testString.append(this.ExcSeq);
-		testString.append("      if (" + this.NewVar + " == null) { System.out.println(\"" + this.NewVar + " is null.\\n\"); return; }\n");
-		testString.append("      try {\n");
-		testString.append("      	assertTrue(" + this.NewVar + ".equals(" + this.NewVar + "));\n");
-		testString.append("      	" + this.NewVar + ".hashCode();\n");
-		testString.append("      	" + this.NewVar + ".toString();\n");
-		testString.append("      } catch (Exception e) { e.printStackTrace(); fail(e.getMessage()); } \n");
+		String newVarContent = NewVar.getContent();
+		if (newVarContent != "" && !NewVar.hasPrimitiveType()) {
+			testString.append("      if (" + newVarContent + " == null) { System.out.println(\"" + newVarContent + " is " +
+					"null.\\n\"); return; }\n");
+			testString.append("      try {\n");
+			testString.append("      	assertTrue(" + newVarContent + ".equals(" + newVarContent + "));\n");
+			testString.append("      	" + newVarContent + ".hashCode();\n");
+			testString.append("      	" + newVarContent + ".toString();\n");
+			testString.append("      } catch (Exception e) { e.printStackTrace(); fail(e.getMessage()); } \n");
+		}
 		testString.append("   }\n");
 		testString.append("    catch (AssertionError e) { e.printStackTrace(); fail(e.getMessage()); }\n");
 		if (!this.InputParamsWithNull) {
