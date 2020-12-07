@@ -24,6 +24,9 @@ public class ValueInfo {
     if (this.Val instanceof Character) {
       return String.format("'%s'", Val);
     }
-    return "(" + this.Type + ") " + this.Val.toString();
+    if (!Type.equals(Number.class.getName())) {
+      return "(" + this.Type + ") " + this.Val.toString();
+    }
+    return this.Val.toString();
   }
 }
