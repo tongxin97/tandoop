@@ -19,7 +19,6 @@ mvn compile assembly:single && java -cp ../commons-collections/target/commons-co
 
 ## Pending Questions/TODOs
 * [DONE] Differentiate static methods in parser
-* Handle generic types
 * [DONE] Handle class/method inheritance
     - [DONE] For class/type inheritance, handle matching for compound types, eg. int[], Set<String>.
     - [DONE] Handle method inheritance
@@ -27,13 +26,15 @@ mvn compile assembly:single && java -cp ../commons-collections/target/commons-co
 * [DONE] Handle interface
 * [DONE] Static nested class
 * [Done] On-demand construction of external types (no improvements)
-* BloodHound
 * Heuristic on constructor selection
+    * [DONE] Prefer constructors with no arguments or only primitive ones.
 * [Done] Primitive type casting
     * [Done] Debug "basic" type compilation error
     * [Done] Update primitive type variable selection
 * [Done] Init String value pool
-* Debug extensible flag
+* Handle generic types
+* BloodHound
+* Debug extensible flag?
 
 ## Related works:
 https://people.kth.se/~artho/papers/lei-ase2015.pdf
