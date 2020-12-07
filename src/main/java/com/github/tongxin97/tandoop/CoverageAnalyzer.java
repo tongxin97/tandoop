@@ -1,21 +1,23 @@
 package com.github.tongxin97.tandoop;
 
 import java.io.*;
-import java.lang.reflect.Array;
 import java.net.URLClassLoader;
-import java.util.List;
-import java.util.Arrays;
 
 import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
 import org.jacoco.core.analysis.IClassCoverage;
-import org.jacoco.core.analysis.ICounter;
+import org.jacoco.core.data.ExecutionData;
+import org.jacoco.core.data.ExecutionDataReader;
 import org.jacoco.core.data.ExecutionDataStore;
+import org.jacoco.core.data.IExecutionDataVisitor;
 import org.jacoco.core.data.SessionInfoStore;
+import org.jacoco.core.data.ISessionInfoVisitor;
+import org.jacoco.core.data.SessionInfo;
 import org.jacoco.core.instr.Instrumenter;
 import org.jacoco.core.runtime.IRuntime;
 import org.jacoco.core.runtime.LoggerRuntime;
 import org.jacoco.core.runtime.RuntimeData;
+import org.jacoco.agent.rt.RT;
 
 public class CoverageAnalyzer {
   private PrintStream out;
@@ -79,10 +81,11 @@ public class CoverageAnalyzer {
 		CoverageBuilder coverageBuilder = new CoverageBuilder();
 		Analyzer analyzer = new Analyzer(executionData, coverageBuilder);
 		analyzer.analyzeAll(targetClasses);
-		printCoverageInfo(coverageBuilder);
+		printCoverageInfo(this.out, coverageBuilder);
+		out.close();
 	}
-    
-  private void printCoverageInfo(CoverageBuilder coverageBuilder) {
+
+	private int[] getCoverageInfo(CoverageBuilder coverageBuilder) {
 		int instruction_total = 0;
 		int instruction_covered = 0;
 		int branch_total = 0;
@@ -106,27 +109,71 @@ public class CoverageAnalyzer {
 			method_covered += cc.getMethodCounter().getCoveredCount();
 			method_total += cc.getMethodCounter().getTotalCount();
 		}
-
-		out.printf("instruction: covered %d, total %d, coverage %f\n", instruction_covered, instruction_total, 100.0 * instruction_covered / instruction_total);
-		out.printf("branch: covered %d, total %d, coverage %f\n", branch_covered, branch_total, 100.0 * branch_covered / branch_total);
-		out.printf("line: covered %d, total %d, coverage %f\n", line_covered, line_total, 100.0 * line_covered / line_total);
-		out.printf("method: covered %d, total %d, coverage %f\n\n", method_covered, method_total, 100.0 * method_covered / method_total);
-		out.close();
-	}
-	
-	public List<Integer> getCoverageInfo() {
-		int instruction_total = 0;
-		int instruction_covered = 0;
-		int branch_total = 0;
-		int branch_covered = 0;
-		int line_total = 0;
-		int line_covered = 0;
-		int method_total = 0;
-		int method_covered = 0;
-		return Arrays.asList(instruction_covered, instruction_total,
+		return new int[] {instruction_covered, instruction_total,
 			branch_covered, branch_total,
 			line_covered, line_total,
 			method_covered, method_total
-		);
+		};
+	}
+    
+  private void printCoverageInfo(PrintStream out, CoverageBuilder coverageBuilder) {
+		int[] coverageInfo = getCoverageInfo(coverageBuilder);
+
+	  out.printf("instruction: covered %d, total %d, coverage %f\n", coverageInfo[0], coverageInfo[1], 100.0 * coverageInfo[0] / coverageInfo[1]);
+	  out.printf("branch: covered %d, total %d, coverage %f\n", coverageInfo[2], coverageInfo[3], 100.0 * coverageInfo[2] / coverageInfo[3]);
+	  out.printf("line: covered %d, total %d, coverage %f\n", coverageInfo[4], coverageInfo[5], 100.0 * coverageInfo[4] / coverageInfo[5]);
+	  out.printf("method: covered %d, total %d, coverage %f\n\n", coverageInfo[6], coverageInfo[7], 100.0 * coverageInfo[6] / coverageInfo[7]);
+	}
+	
+	public int[] collectCoverageInfo() throws IOException {
+		try {
+			// Retrieve the execution data from the Jacoco Java agent
+			final InputStream execDataStream;
+			try {
+				execDataStream = new ByteArrayInputStream(RT.getAgent().getExecutionData(false));
+			} catch (IllegalStateException e) {
+				System.err.println("JaCoCo agent not started. Add '-Xbootclasspath/a:jacocoagent.jar -javaagent:jacocoagent.jar' to command line argument");
+				throw (e);
+			}
+			final ExecutionDataReader reader = new ExecutionDataReader(execDataStream);
+
+			reader.setSessionInfoVisitor(DummySessionInfoVisitor.instance);
+			reader.setExecutionDataVisitor(
+				new IExecutionDataVisitor() {
+					@Override
+					public void visitClassExecution(final ExecutionData data) {
+						// Add the execution data for each class into the execution data store.
+						executionData.put(data);
+					}
+				});
+			reader.read();
+			execDataStream.close();
+		} catch (IOException e) {
+      System.err.println("Error in Coverage Tracker in collecting coverage information.");
+      e.printStackTrace(System.err);
+      System.exit(1);
+		}
+
+		CoverageBuilder coverageBuilder = new CoverageBuilder();
+		Analyzer analyzer = new Analyzer(executionData, coverageBuilder);
+		analyzer.analyzeAll(targetClasses);
+		return getCoverageInfo(coverageBuilder);
+	}
+
+  private static class DummySessionInfoVisitor implements ISessionInfoVisitor {
+    /** Singleton instance of this class. */
+    public static final DummySessionInfoVisitor instance = new DummySessionInfoVisitor();
+
+    /** Initializes the session info visitor. */
+    private DummySessionInfoVisitor() {}
+
+    /**
+     * Required by the {@link ISessionInfoVisitor} but the session information is not used by this
+     * class.
+     *
+     * @param info session information
+     */
+    @Override
+		public void visitSessionInfo(final SessionInfo info) {}
 	}
 }

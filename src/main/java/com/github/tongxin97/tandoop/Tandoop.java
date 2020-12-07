@@ -1,6 +1,7 @@
 package com.github.tongxin97.tandoop;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 import java.util.*;
 import java.io.*;
 import java.util.regex.Pattern;
@@ -235,30 +236,42 @@ public class Tandoop {
     private ValueInfo generateExternalType(Set<Sequence> outputSeqs, String type) {
         // if v is outside of package and v has constructor without parameters, construct v and add it to sequence
         if (checkExternalType(type)) {
+            Class c = null;
+            if (type.endsWith("[]")) {
+                type = type.substring(0, type.length() - 2);
+                VarInfo var = new VarInfo(type.replaceAll(Pattern.quote("."), ""));
+                String statement = type + "[] " + var.getContent() + " = new " + type + "[" + Rand.getRandomInt(5) + 1 + "];\n";
+                Sequence s = new Sequence();
+                s.addStatement(statement);
+                outputSeqs.add(s);
+                return var;
+            }
+            type = Arrays.asList(type.replace("[", "").replace("]", "").replace(" ", "").split("<|>|,")).get(0);
             try {
-                // Constructor[] constructors = Class.forName(type).getConstructors();
-                // only use the constructor without parameters
-                if (type.endsWith("[]")) {
-                    type = type.substring(0, type.length() - 2);
-                    VarInfo var = new VarInfo(type.replaceAll(Pattern.quote("."), ""));
-                    String statement = type + "[] " + var.getContent() + " = new " + type + "[" + Rand.getRandomInt(5) + 1 + "];\n";
-                    Sequence s = new Sequence();
-                    s.addStatement(statement);
-                    outputSeqs.add(s);
-                    return var;
+                c = Class.forName(type);
+                if (Modifier.isAbstract(c.getModifiers())) {
+                    return null;
                 }
-                Constructor[] constructors = Class.forName(type).getConstructors();
+            } catch (Exception e) {
+                System.err.println("[Error] generateExternalType: " + e.getMessage());
+                e.printStackTrace();
+            }
+            
+            // Constructor[] constructors = Class.forName(type).getConstructors();
+            // only use the constructor without parameters
+            try {
+                Constructor[] constructors = c.getConstructors();
                 Constructor constructor = null;
-                for (Constructor c: constructors) {
+                for (Constructor ct: constructors) {
                     boolean valid = true;
-                    for (Class p: c.getParameterTypes()) {
+                    for (Class p: ct.getParameterTypes()) {
                         if (!ClassUtils.isBasicType(p.getName())) {
                             valid = false;
                             break;
                         }
                     }
-                    if (valid && (constructor == null || c.getParameterCount() < constructor.getParameterCount())) {
-                        constructor = c;
+                    if (valid && (constructor == null || ct.getParameterCount() < constructor.getParameterCount())) {
+                        constructor = ct;
                     }
                 }
                 if (constructor != null) {
@@ -289,7 +302,10 @@ public class Tandoop {
                     outputSeqs.add(s);
                     return var;
                 }
-            } catch (Exception e) { }
+            } catch (Exception e) {
+                System.err.println("[Error] generateExternalType: " + e.getMessage());
+                e.printStackTrace();
+            }
         }
         return null;
     }
@@ -546,8 +562,8 @@ public class Tandoop {
                 }
             }
             System.out.println("-----------------------");
-            // TODO: get coverage Info
-            List<Integer> coverageInfo  = coverageAnalyzer.getCoverageInfo();
+            // TODO: use coverageInfo
+            int[] coverageInfo = coverageAnalyzer.collectCoverageInfo();
         }
         writeSeqsToFile();
         // remove TandoopTest.java
