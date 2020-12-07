@@ -160,7 +160,7 @@ public class Sequence {
 		testString.append("  public Object test() {\n");
 		testString.append("    try {\n");
 		testString.append(this.ExcSeq);
-		String newVarContent = NewVar.getContent();
+		String newVarContent = NewVar == null? "": NewVar.getContent();
 		if (newVarContent != "" && !NewVar.hasPrimitiveType()) {
 			testString.append("      if (" + newVarContent + " == null) { return \"[Tandoop] F: null\"; }\n");
 			testString.append("      try {\n");
@@ -169,7 +169,11 @@ public class Sequence {
 			testString.append("        " + newVarContent + ".toString();\n");
 			testString.append("      } catch (Exception e) { return \"[Tandoop] C: \" + e; }\n");
 		}
-		testString.append("      return " + newVarContent+ ";\n");
+		if (newVarContent != "") {
+			testString.append("       return " + newVarContent + ";\n");
+		} else {
+			testString.append("       return \"[Tandoop] F: null\";\n");
+		}
 		testString.append("    }\n");
 		testString.append("    catch (AssertionError e) { return \"[Tandoop] C: \" + e; }\n");
 		if (!InputParamsWithNull) {
@@ -196,7 +200,7 @@ public class Sequence {
 		appendTestClassHeader(testString, testClass);
 		testString.append("  @Test\n  public void test() {\n    try {\n");
 		testString.append(this.ExcSeq);
-		String newVarContent = NewVar.getContent();
+		String newVarContent = NewVar == null? "": NewVar.getContent();
 		if (newVarContent != "" && !NewVar.hasPrimitiveType()) {
 			testString.append("      if (" + newVarContent + " == null) { System.out.println(\"" + newVarContent + " is " +
 					"null.\\n\"); return; }\n");

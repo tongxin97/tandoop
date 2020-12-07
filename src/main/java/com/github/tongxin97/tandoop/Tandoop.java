@@ -307,6 +307,7 @@ public class Tandoop {
         e.printStackTrace();
       }
     }
+<<<<<<< HEAD
     return null;
   }
 
@@ -327,6 +328,50 @@ public class Tandoop {
         // 3) select a (possibly duplicate) sequence from nonErrorSeqs, add it to seqs, and use a value from it
         if (v == null) {
           v = this.getRandomExtensibleValFromSequences(this.nonErrorSeqs, seqs, type, useStrictType);
+=======
+
+    /**
+     * Decides how many times to repeatedly append the new statement to the end of
+     * the new sequence.
+     * @return the number of times to repeat.
+     */
+    private int getNumOfRepetition() {
+        int numRounds = (int) Math.round(1.0/this.repetitionProb); // 10 by default
+        int i = Rand.getRandomInt(numRounds);
+        if (i > 0) {
+            return 1; // do not repeat with (1-repetitionProb) probability
+        }
+        // repeat [0, maxRepetition) times with repetitionProb
+        return Rand.getRandomInt(this.maxRepetition);
+    }
+
+    /**
+     * Generate a new statement to append to the end of the new sequence.
+     * The new statement may be repeated up to maxRepetition-1 times.
+     * @return the new statement as a string.
+     */
+    private String genNewStatement(MethodInfo method, Sequence newSeq, VarInfo var, List<ValueInfo> vals) {
+        // if method is constructor, sentence = Type Type1 = new methodName(p0,p1,...);\n
+        // otherwise, sentence = Type Type1 = p0.methodName(p1,p2,...);\n
+        StringBuilder b = new StringBuilder();
+        if (method.isConstructor || !method.returnType.equals("void")) {
+            b.append(String.format("      %s %s = ", method.getReturnType(), var.getContent()));
+            newSeq.NewVar = var;
+        } else {
+            newSeq.NewVar = null;
+        }
+
+        int start;
+        if (method.isConstructor) {
+            b.append(String.format("new %s(", method.getFullyQualifiedMethodName()));
+            start = 0;
+        } else if (method.isStatic) {
+            b.append(String.format("%s.%s(", method.getFullyQualifiedClassName(), method.Name));
+            start = 0;
+        } else {
+            b.append(String.format("%s.%s(", vals.get(0).getContent(), method.Name));
+            start = 1;
+>>>>>>> 9eac76c... Debug newVarContent
         }
         if (v == null) {
           if (type.equals(String.class.getName())) {

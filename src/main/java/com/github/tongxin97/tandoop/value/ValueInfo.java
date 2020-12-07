@@ -1,5 +1,6 @@
 package com.github.tongxin97.tandoop.value;
 
+import com.github.tongxin97.tandoop.util.ClassUtils;
 import org.apache.commons.text.StringEscapeUtils;
 
 public class ValueInfo {
