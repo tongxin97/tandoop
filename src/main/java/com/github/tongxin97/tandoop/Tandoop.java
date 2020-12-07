@@ -134,10 +134,10 @@ public class Tandoop {
   }
 
   private void initPrimitiveValuePool() {
-//    // boolean type
-//    String booleanType = boolean.class.getName();
-//    this.valuePool.put(booleanType, new TypedValuePool(booleanType, Arrays.asList(true, false)));
-//    inheritanceMap.put(booleanType, new HashSet<>(Arrays.asList(booleanType)));
+   // boolean type
+   String booleanType = boolean.class.getName();
+   this.valuePool.put(booleanType, new TypedValuePool(booleanType, Arrays.asList(true, false)));
+   inheritanceMap.put(booleanType, new HashSet<>(Arrays.asList(booleanType)));
 //    // char type
 //    String charType = char.class.getName();
 //    this.valuePool.put(charType, new TypedValuePool(charType, Arrays.asList(
@@ -283,23 +283,23 @@ public class Tandoop {
             if (i > 0) {
               b.append(", ");
             }
-            if (ClassUtils.isPrimitiveType(cs[i].getName())) {
-              b.append(new ValueInfo(cs[i].getName(), valuePool.get("primitive").getRandomValue()).getContent());
+            if (ClassUtils.isPrimitiveOrWapper(cs[i].getName())) {
+              if (ClassUtils.isBooleanType(cs[i].getName())) {
+                b.append(new ValueInfo(boolean.class.getName(), valuePool.get(boolean.class.getName()).getRandomValue()).getContent()));
+              } else {
+                b.append(new ValueInfo(cs[i].getName(), valuePool.get("primitive").getRandomValue()).getContent());  
+              }
             } else if (cs[i].getName().equals(String.class.getName())) {
               b.append(new ValueInfo(cs[i].getName(), valuePool.get(cs[i].getName()).getRandomValue()).getContent());
-            } else{
-              Object o = valuePool.get("primitive").getRandomValue();
-              if (o.getClass().getName().equals(Character.class.getName())) {
-                b.append(new ValueInfo(type, Character.getNumericValue((Character) o)).getContent());
-              } else {
-                b.append(new ValueInfo(type, o).getContent());
-              }
+            } else {
+              b.append("null");
             }
           }
           b.append(");\n");
           Sequence s = new Sequence();
           s.addStatement(b.toString());
           outputSeqs.add(s);
+          System.out.println(b.toString());
           return var;
         }
       } catch (Exception e) {
@@ -307,7 +307,6 @@ public class Tandoop {
         e.printStackTrace();
       }
     }
-<<<<<<< HEAD
     return null;
   }
 
@@ -316,8 +315,12 @@ public class Tandoop {
     int returnVal = 0;
     int i = 0;
     for (String type: method.getParameterTypes()) {
-      if (ClassUtils.isPrimitiveType(type)) {
-        vals.add(new ValueInfo(type, valuePool.get("primitive").getRandomValue()));
+      if (ClassUtils.isPrimitiveOrWapper(type)) {
+        if (ClassUtils.isBooleanType(type)) {
+          vals.add(new ValueInfo(type, valuePool.get(boolean.class.getName()).getRandomValue()));
+        } else {
+          vals.add(new ValueInfo(type, valuePool.get("primitive").getRandomValue()));
+        }
       } else {
         boolean useStrictType = i == 0 && method.isInstanceMethod();
         // 3 possible choices for v
@@ -328,50 +331,6 @@ public class Tandoop {
         // 3) select a (possibly duplicate) sequence from nonErrorSeqs, add it to seqs, and use a value from it
         if (v == null) {
           v = this.getRandomExtensibleValFromSequences(this.nonErrorSeqs, seqs, type, useStrictType);
-=======
-
-    /**
-     * Decides how many times to repeatedly append the new statement to the end of
-     * the new sequence.
-     * @return the number of times to repeat.
-     */
-    private int getNumOfRepetition() {
-        int numRounds = (int) Math.round(1.0/this.repetitionProb); // 10 by default
-        int i = Rand.getRandomInt(numRounds);
-        if (i > 0) {
-            return 1; // do not repeat with (1-repetitionProb) probability
-        }
-        // repeat [0, maxRepetition) times with repetitionProb
-        return Rand.getRandomInt(this.maxRepetition);
-    }
-
-    /**
-     * Generate a new statement to append to the end of the new sequence.
-     * The new statement may be repeated up to maxRepetition-1 times.
-     * @return the new statement as a string.
-     */
-    private String genNewStatement(MethodInfo method, Sequence newSeq, VarInfo var, List<ValueInfo> vals) {
-        // if method is constructor, sentence = Type Type1 = new methodName(p0,p1,...);\n
-        // otherwise, sentence = Type Type1 = p0.methodName(p1,p2,...);\n
-        StringBuilder b = new StringBuilder();
-        if (method.isConstructor || !method.returnType.equals("void")) {
-            b.append(String.format("      %s %s = ", method.getReturnType(), var.getContent()));
-            newSeq.NewVar = var;
-        } else {
-            newSeq.NewVar = null;
-        }
-
-        int start;
-        if (method.isConstructor) {
-            b.append(String.format("new %s(", method.getFullyQualifiedMethodName()));
-            start = 0;
-        } else if (method.isStatic) {
-            b.append(String.format("%s.%s(", method.getFullyQualifiedClassName(), method.Name));
-            start = 0;
-        } else {
-            b.append(String.format("%s.%s(", vals.get(0).getContent(), method.Name));
-            start = 1;
->>>>>>> 9eac76c... Debug newVarContent
         }
         if (v == null) {
           if (type.equals(String.class.getName())) {
@@ -407,21 +366,6 @@ public class Tandoop {
   }
 
   /**
-   * Decides how many times to repeatedly append the new statement to the end of
-   * the new sequence.
-   * @return the number of times to repeat.
-   */
-  private int getNumOfRepetition() {
-    int numRounds = (int) Math.round(1.0/this.repetitionProb); // 10 by default
-    int i = Rand.getRandomInt(numRounds);
-    if (i > 0) {
-      return 1; // do not repeat with (1-repetitionProb) probability
-    }
-    // repeat [0, maxRepetition) times with repetitionProb
-    return Rand.getRandomInt(this.maxRepetition);
-  }
-
-  /**
    * Generate a new statement to append to the end of the new sequence.
    * The new statement may be repeated up to maxRepetition-1 times.
    * @return the new statement as a string.
@@ -430,9 +374,11 @@ public class Tandoop {
     // if method is constructor, sentence = Type Type1 = new methodName(p0,p1,...);\n
     // otherwise, sentence = Type Type1 = p0.methodName(p1,p2,...);\n
     StringBuilder b = new StringBuilder();
-    if (method.returnType == null || !method.returnType.equals("void")) {
-      b.append(String.format("    %s %s = ", method.getReturnType(), var.getContent()));
+    if (method.isConstructor || !method.returnType.equals("void")) {
+      b.append(String.format("      %s %s = ", method.getReturnType(), var.getContent()));
       newSeq.NewVar = var;
+    } else {
+      newSeq.NewVar = null;
     }
 
     int start;

@@ -29,9 +29,6 @@ public class ValueInfo {
       return String.format("'%s'", Val);
     }
     if (!Type.equals(Number.class.getName())) {
-      if (Type.equals(boolean.class.getName()) || Type.equals(Boolean.class.getName())) {
-        return ((int) this.Val == 0)? "true": "false";
-      }
       return "(" + this.Type + ") " + this.Val.toString();
     }
     return this.Val.toString();
