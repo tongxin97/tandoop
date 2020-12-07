@@ -27,5 +27,8 @@ tandoop/src/test/java/com/github/tongxin97/tandoop/TandoopTest.java
 # test output
 failed_test_classes
 *.txt
+
+# Jacoco
+jacoco.exec
 coverageInfo
 RandoopCoverage

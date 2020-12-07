@@ -10,7 +10,8 @@ import com.github.tongxin97.tandoop.util.Rand;
 import com.github.tongxin97.tandoop.value.ValueInfo;
 import com.github.tongxin97.tandoop.Tandoop;
 import com.github.tongxin97.tandoop.CoverageAnalyzer;
-import com.github.tongxin97.tandoop.InstrumentedClassLoader;
+import java.net.URLClassLoader;
+import java.net.URL;
 
 /**
  * The class that stores a sequence
@@ -221,25 +222,11 @@ public class Sequence {
 				return "[Tandoop] E: java compiler error";
 			}
 			
-			// URLClassLoader classLoader = new URLClassLoader(new URL[]{ new File("target/test-classes/").toURI().toURL() }, parentClassLoader);
-			// Class testClass = Class.forName("TandoopTest", false, classLoader);
-			String resource = "target/test-classes/TandoopTest.class";
-			InputStream original = new FileInputStream(new File(resource));
-			byte[] instrumented = coverageAnalyzer.instr.instrument(original, "TandoopTest");
-			original.close();
-
-			InstrumentedClassLoader classLoader = new InstrumentedClassLoader(coverageAnalyzer.classLoader);
-			classLoader.addDefinition("TandoopTest", instrumented);
-			// System.out.println("coverage classloader");
-			// Class tempClass1 = Class.forName("DataTime", false, coverageAnalyzer.classLoader);
-			// System.out.println(" classloader");
-			// Class tempClass2 = Class.forName("DataTime", false, classLoader);
-			Class<?> testClass = classLoader.loadClass("TandoopTest");
-
+			URLClassLoader classLoader = new URLClassLoader(new URL[]{ new File("target/test-classes/").toURI().toURL() }, this.getClass().getClassLoader());
+			Class testClass = Class.forName("TandoopTest", false, classLoader);
 			Method method = testClass.getMethod("test");
 			try {
 				Object result = method.invoke(null);
-				coverageAnalyzer.collect();
 				// System.out.println("Result: " + result.toString());
 				return result;
 			} catch (Exception e) {

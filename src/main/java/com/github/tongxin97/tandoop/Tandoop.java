@@ -103,7 +103,7 @@ public class Tandoop {
         // setup coverage analyzer
         coverageInfoOut = new PrintStream(new FileOutputStream("coverageInfo", true));
         coverageInfoOut.printf("prjDir: %s, ", prjDir);
-        coverageAnalyzer = new CoverageAnalyzer(prjDir, coverageInfoOut, classLoader);
+        coverageAnalyzer = new CoverageAnalyzer(prjDir);
     }
 
     private void invertInheritanceMap() {
@@ -563,13 +563,14 @@ public class Tandoop {
             }
             System.out.println("-----------------------");
             // TODO: use coverageInfo
-            int[] coverageInfo = coverageAnalyzer.collectCoverageInfo();
+            // int[] coverageInfo = coverageAnalyzer.getCoverageInfo();
+            coverageAnalyzer.printCoverageInfo(System.out);
         }
         writeSeqsToFile();
         // remove TandoopTest.java
         File testFile = new File(tandoopTestFile);
         testFile.delete();
-
-        this.coverageAnalyzer.end();
+        coverageAnalyzer.printCoverageInfo(this.coverageInfoOut);
+        this.coverageInfoOut.close();
     }
 }
