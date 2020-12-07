@@ -16,6 +16,6 @@ public class VarInfo extends ValueInfo{
 
   @Override
   public String getContent() {
-    return Str.sanitizeTypeString(Type) + String.valueOf(this.Idx);
+    return Str.sanitizeTypeString(Type) + this.Idx;
   }
 }
