@@ -555,6 +555,8 @@ public class Tandoop {
                 }
             }
             System.out.println("-----------------------");
+            // TODO: get coverage Info
+            List<Integer> coverageInfo  = coverageAnalyzer.getCoverageInfo();
         }
         writeSeqsToFile();
         // remove TandoopTest.java

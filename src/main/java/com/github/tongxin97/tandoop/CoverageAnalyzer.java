@@ -1,7 +1,10 @@
 package com.github.tongxin97.tandoop;
 
 import java.io.*;
+import java.lang.reflect.Array;
 import java.net.URLClassLoader;
+import java.util.List;
+import java.util.Arrays;
 
 import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
@@ -109,5 +112,21 @@ public class CoverageAnalyzer {
 		out.printf("line: covered %d, total %d, coverage %f\n", line_covered, line_total, 100.0 * line_covered / line_total);
 		out.printf("method: covered %d, total %d, coverage %f\n\n", method_covered, method_total, 100.0 * method_covered / method_total);
 		out.close();
-  }
+	}
+	
+	public List<Integer> getCoverageInfo() {
+		int instruction_total = 0;
+		int instruction_covered = 0;
+		int branch_total = 0;
+		int branch_covered = 0;
+		int line_total = 0;
+		int line_covered = 0;
+		int method_total = 0;
+		int method_covered = 0;
+		return Arrays.asList(instruction_covered, instruction_total,
+			branch_covered, branch_total,
+			line_covered, line_total,
+			method_covered, method_total
+		);
+	}
 }
