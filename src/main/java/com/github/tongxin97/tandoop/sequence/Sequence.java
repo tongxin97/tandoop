@@ -10,13 +10,9 @@ import com.github.tongxin97.tandoop.util.Rand;
 import com.github.tongxin97.tandoop.value.ValueInfo;
 import com.github.tongxin97.tandoop.Tandoop;
 import com.github.tongxin97.tandoop.CoverageAnalyzer;
-<<<<<<< HEAD
 import java.net.URLClassLoader;
 import java.net.URL;
-=======
-import com.github.tongxin97.tandoop.InstrumentedClassLoader;
 import com.github.tongxin97.tandoop.value.VarInfo;
->>>>>>> dd5b528888d8fa07e83238375b398490a33fdeb2
 
 /**
  * The class that stores a sequence

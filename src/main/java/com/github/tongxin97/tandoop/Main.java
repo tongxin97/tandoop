@@ -61,7 +61,7 @@ public class Main {
       File[] files = testOutputDir.listFiles( new FilenameFilter() {
         @Override
         public boolean accept(final File dir, final String name) {
-          return name.matches("^TandoopTest.*\\.java");
+          return name.matches("^TandoopErrTest*\\.java");
         }
       });
       if (files != null) {
