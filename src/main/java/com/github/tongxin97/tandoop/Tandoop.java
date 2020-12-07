@@ -497,18 +497,19 @@ public class Tandoop {
 //                 System.out.printf("Instance val is null: %s.%s\n", method.ClassName, method.Name);
                 continue;
             }
-            // Skip method if any of its associated types is generic (for now)
-            boolean hasGenericType = false;
-            for (String paramType: method.getParameterTypes()) {
-                hasGenericType |= Str.parseNestedTypes(paramType, null);
-            }
-            hasGenericType |= Str.parseNestedTypes(method.getReturnType(), null);
-            if (hasGenericType) {
-                continue;
-            }
 
             VarInfo var = new VarInfo(method.getSimpleReturnType());
             Sequence newSeq = this.extend(method, var, seqs, vals);
+            // Skip method if any of its associated types is generic (for now)
+            boolean hasGenericType = false;
+            for (String paramType: method.getParameterTypes()) {
+                hasGenericType |= Str.parseNestedTypes(paramType, null, newSeq.genericTypes);
+            }
+            hasGenericType |= Str.parseNestedTypes(method.getReturnType(), null, newSeq.genericTypes);
+//            if (hasGenericType) {
+//                continue;
+//            }
+
             // Check if newSeq is duplicate
             if (this.errorSeqs.contains(newSeq) || this.nonErrorSeqs.contains(newSeq)) {
                 // System.out.println("Duplicate: " + newSeq.ExcSeq);

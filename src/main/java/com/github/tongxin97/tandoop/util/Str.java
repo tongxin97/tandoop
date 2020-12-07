@@ -1,5 +1,7 @@
 package com.github.tongxin97.tandoop.util;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Set;
 import java.util.HashSet;
 
@@ -8,7 +10,7 @@ public class Str {
   static String specialSymbols = "[]<>";
 
   public static boolean isGenericType(String type) {
-    return !type.contains(".");
+    return type.length() == 1 && StringUtils.isAllUpperCase(type);
   }
 
   public static String getLastElementAfterSplit(String s, String delim) {
@@ -35,13 +37,16 @@ public class Str {
    * @param res set to store parsed types (could be null)
    * @return true if some of the parsed types are generic
    */
-  public static boolean parseNestedTypes(String type, Set<String> res) {
+  public static boolean parseNestedTypes(String type, Set<String> res, Set<String> generics) {
     boolean containsGenericType = false;
     StringBuilder b = new StringBuilder();
     for (int i = 0; i < type.length(); i++){
       char c = type.charAt(i);
       if (c == '<') {
         containsGenericType |= isGenericType(b.toString());
+        if (isGenericType(b.toString())) {
+          generics.add(b.toString());
+        }
         if (res != null) {
           res.add(b.toString());
         }
@@ -52,10 +57,13 @@ public class Str {
         }
       }
     }
+    containsGenericType |= isGenericType(b.toString());
+    if (isGenericType(b.toString())) {
+      generics.add(b.toString());
+    }
     if (res != null) {
       res.add(b.toString()); // add last
     }
-    containsGenericType |= isGenericType(b.toString());
     return containsGenericType;
   }
 }

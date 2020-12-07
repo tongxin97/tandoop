@@ -29,6 +29,7 @@ public class Sequence {
 	public String ExcSeq;
 	public String NewVar;
 	public boolean InputParamsWithNull;
+	public Set<String> genericTypes;
 
 	public Sequence() {
 		this.Vals = new HashMap<>();
@@ -36,6 +37,11 @@ public class Sequence {
 		this.ExcSeq = "";
 		this.NewVar = "";
 		this.InputParamsWithNull = false;
+		genericTypes = new HashSet<>();
+	}
+
+	private boolean hasGenericTypes() {
+		return genericTypes.size() > 0;
 	}
 
 	public void addStatements(Sequence seq) {
@@ -134,14 +140,26 @@ public class Sequence {
 		return -1;
 	}
 
+	private void appendTestClassHeader(StringBuilder testString, String testClassName) {
+		testString.append("\npublic class " +  testClassName);
+		if (hasGenericTypes()) {
+			testString.append("<");
+			for (String g: genericTypes) {
+				testString.append(g + ",");
+			}
+			testString.replace(testString.length()-1, testString.length(), ">");
+		}
+		testString.append(" {\n");
+	}
+
 	/**
 	 * Generate a test and writes it to testDir/TandoopTest.java
 	 * Add contract checking into the test itself.
 	 */
 	public void generateTest() {
 		StringBuilder testString = new StringBuilder("");
-		testString.append("\npublic class TandoopTest {\n");
-		testString.append("  public static Object test() {\n");
+		appendTestClassHeader(testString, "TandoopTest");
+		testString.append("  public Object test() {\n");
 		testString.append("    try {\n");
 		testString.append(this.ExcSeq);
 		testString.append("      if (" + this.NewVar + " == null) { return \"[Tandoop] F: null\"; }\n");
@@ -174,7 +192,8 @@ public class Sequence {
 		testString.append("import org.junit.Test;\n");
 		testString.append("import static org.junit.Assert.assertTrue;\n");
 		testString.append("import static org.junit.Assert.fail;\n");
-		testString.append("\npublic class " + testClass + "{\n  @Test\n  public void test() {\n    try {\n");
+		appendTestClassHeader(testString, testClass);
+		testString.append("  @Test\n  public void test() {\n    try {\n");
 		testString.append(this.ExcSeq);
 		testString.append("      if (" + this.NewVar + " == null) { System.out.println(\"" + this.NewVar + " is null.\\n\"); return; }\n");
 		testString.append("      try {\n");
@@ -241,7 +260,7 @@ public class Sequence {
 
 			Method method = testClass.getMethod("test");
 			try {
-				Object result = method.invoke(null);
+				Object result = method.invoke(testClass.getConstructor().newInstance());
 				coverageAnalyzer.collect();
 				// System.out.println("Result: " + result.toString());
 				return result;
