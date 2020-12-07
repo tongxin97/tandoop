@@ -75,28 +75,19 @@ public class Tandoop {
         MethodParser.parseAndResolveDirectory(srcDir, prjDir, methodPool);
         this.invertInheritanceMap();
 
-        try {
-            String filename = "inheritance.txt";
-            BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
-            writer.write(inheritanceMap.toString());
-            writer.close();
-        } catch (Exception e) {
-            System.err.println("Failed to write inheritanceMap: " + e.getMessage());
-            e.printStackTrace();
-        }
+//        try {
+//            String filename = "inheritance.txt";
+//            BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
+//            writer.write(inheritanceMap.toString());
+//            writer.close();
+//        } catch (Exception e) {
+//            System.err.println("Failed to write inheritanceMap: " + e.getMessage());
+//            e.printStackTrace();
+//        }
 
-        try {
-            String filename = "oldMethodPool.txt";
-            BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
-            writer.write(methodPool.toString());
-            writer.close();
-        } catch (Exception e) {
-            System.err.println("Failed to write methodPool: " + e.getMessage());
-            e.printStackTrace();
-        }
         methodPool.addParentMethodsToSubClasses();
         try {
-            String filename = "newMethodPool.txt";
+            String filename = "methodPool.txt";
             BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
             writer.write(methodPool.toString());
             writer.close();
@@ -322,7 +313,7 @@ public class Tandoop {
                     v = this.getRandomExtensibleValFromSequences(this.nonErrorSeqs, seqs, type, useStrictType);
                 }
                 if (v == null) {
-                    if (type.equals(String.class.getName()) || type.equals(Object.class.getName())) {
+                    if (type.equals(String.class.getName())) {
                         v = new ValueInfo(type, valuePool.get(type).getRandomValue());
                     } else if (type.equals(Number.class.getName())) {
                         Object o = valuePool.get("primitive").getRandomValue();
