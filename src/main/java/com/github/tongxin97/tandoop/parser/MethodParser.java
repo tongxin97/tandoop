@@ -143,7 +143,7 @@ public class MethodParser {
    * @return MethodInfo if a public constructor exists; null otherwise.
    */
   private void getConstructorInfo(Set<MethodInfo> infoList) {
-    if (checkModifier(cd, Modifier.Keyword.ABSTRACT)) {
+    if (cd.isAbstract()) {
       return; // don't read constructor info for abstract class
     }
     for (TypeDeclaration td: this.cu.getTypes()) {
@@ -154,7 +154,7 @@ public class MethodParser {
           if (bd instanceof ConstructorDeclaration) {
               ConstructorDeclaration cd = (ConstructorDeclaration) bd;
               // continue if constructor is abstract or non-public
-              if (checkModifier(cd, Modifier.Keyword.ABSTRACT) || !checkModifier(cd, Modifier.Keyword.PUBLIC)) {
+              if (cd.isAbstract() || !cd.isPublic()) {
                 continue;
               }
               String constructorName = cd.getNameAsString();
@@ -175,22 +175,10 @@ public class MethodParser {
     }
   }
 
-  private static boolean checkModifier(NodeWithModifiers n, Modifier.Keyword k) {
-    if (n == null) {
-      return false;
-    }
-    for (Object m : n.getModifiers()) {
-      if (((Modifier)m).getKeyword().equals(k)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   private ClassOrInterfaceDeclaration getPublicClassDeclaration() {
     for (TypeDeclaration td: this.cu.getTypes()) {
       if (td instanceof ClassOrInterfaceDeclaration) {
-        if (!((ClassOrInterfaceDeclaration) td).isInterface() && checkModifier(td, Modifier.Keyword.PUBLIC)) {
+        if (!((ClassOrInterfaceDeclaration) td).isInterface() && td.isPublic()) {
           return (ClassOrInterfaceDeclaration) td;
         }
       }
@@ -205,7 +193,7 @@ public class MethodParser {
       super.visit(md, methodPool);
 
       // Skip if method is abstract or non-public
-      if (checkModifier(md, Modifier.Keyword.ABSTRACT) || !checkModifier(md, Modifier.Keyword.PUBLIC)) {
+      if (md.isAbstract() || !md.isPublic()) {
         // System.out.println("Encountered abstract πor non-public method: " + md.getNameAsString());
         return;
       }
@@ -216,22 +204,19 @@ public class MethodParser {
         try {
           TypeDeclaration t = (TypeDeclaration) opt.get();
           // if parent node is not public class, skip this method
-          if (!(
-            t instanceof ClassOrInterfaceDeclaration &&
-            checkModifier((ClassOrInterfaceDeclaration) t, Modifier.Keyword.PUBLIC)
-          )) {
+          if (!(t instanceof ClassOrInterfaceDeclaration && t.isPublic())) {
             // System.out.printf("Encountered method in private inner class: %s.%s\n", t.getNameAsString(), md.getNameAsString());
             return;
           }
           className = t.getNameAsString();
         } catch (Exception e) {
-          System.err.println("[Error] MethodCollector: " + e.getMessage());
+//          System.err.println("[Error] MethodCollector: " + e.getMessage());
           return;
         }
       }
       MethodInfo info = new MethodInfo(methodName, className, packageName);
       // set if method is static
-      info.isStatic = checkModifier(md, Modifier.Keyword.STATIC);
+      info.isStatic = md.isStatic();
       // store return type
       String returnType = resolveType(md.getType());
       if (returnType == null) {
