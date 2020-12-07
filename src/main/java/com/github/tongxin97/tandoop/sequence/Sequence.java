@@ -2,12 +2,9 @@ package com.github.tongxin97.tandoop.sequence;
 
 import java.lang.IllegalArgumentException;
 import java.lang.reflect.Method;
-import java.net.URLClassLoader;
-import java.net.URL;
 import java.util.*;
 import java.io.*;
 
-import com.github.tongxin97.tandoop.method.MethodInfo;
 import com.github.tongxin97.tandoop.util.ClassUtils;
 import com.github.tongxin97.tandoop.util.Rand;
 import com.github.tongxin97.tandoop.value.ValueInfo;
