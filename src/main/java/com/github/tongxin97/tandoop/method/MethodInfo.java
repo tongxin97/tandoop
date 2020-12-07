@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import java.util.ArrayList;
 import java.lang.IllegalArgumentException;
 
+import com.github.tongxin97.tandoop.util.ClassUtils;
 import com.github.tongxin97.tandoop.util.Str;
 
 public class MethodInfo {
@@ -86,11 +87,7 @@ public class MethodInfo {
 
     public boolean hasOnlyPrimitiveParameters() {
         for (String t: parameterTypes) {
-            try {
-                if (!Class.forName(t).isPrimitive()) {
-                    return false;
-                }
-            } catch (ClassNotFoundException e) {
+            if (!ClassUtils.isPrimitiveType(t)) {
                 return false;
             }
         }

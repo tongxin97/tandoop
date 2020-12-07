@@ -243,7 +243,7 @@ public class Tandoop {
 
     private ValueInfo generateExternalType(Set<Sequence> outputSeqs, String type) {
         // if v is outside of package and v has constructor without parameters, construct v and add it to sequence
-        if (checkExtenalType(type)) {
+        if (checkExternalType(type)) {
             try {
                 // Constructor[] constructors = Class.forName(type).getConstructors();
                 // only use the constructor without parameters
@@ -345,7 +345,7 @@ public class Tandoop {
         return returnVal;
     }
 
-    private boolean checkExtenalType(String type) {
+    private boolean checkExternalType(String type) {
         for (String pkg: pkgs) {
             if (type.startsWith(pkg)) {
                 return false;
