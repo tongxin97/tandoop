@@ -530,8 +530,11 @@ public class Tandoop {
           String returnType = method.getReturnType();
           newSeq.addVal(returnType, var);
           if (ClassUtils.isPrimitiveOrWrapper(returnType)) {
-            if (!(ClassUtils.isBooleanOrWrapper(returnType) || ClassUtils.isVoidOrWrapper(returnType))) {
-              this.valuePool.get("primitive").addValue(Double.valueOf(var.Val.toString()).doubleValue());
+            if (!ClassUtils.isBooleanOrWrapper(returnType)) {
+              String varStr = var.Val.toString();
+              if (!varStr.isEmpty()) {
+                this.valuePool.get("primitive").addValue(Double.valueOf(varStr).doubleValue());
+              }
             }
           } else {
             if (this.valuePool.containsKey(returnType)) {
