@@ -249,8 +249,12 @@ public class Tandoop {
       if (type.endsWith("[]")) {
         type = type.substring(0, type.length() - 2);
         VarInfo var = new VarInfo(type.replaceAll(Pattern.quote("."), ""));
-        String statement =
-            type + "[] " + var.getContent() + " = (" + type + "[]) new Object[" + Rand.getRandomInt(5) + 1 + "];\n";
+        String statement = type + "[] " + var.getContent();
+        if (type.length() == 1) { // if type is generic type
+          statement += " = (" + type + "[]) new Object[" + Rand.getRandomInt(5) + 1 + "];\n";
+        } else {
+          statement += " = new " + type + "[" + Rand.getRandomInt(5) + 1 + "];\n";
+        }
         Sequence s = new Sequence();
         s.addStatement(statement);
         outputSeqs.add(s);
