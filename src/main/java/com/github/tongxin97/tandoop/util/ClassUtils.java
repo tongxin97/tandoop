@@ -160,7 +160,7 @@ public class ClassUtils {
         Set<String> types = parseCompoundType(className);
 
         for (String type: types) {
-            if (isPrimitiveType(type) || inheritanceMap.containsKey(type)) {
+            if (isPrimitiveType(type) || inheritanceMap.containsKey(type) || type.equals("")) {
                 continue;
             }
             Class c = null;
