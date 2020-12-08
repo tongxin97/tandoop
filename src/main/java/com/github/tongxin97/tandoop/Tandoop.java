@@ -563,8 +563,9 @@ public class Tandoop {
         }
       }
       System.out.println("-----------------------");
+      coverageAnalyzer.collectCoverage();
       // TODO: use coverageInfo
-      int[] coverageInfo = coverageAnalyzer.getCoverageInfo();
+      // branchCoverageMap
     }
     writeSeqsToFile();
     // remove TandoopTest.java

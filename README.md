@@ -34,7 +34,7 @@ mvn compile assembly:single && java -cp ../joda-time/target/joda-time-2.10.9-SNA
 * [Done] Primitive type casting
     * [Done] Debug "basic" type compilation error
     * [Done] Update primitive type variable selection
-    * Fix bugs in casting
+    * [Done] Fix bugs in casting
 * [Done] Init String value pool
 * Handle generic types
 * BloodHound

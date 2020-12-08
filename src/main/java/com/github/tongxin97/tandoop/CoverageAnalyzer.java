@@ -1,10 +1,14 @@
 package com.github.tongxin97.tandoop;
 
 import java.io.*;
+import java.util.Map;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
 import org.jacoco.core.analysis.IClassCoverage;
+import org.jacoco.core.analysis.IMethodCoverage;
 import org.jacoco.core.data.ExecutionData;
 import org.jacoco.core.data.ExecutionDataReader;
 import org.jacoco.core.data.ExecutionDataStore;
@@ -17,6 +21,13 @@ public class CoverageAnalyzer {
 	private File targetClasses;
 	private ExecutionDataStore executionData;
 
+	/**
+   * Map from method name to uncovered branch ratio (in Jacoco terms, the "missed ratio"). In cases
+   * where a method's total branches is zero, the uncovered branch ratio is NaN, and this map uses
+   * zero instead.
+   */
+  public Map<String, Double> branchCoverageMap = new HashMap<>();
+
 	public CoverageAnalyzer(String prjDir) throws Exception {
 		this.targetClasses = new File(prjDir + "/target/classes");
 		this.executionData = new ExecutionDataStore();
@@ -26,11 +37,6 @@ public class CoverageAnalyzer {
 		CoverageBuilder coverageBuilder = collectCoverage();
 		int[] converageInfo = getCoverageInfo(coverageBuilder);
 		printCoverageInfo(out, converageInfo);
-	}
-
-	public int[] getCoverageInfo() throws IOException {
-		CoverageBuilder coverageBuilder = collectCoverage();
-		return getCoverageInfo(coverageBuilder);
 	}
 
 	private int[] getCoverageInfo(CoverageBuilder coverageBuilder) {
@@ -103,7 +109,34 @@ public class CoverageAnalyzer {
 		CoverageBuilder coverageBuilder = new CoverageBuilder();
 		Analyzer analyzer = new Analyzer(executionData, coverageBuilder);
 		analyzer.analyzeAll(targetClasses);
+		this.updateBranchCoverageMap(coverageBuilder);
 		return coverageBuilder;
+	}
+
+	private void updateBranchCoverageMap(CoverageBuilder coverageBuilder) {
+    // For each method under test, copy its branch coverage information from the coverageBuilder to
+    // branchCoverageMap.
+    // Sorting is to make diagnostic output deterministic.
+    ArrayList<IClassCoverage> classes = new ArrayList<>(coverageBuilder.getClasses());
+    for (IClassCoverage cc : classes) {
+      ArrayList<IMethodCoverage> methods = new ArrayList<>(cc.getMethods());
+      for (IMethodCoverage cm : methods) {
+        // cc is in internal form because Jacoco uses class names in internal form.
+//        @SuppressWarnings("signature") // Jacoco is not annotated
+//        @InternalForm
+				String methodName = cc.getName().replace("/", ".");
+				// Randoop uses fully-qualified class names, with only periods as delimiters.
+				if (!cm.getName().equals("<init>")) {
+					methodName += "." + cm.getName();
+				}
+				
+        // In cases where a method's total branches is zero, the Jacoco missed ratio is NaN,
+        // but use zero as the uncovRatio instead.
+        double uncovRatio = cm.getBranchCounter().getMissedRatio();
+        uncovRatio = Double.isNaN(uncovRatio) ? 0 : uncovRatio;
+        branchCoverageMap.put(methodName, uncovRatio);
+      }
+    }
 	}
 
   private static class DummySessionInfoVisitor implements ISessionInfoVisitor {

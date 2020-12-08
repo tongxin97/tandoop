@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 
 public class ClassUtils {
     public static Map<String, String> WRAPPER_PRIMITIVE_MAPPER = new HashMap<String, String>(){{
+        put(Boolean.class.getName(), boolean.class.getName());
+        put(boolean.class.getName(), boolean.class.getName());
         put(Character.class.getName(), char.class.getName());
         put(char.class.getName(), char.class.getName());
         put(Byte.class.getName(), byte.class.getName());
@@ -96,7 +98,7 @@ public class ClassUtils {
     }
 
     public static boolean isPrimitiveOrWrapper(String c) {
-        return PRIMITIVE_TYPES.contains(c);
+        return PRIMITIVE_OR_WRAPPER_TYPES.contains(c);
     }
 
     public static boolean isBasicType(String c) {
