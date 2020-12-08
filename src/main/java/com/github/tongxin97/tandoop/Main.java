@@ -57,13 +57,8 @@ public class Main {
       testClassDir.mkdir();
 
       // remove previously genereated error tests
-      File testOutputDir = new File(String.format("%s/src/test/java", prjDir));
-      File[] files = testOutputDir.listFiles( new FilenameFilter() {
-        @Override
-        public boolean accept(final File dir, final String name) {
-          return name.matches("^TandoopErrTest*\\.java");
-        }
-      });
+      File testOutputDir = new File(String.format("%s/src/test/java/", prjDir));
+      File[] files = testOutputDir.listFiles((dir, name) -> name.matches("^TandoopErrTest*\\.java"));
       if (files != null) {
         for (File f: files) {
           if (!f.delete()) {
