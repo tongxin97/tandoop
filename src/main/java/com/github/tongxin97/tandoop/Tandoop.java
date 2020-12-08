@@ -89,17 +89,17 @@ public class Tandoop {
 //      System.err.println("Failed to write inheritanceMap: " + e.getMessage());
 //      e.printStackTrace();
 //    }
+//    methodPool.addParentMethodsToSubClasses();
+//    try {
+//      String filename = "methodPool.txt";
+//      BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
+//      writer.write(methodPool.toString());
+//      writer.close();
+//    } catch (Exception e) {
+//      System.err.println("Failed to write methodPool: " + e.getMessage());
+//      e.printStackTrace();
+//    }
 
-    methodPool.addParentMethodsToSubClasses();
-    try {
-      String filename = "methodPool.txt";
-      BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
-      writer.write(methodPool.toString());
-      writer.close();
-    } catch (Exception e) {
-      System.err.println("Failed to write methodPool: " + e.getMessage());
-      e.printStackTrace();
-    }
     methodPool.assignUniversalMethodWeights();
 
     this.initPrimitiveValuePool();
@@ -112,11 +112,11 @@ public class Tandoop {
   }
 
   private void invertInheritanceMap() {
-    Map<String, Set<String>> newInheritanceMap = new HashMap<String, Set<String>>();
+    Map<String, Set<String>> newInheritanceMap = new HashMap<>();
     for (Map.Entry<String, Set<String>> entry: inheritanceMap.entrySet()) {
       for (String superClassOrInterface: entry.getValue()) {
         if (!newInheritanceMap.containsKey(superClassOrInterface)) {
-          newInheritanceMap.put(superClassOrInterface, new HashSet<String>());
+          newInheritanceMap.put(superClassOrInterface, new HashSet<>());
         }
         newInheritanceMap.get(superClassOrInterface).add(entry.getKey());
       }
@@ -124,7 +124,7 @@ public class Tandoop {
     inheritanceMap = newInheritanceMap;
   }
 
-  private void setExtensibleFlag(Sequence newSeq, MethodInfo method, VarInfo var, Object result) {
+  private void setExtensibleFlag(MethodInfo method, VarInfo var, Object result) {
     // if runtime value is null, set extensible to false and return
     if (result.toString().startsWith("[Tandoop] F: ")) {
       var.Extensible = false;
@@ -143,54 +143,6 @@ public class Tandoop {
    String booleanType = boolean.class.getName();
    this.valuePool.put(booleanType, new TypedValuePool(booleanType, Arrays.asList(true, false)));
    inheritanceMap.put(booleanType, new HashSet<>(Arrays.asList(booleanType)));
-//    // char type
-//    String charType = char.class.getName();
-//    this.valuePool.put(charType, new TypedValuePool(charType, Arrays.asList(
-//        'a', 'z', 'B', '\t'
-//    )));
-//    inheritanceMap.put(charType, new HashSet<>(Arrays.asList(charType)));
-//
-//    // byte type
-//    String byteType = byte.class.getName();
-//    this.valuePool.put(byteType, new TypedValuePool(byteType, Arrays.asList(
-//        -128, 0, 127
-//    )));
-//    inheritanceMap.put(byteType, new HashSet<>(Arrays.asList(byteType)));
-//
-//    // int type
-//    String intType = int.class.getName();
-//    this.valuePool.put(intType, new TypedValuePool(intType, Arrays.asList(
-//        0, 1, -1, 1000, -1000, Integer.MAX_VALUE, Integer.MIN_VALUE
-//    )));
-//    inheritanceMap.put(intType, new HashSet<>(Arrays.asList(intType)));
-//
-//    // short type
-//    String shortType = short.class.getName();
-//    this.valuePool.put(shortType, new TypedValuePool(shortType, Arrays.asList(
-//        0, 1, -1, 100, -100, Short.MAX_VALUE, Short.MIN_VALUE
-//    )));
-//    inheritanceMap.put(shortType, new HashSet<>(Arrays.asList(shortType)));
-//
-//    // long type
-//    String longType = long.class.getName();
-//    this.valuePool.put(longType, new TypedValuePool(longType, Arrays.asList(
-//        0, 1, -1, 100000, -100000, Long.MAX_VALUE, Long.MIN_VALUE
-//    )));
-//    inheritanceMap.put(longType, new HashSet<>(Arrays.asList(longType)));
-//
-//    // float type
-//    String floatType = float.class.getName();
-//    this.valuePool.put(floatType, new TypedValuePool(floatType, Arrays.asList(
-//        0.0, 3.14, -100, Float.MAX_VALUE, Float.MIN_VALUE, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY
-//    )));
-//    inheritanceMap.put(floatType, new HashSet<>(Arrays.asList(floatType)));
-//
-//    // double type
-//    String doubleType = double.class.getName();
-//    this.valuePool.put(doubleType, new TypedValuePool(doubleType, Arrays.asList(
-//        0.0, 3.14, -100, Double.MAX_VALUE, Double.MIN_VALUE, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY
-//    )));
-//    inheritanceMap.put(doubleType, new HashSet<>(Arrays.asList(doubleType)));
 
     double[] primitives = {'a', 'z', 'B', '\t',
             -128, 0, 127,
@@ -442,12 +394,10 @@ public class Tandoop {
 
   public Sequence extend(MethodInfo method, VarInfo var, Set<Sequence> seqs, List<ValueInfo> vals) {
     Sequence newSeq = new Sequence();
-    // merge seqs to one seq: methods, vals, and executable sequence string
-    // Q: how to generate equivalent sequences & how to set modulo variable names?
     for (Sequence seq: seqs) {
-      for (Map.Entry<String, List<ValueInfo>> entry: seq.Vals.entrySet()) {
-        newSeq.addVals(entry.getKey(), entry.getValue());
-      }
+//      for (Map.Entry<String, List<ValueInfo>> entry: seq.Vals.entrySet()) {
+//        newSeq.addVals(entry.getKey(), entry.getValue());
+//      }
       for (String g: seq.genericTypes) {
         newSeq.genericTypes.add(g);
       }
@@ -571,7 +521,7 @@ public class Tandoop {
       } else {
         nonErrorSeqs.add(newSeq);
         methodInvocations.put(methodName, methodInvocations.getOrDefault(methodName, 0L) + 1);
-        setExtensibleFlag(newSeq, method, var, result);
+        setExtensibleFlag(method, var, result);
         if (var.Extensible) {
           String returnType = method.getReturnType();
           newSeq.addVal(returnType, var);
@@ -601,7 +551,7 @@ public class Tandoop {
       }
     }
     coverageInfoOut.printf("generated tests: %d\n", numIterations);
-    writeSeqsToFile();
+//    writeSeqsToFile();
     // remove TandoopTest.java
     File testFile = new File(tandoopTestFile);
     testFile.delete();
