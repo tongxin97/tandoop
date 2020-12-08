@@ -167,13 +167,17 @@ public class ClassUtils {
             try {
                 c = Class.forName(type, true, classLoader);
             } catch (ClassNotFoundException e1) {
-                try {
-                    int lastDot = type.lastIndexOf('.');
+                int lastDot = type.lastIndexOf('.');
+                if (lastDot >= 0) {
                     String nestedClassName = type.substring(0, lastDot) + '$' + type.substring(lastDot + 1);
-                    c = Class.forName(nestedClassName, true, classLoader);
-                } catch (Exception e2) {
-                    System.err.println("[Error] collectInheritanceInfo: " + e2.getMessage());
-                }   
+                    try {
+                        c = Class.forName(nestedClassName, true, classLoader);
+                    } catch (Exception e2) {
+                        System.err.println("[Error] collectInheritanceInfo: " + e2.getMessage());
+                    }
+                } else {
+                    System.err.println("[Error] collectInheritanceInfo: " + e1.getMessage());
+                }
             } catch (Exception e2) {
                 System.err.println("[Error] collectInheritanceInfo: " + e2.getMessage());
             }
