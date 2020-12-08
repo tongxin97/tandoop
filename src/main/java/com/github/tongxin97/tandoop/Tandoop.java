@@ -39,6 +39,10 @@ public class Tandoop {
   private final int maxRepetition = 100;
   private final double repetitionProb = 0.1;
 
+  private final int updateMethodWeightsInterval = 200;
+  private final double weightAlpha = 0.6;
+  private final double weightP = 0.5;
+
   private String prjDir;
 
   public CoverageAnalyzer coverageAnalyzer;
@@ -96,6 +100,7 @@ public class Tandoop {
       System.err.println("Failed to write methodPool: " + e.getMessage());
       e.printStackTrace();
     }
+    methodPool.assignUniversalMethodWeights();
 
     this.initPrimitiveValuePool();
     // System.out.println("ValuePool:\n" + valuePool);
@@ -487,21 +492,43 @@ public class Tandoop {
     return m;
   }
 
+  private void calculateMethodWeights(Map<String, Long> methodSelections, Map<String, Long> methodInvocations
+          , Map<String, Double> branchCoverageMap) {
+    long maxSucc = Collections.max(methodInvocations.values());
+    int sizeM = methodPool.MethodInfoList.size();
+    assert(sizeM == methodPool.methodWeights.size());
+    for (int i = 0; i < sizeM; i++) {
+      String methodName = methodPool.MethodInfoList.get(i).getFullyQualifiedMethodName();
+      long k = methodSelections.getOrDefault(methodName, 0L);
+      long succ = methodInvocations.getOrDefault(methodName, 0L);
+      double newWeight =  weightAlpha * branchCoverageMap.get(methodName) + (1-weightAlpha) * (1- succ/maxSucc);
+      if (k > 0) {
+        newWeight = Math.max( -3.0/Math.log(1-weightP) * Math.pow(weightP, k)/k, 1.0/(Math.log(sizeM)+3) ) * newWeight;
+      }
+      methodPool.methodWeights.set(i, newWeight);
+    }
+  }
+
   public void generateSequences(long timeLimits) throws Exception {
     this.coverageInfoOut.printf("timeLimits: %d s\n", timeLimits);
     timeLimits *= 1000;
     long startTime = System.currentTimeMillis();
     long elapsedTime = 0L;
+    int numIterations = 0;
+    Map<String, Long> methodInvocations = new HashMap<>();
+    Map<String, Long> methodSelections = new HashMap<>();
     while (elapsedTime < timeLimits) {
       elapsedTime = (new Date()).getTime() - startTime;
       MethodInfo method;
       try {
-        method = methodPool.getRandomMethod();
-      } catch (Exception e) {
-        System.err.println("getRandomMethod exception: " + e.getMessage());
+        method = methodPool.getCovGuidedRandomMethod();
+      } catch (RuntimeException e) {
+        System.err.println(e.getMessage());
         break;
       }
       method = selectConstructor(method);
+      String methodName = method.getFullyQualifiedMethodName();
+      methodSelections.put(methodName, methodSelections.getOrDefault(methodName, 0L) + 1);
       // System.out.printf("Selected random method: %s.%s\n", method.ClassName, method.Name);
       Set<Sequence> seqs = new LinkedHashSet<>();
       List<ValueInfo> vals = new ArrayList<>();
@@ -542,6 +569,7 @@ public class Tandoop {
         var.Extensible = false;
       } else {
         nonErrorSeqs.add(newSeq);
+        methodInvocations.put(methodName, methodInvocations.getOrDefault(methodName, 0L) + 1);
         setExtensibleFlag(newSeq, method, var, result);
         if (var.Extensible) {
           String returnType = method.getReturnType();
@@ -564,8 +592,13 @@ public class Tandoop {
       }
       System.out.println("-----------------------");
       coverageAnalyzer.collectCoverage();
-      // TODO: use coverageInfo
-      // branchCoverageMap
+      // recalculate method weights
+      numIterations++;
+      if (numIterations == updateMethodWeightsInterval) {
+        calculateMethodWeights(methodSelections, methodInvocations, coverageAnalyzer.branchCoverageMap);
+        numIterations = 0; // reset
+        methodSelections = new HashMap<>();
+      }
     }
     writeSeqsToFile();
     // remove TandoopTest.java

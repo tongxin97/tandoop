@@ -1,6 +1,7 @@
 package com.github.tongxin97.tandoop.method;
 
 import java.lang.IllegalArgumentException;
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -17,10 +18,12 @@ import com.github.tongxin97.tandoop.util.Rand;
 
 public class MethodPool {
     public List<MethodInfo> MethodInfoList;
+    public List<Double> methodWeights;
     public Map<String, Set<MethodInfo>> classToMethods;
 
     public MethodPool() {
         MethodInfoList = new ArrayList<>();
+        methodWeights = new ArrayList<>();
         classToMethods = new HashMap<>();
     }
 
@@ -67,11 +70,30 @@ public class MethodPool {
         return classToMethods.get(className).stream().filter(m -> m.isConstructor).collect(Collectors.toSet());
     }
 
-    public MethodInfo getRandomMethod() throws IllegalArgumentException {
-        if (MethodInfoList.isEmpty()) {
-            throw new IllegalArgumentException("MethodPool is empty.");
-        }
+    public MethodInfo getUniformRandomMethod() {
+        assert(!MethodInfoList.isEmpty());
         return Rand.getRandomCollectionElement(MethodInfoList);
+    }
+
+    public MethodInfo getCovGuidedRandomMethod() throws RuntimeException {
+        assert(!MethodInfoList.isEmpty() && !methodWeights.isEmpty());
+        assert(MethodInfoList.size() == methodWeights.size());
+
+        double totalWeight = methodWeights.stream().reduce((a, b) -> a+b).get();
+        double r = Math.random() * totalWeight;
+        double w = 0;
+        for (int i = 0; i < methodWeights.size(); i++) {
+            w += methodWeights.get(i);
+            if (w >= r) {
+                return MethodInfoList.get(i);
+            }
+        }
+        throw new RuntimeException("getCovGuidedRandomMethod failed.");
+    }
+
+    public void assignUniversalMethodWeights() {
+        double universalWeight = 1.0/MethodInfoList.size();
+        methodWeights.addAll(Collections.nCopies(MethodInfoList.size(), universalWeight));
     }
 
     @Override

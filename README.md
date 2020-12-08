@@ -39,7 +39,7 @@ mvn compile assembly:single && java -cp ../joda-time/target/joda-time-2.10.9-SNA
 * Handle generic types
 * BloodHound
     * [Done] get coverageInfo
-        * Remove unrelated codes
+        * [Done] Remove unrelated codes
     * Select method according to its probability
     * Update method selection probability according coverageInfo
 * Debug extensible flag
