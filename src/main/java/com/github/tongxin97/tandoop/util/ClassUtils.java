@@ -25,6 +25,8 @@ public class ClassUtils {
         put(float.class.getName(), float.class.getName());
         put(Double.class.getName(), double.class.getName());
         put(double.class.getName(), double.class.getName());
+        put(Void.class.getName(), void.class.getName());
+        put(void.class.getName(), void.class.getName());
     }};
 
 
@@ -37,6 +39,7 @@ public class ClassUtils {
         Long.class.getName(),
         Float.class.getName(),
         Double.class.getName(),
+        Void.class.getName(),
         boolean.class.getName(),
         char.class.getName(),
         byte.class.getName(),
@@ -49,13 +52,6 @@ public class ClassUtils {
     ));
 
     private static final Set<String> PRIMITIVE_TYPES = new HashSet(Arrays.asList(
-        Boolean.class.getName(),
-        Character.class.getName(),
-        Byte.class.getName(),
-        Short.class.getName(),
-        Long.class.getName(),
-        Float.class.getName(),
-        Double.class.getName(),
         boolean.class.getName(),
         char.class.getName(),
         byte.class.getName(),
@@ -91,7 +87,12 @@ public class ClassUtils {
     private static final Set<String> BOOLEAN_TYPES = new HashSet<>(Arrays.asList(
         Boolean.class.getName(),
         boolean.class.getName()
-));
+)   );
+
+    private static final Set<String> VOID_TYPES = new HashSet<>(Arrays.asList(
+        Void.class.getName(),
+        void.class.getName()
+    )   );
 
     public static boolean isPrimitiveType(String c) {
         return PRIMITIVE_TYPES.contains(c);
@@ -107,6 +108,10 @@ public class ClassUtils {
 
     public static boolean isBooleanOrWrapper(String c) {
         return BOOLEAN_TYPES.contains(c);
+    }
+
+    public static boolean isVoidOrWrapper(String c) {
+        return VOID_TYPES.contains(c);
     }
 
     /**
