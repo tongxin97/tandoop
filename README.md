@@ -18,6 +18,18 @@ mvn compile assembly:single -q && java -cp ../commons-collections/target/commons
 
 ```
 
+### install Maven and prepare target repo
+```
+wget https://apache.osuosl.org/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz
+tar xvf apache-maven-3.6.3-bin.tar.gz
+export M2_HOME=~/apache-maven-3.6.3
+export M2=$M2_HOME/bin
+export PATH=$M2:$PATH
+mvn -version
+mvn clean install -DskipTests
+mvn dependency:copy-dependencies
+```
+
 ## Pending Questions/TODOs
 * [DONE] Differentiate static methods in parser
 * [DONE] Handle class/method inheritance
