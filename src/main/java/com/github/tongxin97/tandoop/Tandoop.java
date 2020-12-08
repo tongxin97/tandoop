@@ -501,7 +501,7 @@ public class Tandoop {
       String methodName = methodPool.MethodInfoList.get(i).getFullyQualifiedMethodName();
       long k = methodSelections.getOrDefault(methodName, 0L);
       long succ = methodInvocations.getOrDefault(methodName, 0L);
-      double newWeight =  weightAlpha * branchCoverageMap.get(methodName) + (1-weightAlpha) * (1- succ/maxSucc);
+      double newWeight =  weightAlpha * branchCoverageMap.getOrDefault(methodName, 0.0) + (1-weightAlpha) * (1- succ/maxSucc);
       if (k > 0) {
         newWeight = Math.max( -3.0/Math.log(1-weightP) * Math.pow(weightP, k)/k, 1.0/(Math.log(sizeM)+3) ) * newWeight;
       }
@@ -510,7 +510,7 @@ public class Tandoop {
   }
 
   public void generateSequences(long timeLimits) throws Exception {
-    this.coverageInfoOut.printf("timeLimits: %d s\n", timeLimits);
+    this.coverageInfoOut.printf("timeLimits: %d s, ", timeLimits);
     timeLimits *= 1000;
     long startTime = System.currentTimeMillis();
     long elapsedTime = 0L;
@@ -594,12 +594,12 @@ public class Tandoop {
       coverageAnalyzer.collectCoverage();
       // recalculate method weights
       numIterations++;
-      if (numIterations == updateMethodWeightsInterval) {
+      if (numIterations % updateMethodWeightsInterval == 0) {
         calculateMethodWeights(methodSelections, methodInvocations, coverageAnalyzer.branchCoverageMap);
-        numIterations = 0; // reset
         methodSelections = new HashMap<>();
       }
     }
+    coverageInfoOut.printf("generated tests: %d\n", numIterations);
     writeSeqsToFile();
     // remove TandoopTest.java
     File testFile = new File(tandoopTestFile);
