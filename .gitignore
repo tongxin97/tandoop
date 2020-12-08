@@ -21,9 +21,6 @@ target/
 joda-time
 /.metadata/
 
-# TandoopTest
-tandoop/src/test/java/com/github/tongxin97/tandoop/TandoopTest.java
-
 # test output
 failed_test_classes
 *.txt
