@@ -126,7 +126,7 @@ public class Tandoop {
 
   private void setExtensibleFlag(MethodInfo method, VarInfo var, Object result) {
     // if runtime value is null, set extensible to false and return
-    if (result.toString() == "" || result.toString().startsWith("[Tandoop] F: ")) {
+    if (result.toString().isEmpty() || result.toString().startsWith("[Tandoop] F: ")) {
       var.Extensible = false;
       return;
     }
@@ -515,7 +515,8 @@ public class Tandoop {
 
       newSeq.generateTest();
       Object result = newSeq.runTest(this.prjDir, this.coverageAnalyzer);
-      if (result.toString().startsWith("[Tandoop] E: ") || result.toString().startsWith("[Tandoop] C: ")) {
+      String resultStr = result.toString();
+      if (resultStr.startsWith("[Tandoop] E: ") || resultStr.startsWith("[Tandoop] C: ")) {
         newSeq.generateJUnitTest(
             String.format("%s/src/test/java/", this.prjDir),
             String.format("TandoopErrTest%d", errorSeqs.size())
@@ -529,13 +530,8 @@ public class Tandoop {
         if (var.Extensible) {
           String returnType = method.getReturnType();
           newSeq.addVal(returnType, var);
-          if (ClassUtils.isPrimitiveOrWrapper(returnType)) {
-            if (!ClassUtils.isBooleanOrWrapper(returnType)) {
-              String varStr = var.Val.toString();
-              if (!varStr.isEmpty()) {
-                this.valuePool.get("primitive").addValue(Double.valueOf(varStr).doubleValue());
-              }
-            }
+          if (ClassUtils.isPrimitiveOrWrapper(returnType) && !ClassUtils.isBooleanOrWrapper(returnType)) {
+            this.valuePool.get("primitive").addValue(Double.valueOf(var.Val.toString()).doubleValue());
           } else {
             if (this.valuePool.containsKey(returnType)) {
               this.valuePool.get(returnType).addValue(var.Val);
