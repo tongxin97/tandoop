@@ -126,7 +126,7 @@ public class Tandoop {
 
   private void setExtensibleFlag(MethodInfo method, VarInfo var, Object result) {
     // if runtime value is null, set extensible to false and return
-    if (result.toString().startsWith("[Tandoop] F: ")) {
+    if (result.toString() == "" || result.toString().startsWith("[Tandoop] F: ")) {
       var.Extensible = false;
       return;
     }

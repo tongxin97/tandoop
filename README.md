@@ -39,7 +39,7 @@ mvn dependency:copy-dependencies
 * [DONE] Handle interface
 * [DONE] Static nested class
 * [Done] On-demand construction of external types (no improvements)
-* Heuristic on constructor selection
+* [DONE] Heuristic on constructor selection
     * [DONE] Prefer constructors with no arguments or only primitive ones.
 * [Done] Primitive type casting
     * [Done] Debug "basic" type compilation error
@@ -47,12 +47,13 @@ mvn dependency:copy-dependencies
     * [Done] Fix bugs in casting
 * [Done] Init String value pool
 * [DONE] Handle generic types
-* BloodHound
+* [DONE] BloodHound
     * [Done] get coverageInfo
         * [Done] Remove unrelated codes
     * [DONE] Select method according to its probability
     * [DONE] Update method selection probability according coverageInfo
-* Debug extensible flag
+* [DONE] Debug extensible flag
+* Debug classloader and method invoke errors
 
 ## Related works:
 https://people.kth.se/~artho/papers/lei-ase2015.pdf
