@@ -456,9 +456,9 @@ public class Tandoop {
       String methodName = methodPool.MethodInfoList.get(i).getFullyQualifiedMethodName();
       long k = methodSelections.getOrDefault(methodName, 0L);
       long succ = methodInvocations.getOrDefault(methodName, 0L);
-      double newWeight =  weightAlpha * branchCoverageMap.getOrDefault(methodName, 0.0) + (1-weightAlpha) * (1- succ/maxSucc);
+      double newWeight =  weightAlpha * branchCoverageMap.getOrDefault(methodName, 0.0) + (1-weightAlpha) * (1-succ/maxSucc);
       if (k > 0) {
-        newWeight = Math.max( -3.0/Math.log(1-weightP) * Math.pow(weightP, k)/k, 1.0/(Math.log(sizeM)+3) ) * newWeight;
+        newWeight = Math.max( -3.0/Math.log(1-weightP) * Math.pow(weightP, k)/k, 1.0/(Math.log(sizeM+3)) ) * newWeight;
       }
       methodPool.methodWeights.set(i, newWeight);
     }
@@ -477,11 +477,19 @@ public class Tandoop {
       MethodInfo method;
       try {
         method = methodPool.getCovGuidedRandomMethod();
+        // [evaluation] run with uniform method selection
+//        method = methodPool.getUniformRandomMethod();
       } catch (RuntimeException e) {
         System.err.println(e.getMessage());
         break;
       }
       method = selectConstructor(method);
+
+      // [evaluation] skip over methods with generics
+      if (Str.parseNestedTypes(method.getReturnType(), null)) {
+        continue;
+      }
+
       String methodName = method.getFullyQualifiedMethodName();
       methodSelections.put(methodName, methodSelections.getOrDefault(methodName, 0L) + 1);
       // System.out.printf("Selected random method: %s.%s\n", method.ClassName, method.Name);

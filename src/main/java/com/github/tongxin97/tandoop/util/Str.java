@@ -43,7 +43,7 @@ public class Str {
       char c = type.charAt(i);
       if (c == '<' || c == ',') {
         containsGenericType |= isGenericType(b.toString());
-        if (isGenericType(b.toString())) {
+        if (isGenericType(b.toString()) && generics != null) {
           generics.add(b.toString().trim());
         }
         b.setLength(0); // reset
@@ -54,7 +54,7 @@ public class Str {
       }
     }
     containsGenericType |= isGenericType(b.toString());
-    if (isGenericType(b.toString())) {
+    if (isGenericType(b.toString()) && generics != null) {
       generics.add(b.toString().trim());
     }
     return containsGenericType;

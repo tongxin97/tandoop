@@ -38,7 +38,7 @@ public class Sequence {
 		genericTypes = new HashSet<>();
 	}
 
-	private boolean hasGenericTypes() {
+	public boolean hasGenericTypes() {
 		return genericTypes.size() > 0;
 	}
 
