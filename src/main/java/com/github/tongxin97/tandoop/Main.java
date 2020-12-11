@@ -15,6 +15,8 @@ public class Main {
     options.addOption("src", "srcDir", true, "Project src directory");
     options.addOption("prj", "projectDir", true, "Project directory");
     options.addOption("limit", "timeLimit", true, "Time limit to run Tandoop for in seconds");
+    options.addOption("generics", "generics", false, "If Tandoop should allow for generics in generated test classes.");
+    options.addOption("cov", "coverageGuided", false, "If Tandoop uses coverage-guided method selection.");
 
     try {
       // parse cmdline arguments
@@ -69,6 +71,8 @@ public class Main {
       testOutputDir.mkdir();
 
       Tandoop tandoop = new Tandoop(cmd.getOptionValue("src"), prjDir);
+      tandoop.allowGenerics = cmd.hasOption("generics");
+      tandoop.useCovGuide = cmd.hasOption("cov");
       int timeLimit = Integer.parseInt(cmd.getOptionValue("limit"));
       tandoop.generateSequences(timeLimit);
 

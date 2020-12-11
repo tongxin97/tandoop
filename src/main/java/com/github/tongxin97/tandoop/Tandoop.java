@@ -44,6 +44,8 @@ public class Tandoop {
   private final double weightP = 0.5;
 
   private String prjDir;
+  public boolean allowGenerics;
+  public boolean useCovGuide;
 
   public CoverageAnalyzer coverageAnalyzer;
   public PrintStream coverageInfoOut;
@@ -476,9 +478,8 @@ public class Tandoop {
       elapsedTime = (new Date()).getTime() - startTime;
       MethodInfo method;
       try {
-        method = methodPool.getCovGuidedRandomMethod();
         // [evaluation] run with uniform method selection
-//        method = methodPool.getUniformRandomMethod();
+        method = useCovGuide? methodPool.getCovGuidedRandomMethod(): methodPool.getUniformRandomMethod();
       } catch (RuntimeException e) {
         System.err.println(e.getMessage());
         break;
@@ -486,7 +487,7 @@ public class Tandoop {
       method = selectConstructor(method);
 
       // [evaluation] skip over methods with generics
-      if (Str.parseNestedTypes(method.getReturnType(), null)) {
+      if (!allowGenerics && Str.parseNestedTypes(method.getReturnType(), null)) {
         continue;
       }
 
