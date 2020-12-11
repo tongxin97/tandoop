@@ -15,8 +15,13 @@ public class Main {
     options.addOption("src", "srcDir", true, "Project src directory");
     options.addOption("prj", "projectDir", true, "Project directory");
     options.addOption("limit", "timeLimit", true, "Time limit to run Tandoop for in seconds");
-    options.addOption("generics", "generics", false, "If Tandoop should allow for generics in generated test classes.");
+    options.addOption("all", "allFeatures", false, "If Tandoop should use all new features.");
+    options.addOption("gt", "genericTypes", false, "If Tandoop should allow for generics types in generated test classes.");
+    options.addOption("mi", "methodInheritance", false, "If Tandoop should use method inheritance.");
+    options.addOption("ci", "classInheritance", false, "If Tandoop should use class inheritance.");
     options.addOption("cov", "coverageGuided", false, "If Tandoop uses coverage-guided method selection.");
+    options.addOption("cs", "constructorSelection", false, "If Tandoop uses constructor selection preference.");
+    options.addOption("odc", "onDemandConstruction", false, "If Tandoop uses on-demand construction of external types.");
 
     try {
       // parse cmdline arguments
@@ -71,8 +76,19 @@ public class Main {
       testOutputDir.mkdir();
 
       Tandoop tandoop = new Tandoop(cmd.getOptionValue("src"), prjDir);
-      tandoop.allowGenerics = cmd.hasOption("generics");
+      if (cmd.hasOption("all")) {
+        tandoop.allowGenerics = true;
+        tandoop.useMethodInheritance = true;
+        tandoop.useClassInheritance = true;
+      } else {
+        tandoop.allowGenerics = cmd.hasOption("gt");
+        tandoop.useMethodInheritance = cmd.hasOption("mi");
+        tandoop.useClassInheritance = cmd.hasOption("ci");
+      }
       tandoop.useCovGuide = cmd.hasOption("cov");
+      tandoop.useConstructorSelection = cmd.hasOption("cs");
+      tandoop.useODConstruction = cmd.hasOption("odc");
+
       int timeLimit = Integer.parseInt(cmd.getOptionValue("limit"));
       tandoop.generateSequences(timeLimit);
 

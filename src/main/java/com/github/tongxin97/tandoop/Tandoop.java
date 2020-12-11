@@ -45,7 +45,11 @@ public class Tandoop {
 
   private String prjDir;
   public boolean allowGenerics;
+  public boolean useMethodInheritance;
+  public boolean useClassInheritance;
   public boolean useCovGuide;
+  public boolean useConstructorSelection;
+  public boolean useODConstruction;
 
   public CoverageAnalyzer coverageAnalyzer;
   public PrintStream coverageInfoOut;
@@ -81,6 +85,10 @@ public class Tandoop {
     // parse all accessible class methods in the target project
     MethodParser.parseAndResolveDirectory(srcDir, prjDir, methodPool);
     this.invertInheritanceMap();
+
+    if (useMethodInheritance) {
+      methodPool.addParentMethodsToSubClasses();
+    }
 
 //    try {
 //      String filename = "inheritance.txt";
@@ -159,7 +167,7 @@ public class Tandoop {
     for (double no: primitives) {
       primitivesList.add(no);
     }
-    this.valuePool.put("primitive", new TypedValuePool("primative", primitivesList));
+    this.valuePool.put("primitive", new TypedValuePool("primitive", primitivesList));
     inheritanceMap.get(Object.class.getName()).add("primitive");
 
     String stringType = String.class.getName();
@@ -172,7 +180,7 @@ public class Tandoop {
 
     // null type
     this.valuePool.put("null", new TypedValuePool("null", null));
-    inheritanceMap.put("null", new HashSet<>(Arrays.asList("null")));
+    inheritanceMap.put("null", new HashSet<>(Collections.singletonList("null")));
   }
 
   private ValueInfo getRandomExtensibleValFromSequences(Set<Sequence> inputSeqs, Set<Sequence> outputSeqs, String type, boolean useStrictType) {
@@ -280,7 +288,7 @@ public class Tandoop {
     return null;
   }
 
-  private int getRandomSeqsAndVals(Set<Sequence> seqs, List<ValueInfo> vals, final MethodInfo method) throws Exception {
+  private int getRandomSeqsAndVals(Set<Sequence> seqs, List<ValueInfo> vals, final MethodInfo method) {
 //    System.out.println("types: " + types);
     int returnVal = 0;
     int i = 0;
@@ -292,7 +300,7 @@ public class Tandoop {
           vals.add(new ValueInfo(type, valuePool.get("primitive").getRandomValue()));
         }
       } else {
-        boolean useStrictType = i == 0 && method.isInstanceMethod();
+        boolean useStrictType = !useClassInheritance || (i == 0 && method.isInstanceMethod());
         // 3 possible choices for v
         // 1) v = null
         ValueInfo v = null;
@@ -314,7 +322,7 @@ public class Tandoop {
             }
           }
         }
-        if (v == null) {
+        if (v == null && useODConstruction) {
           v = generateExternalType(seqs, type);
           returnVal = 1;
         }
@@ -401,12 +409,7 @@ public class Tandoop {
   public Sequence extend(MethodInfo method, VarInfo var, Set<Sequence> seqs, List<ValueInfo> vals) {
     Sequence newSeq = new Sequence();
     for (Sequence seq: seqs) {
-//      for (Map.Entry<String, List<ValueInfo>> entry: seq.Vals.entrySet()) {
-//        newSeq.addVals(entry.getKey(), entry.getValue());
-//      }
-      for (String g: seq.genericTypes) {
-        newSeq.genericTypes.add(g);
-      }
+      newSeq.genericTypes.addAll(seq.genericTypes);
       newSeq.addStatements(seq);
     }
 
@@ -484,7 +487,9 @@ public class Tandoop {
         System.err.println(e.getMessage());
         break;
       }
-      method = selectConstructor(method);
+      if (useConstructorSelection) {
+        method = selectConstructor(method);
+      }
 
       // [evaluation] skip over methods with generics
       if (!allowGenerics && Str.parseNestedTypes(method.getReturnType(), null)) {

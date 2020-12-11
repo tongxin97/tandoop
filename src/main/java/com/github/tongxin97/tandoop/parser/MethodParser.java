@@ -72,7 +72,6 @@ public class MethodParser {
     // use combinedTypeSolver in parser
     JavaSymbolSolver symbolSolver = new JavaSymbolSolver(combinedTypeSolver);
     StaticJavaParser.getConfiguration().setSymbolResolver(symbolSolver);
-    // TODO: handle generic types
 
     Path rootPath = Paths.get(srcDir);
     ProjectRoot projectRoot = new SymbolSolverCollectionStrategy(
