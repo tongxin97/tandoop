@@ -61,7 +61,7 @@ public class Sequence {
 			this.Vals.put(type, new ArrayList<>());
 		}
 		this.Vals.get(type).add(v);
-		System.out.printf("Added val %s of type %s\n", this.Vals.get(type), type);
+//		System.out.printf("Added val %s of type %s\n", this.Vals.get(type), type);
 	}
 
 	public void addVals(String type, List<ValueInfo> vals) {
@@ -247,7 +247,7 @@ public class Sequence {
 			}
 
 			int cmdReturnValue = p.waitFor();
-			System.out.println("javacompile: " + cmdReturnValue);
+//			System.out.println("javacompile: " + cmdReturnValue);
 			if (cmdReturnValue != 0) {
 				return "[Tandoop] E: java compiler error";
 			}

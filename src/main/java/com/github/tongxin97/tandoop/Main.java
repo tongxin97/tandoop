@@ -17,7 +17,7 @@ public class Main {
     options.addOption("limit", "timeLimit", true, "Time limit to run Tandoop for in seconds");
     options.addOption("basic", "basicFeatures", false, "If Tandoop should use all basic features.");
     options.addOption("all", "allFeatures", false, "If Tandoop should use all features.");
-    options.addOption("noGI", "noGenericTypes", false, "If Tandoop should allow for generics types in generated test classes.");
+    options.addOption("noGT", "noGenericTypes", false, "If Tandoop should allow for generics types in generated test classes.");
     options.addOption("noMI", "noMethodInheritance", false, "If Tandoop should use method inheritance.");
     options.addOption("noCI", "noClassInheritance", false, "If Tandoop should use class inheritance.");
     options.addOption("cg", "coverageGuided", false, "If Tandoop uses coverage-guided method selection.");
@@ -78,7 +78,7 @@ public class Main {
 
       Tandoop tandoop = new Tandoop(cmd.getOptionValue("src"), prjDir);
 
-      tandoop.allowGenerics = cmd.hasOption("basic") || !cmd.hasOption("noGI");
+      tandoop.allowGenerics = cmd.hasOption("basic") || !cmd.hasOption("noGT");
       tandoop.useMethodInheritance = cmd.hasOption("basic") || !cmd.hasOption("noMI");
       tandoop.useClassInheritance = cmd.hasOption("basic") || !cmd.hasOption("noCI");
       tandoop.useCovGuide = cmd.hasOption("all") || cmd.hasOption("cg");
