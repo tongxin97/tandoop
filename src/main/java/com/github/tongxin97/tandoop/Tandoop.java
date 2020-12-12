@@ -469,16 +469,22 @@ public class Tandoop {
     }
   }
 
-  public void generateSequences(long timeLimits) throws Exception {
-    this.coverageInfoOut.printf("timeLimits: %d s, ", timeLimits);
-    timeLimits *= 1000;
+  public void generateSequences(int numTests, long timeLimit) throws Exception {
+    if (numTests != 0) {
+      this.coverageInfoOut.printf("numTests: %d\n", numTests);
+    } else if (timeLimit != 0) {
+      this.coverageInfoOut.printf("timeLimit: %d s, ", timeLimit);
+      timeLimit *= 1000;
+    }
     long startTime = System.currentTimeMillis();
     long elapsedTime = 0L;
     int numIterations = 0;
     Map<String, Long> methodInvocations = new HashMap<>();
     Map<String, Long> methodSelections = new HashMap<>();
-    while (elapsedTime < timeLimits) {
-      elapsedTime = (new Date()).getTime() - startTime;
+    while (numIterations < numTests || elapsedTime < timeLimit) {
+      if (timeLimit != 0) {
+        elapsedTime = (new Date()).getTime() - startTime;
+      }
       MethodInfo method;
       try {
         // [evaluation] run with uniform method selection
@@ -566,7 +572,9 @@ public class Tandoop {
         methodSelections = new HashMap<>();
       }
     }
-    coverageInfoOut.printf("generated tests: %d\n", numIterations);
+    if (timeLimit != 0) {
+      coverageInfoOut.printf("generated tests: %d\n", numIterations);
+    }
 //    writeSeqsToFile();
     // remove TandoopTest.java
     File testFile = new File(tandoopTestFile);

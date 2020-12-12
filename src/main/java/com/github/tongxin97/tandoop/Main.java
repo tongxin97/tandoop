@@ -15,6 +15,7 @@ public class Main {
     options.addOption("src", "srcDir", true, "Project src directory");
     options.addOption("prj", "projectDir", true, "Project directory");
     options.addOption("limit", "timeLimit", true, "Time limit to run Tandoop for in seconds");
+    options.addOption("numTests", "numTests", true, "Limit the number of generated tests.");
     options.addOption("basic", "basicFeatures", false, "If Tandoop should use all basic features.");
     options.addOption("all", "allFeatures", false, "If Tandoop should use all features.");
     options.addOption("noGT", "noGenericTypes", false, "If Tandoop should allow for generics types in generated test classes.");
@@ -35,8 +36,8 @@ public class Main {
         System.err.println("Project directory not provided.");
         return;
       }
-      if (!cmd.hasOption("limit")) {
-        System.err.println("Time limit not provided.");
+      if (!cmd.hasOption("limit") && !cmd.hasOption("numTests")) {
+        System.err.println("Time limit/numTests not provided.");
         return;
       }
 
@@ -85,8 +86,9 @@ public class Main {
       tandoop.useConstructorSelection = cmd.hasOption("all") || cmd.hasOption("cs");
       tandoop.useODConstruction = cmd.hasOption("all") || cmd.hasOption("odc");
 
-      int timeLimit = Integer.parseInt(cmd.getOptionValue("limit"));
-      tandoop.generateSequences(timeLimit);
+      int numTests = cmd.hasOption("numTests")? Integer.parseInt(cmd.getOptionValue("numTests")): 0;
+      int timeLimit = cmd.hasOption("limit")? Integer.parseInt(cmd.getOptionValue("limit")): 0;
+      tandoop.generateSequences(numTests, timeLimit);
 
     } catch (ParseException e) {
       System.err.println( "Unexpected exception:" + e.getMessage() );
