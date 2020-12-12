@@ -15,11 +15,12 @@ public class Main {
     options.addOption("src", "srcDir", true, "Project src directory");
     options.addOption("prj", "projectDir", true, "Project directory");
     options.addOption("limit", "timeLimit", true, "Time limit to run Tandoop for in seconds");
-    options.addOption("all", "allFeatures", false, "If Tandoop should use all new features.");
+    options.addOption("basic", "basicFeatures", false, "If Tandoop should use all basic features.");
+    options.addOption("all", "allFeatures", false, "If Tandoop should use all features.");
     options.addOption("gt", "genericTypes", false, "If Tandoop should allow for generics types in generated test classes.");
     options.addOption("mi", "methodInheritance", false, "If Tandoop should use method inheritance.");
     options.addOption("ci", "classInheritance", false, "If Tandoop should use class inheritance.");
-    options.addOption("cov", "coverageGuided", false, "If Tandoop uses coverage-guided method selection.");
+    options.addOption("cg", "coverageGuided", false, "If Tandoop uses coverage-guided method selection.");
     options.addOption("cs", "constructorSelection", false, "If Tandoop uses constructor selection preference.");
     options.addOption("odc", "onDemandConstruction", false, "If Tandoop uses on-demand construction of external types.");
 
@@ -80,14 +81,23 @@ public class Main {
         tandoop.allowGenerics = true;
         tandoop.useMethodInheritance = true;
         tandoop.useClassInheritance = true;
+        tandoop.useCovGuide = true;
+        tandoop.useConstructorSelection = true;
+        tandoop.useODConstruction = true;
       } else {
-        tandoop.allowGenerics = cmd.hasOption("gt");
-        tandoop.useMethodInheritance = cmd.hasOption("mi");
-        tandoop.useClassInheritance = cmd.hasOption("ci");
+        if (cmd.hasOption("basic")) {
+          tandoop.allowGenerics = true;
+          tandoop.useMethodInheritance = true;
+          tandoop.useClassInheritance = true;
+        } else {
+          tandoop.allowGenerics = cmd.hasOption("gt");
+          tandoop.useMethodInheritance = cmd.hasOption("mi");
+          tandoop.useClassInheritance = cmd.hasOption("ci");
+        }
+        tandoop.useCovGuide = cmd.hasOption("cg");
+        tandoop.useConstructorSelection = cmd.hasOption("cs");
+        tandoop.useODConstruction = cmd.hasOption("odc");
       }
-      tandoop.useCovGuide = cmd.hasOption("cov");
-      tandoop.useConstructorSelection = cmd.hasOption("cs");
-      tandoop.useODConstruction = cmd.hasOption("odc");
 
       int timeLimit = Integer.parseInt(cmd.getOptionValue("limit"));
       tandoop.generateSequences(timeLimit);
