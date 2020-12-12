@@ -156,12 +156,12 @@ public class Tandoop {
 
     double[] primitives = {'a', 'z', 'B', '\t',
             -128, 0, 127,
-            0, 1, -1, 1000, -1000, Integer.MAX_VALUE, Integer.MIN_VALUE,
-            12.0, 5, -5, 100, -100, Short.MAX_VALUE, Short.MIN_VALUE,
-            24.0, 10, -10, 100000, -100000, Long.MAX_VALUE, Long.MIN_VALUE,
-            36.0, 3.14, -72.0, Float.MAX_VALUE, Float.MIN_VALUE,
-            11.0, 7.14285, -92, Double.MAX_VALUE, Double.MIN_VALUE,
-            13.0, 0.333, -12, Double.MAX_VALUE, Double.MIN_VALUE
+            0, 1, -1, 1000, Integer.MAX_VALUE, Integer.MIN_VALUE,
+            12.0, 5, -5, 100, Short.MAX_VALUE, Short.MIN_VALUE,
+            24.0, 10, -10, 100000, Long.MAX_VALUE, Long.MIN_VALUE,
+            36.0, 3.14, Float.MAX_VALUE, Float.MIN_VALUE,
+            11.0, 7.14285, Double.MAX_VALUE, Double.MIN_VALUE,
+            13.0, 0.333, Double.MAX_VALUE, Double.MIN_VALUE
     };
     List<Object> primitivesList = new ArrayList<>();
     for (double no: primitives) {
@@ -414,7 +414,7 @@ public class Tandoop {
     }
 
     String newStatement = this.genNewStatement(method, newSeq, var, vals);
-    System.out.println("New statements:\n " + newStatement);
+    // System.out.println("New statements:\n " + newStatement);
     newSeq.addStatement(newStatement);
     return newSeq;
   }
@@ -552,12 +552,12 @@ public class Tandoop {
               this.valuePool.put(returnType, new TypedValuePool(returnType, false, Arrays.asList(var.Val)));
             }
           }
-          System.out.println("Added extensible val:" + var.Val);
+          // System.out.println("Added extensible val:" + var.Val);
         } else {
-          System.out.printf("Non-extensible val: %s\n ", var.Val);
+          // System.out.printf("Non-extensible val: %s\n ", var.Val);
         }
       }
-      System.out.println("-----------------------");
+      // System.out.println("-----------------------");
       coverageAnalyzer.collectCoverage();
       // recalculate method weights
       numIterations++;

@@ -16,6 +16,8 @@ mvn compile assembly:single -q && java -cp ../joda-time/target/joda-time-2.10.9-
 
 mvn compile assembly:single && java -cp ../commons-collections/target/commons-collections4-4.5-SNAPSHOT.jar:target/tandoop-1.0-SNAPSHOT-jar-with-dependencies.jar -Xbootclasspath/a:jacocoagent.jar -javaagent:jacocoagent.jar com.github.tongxin97.tandoop.Main -src ../commons-collections/src/main/java -prj ../commons-collections -limit 900
 
+mvn compile assembly:single && java -cp ../commons-codec/target/commons-codec-1.16-SNAPSHOT.jar:target/tandoop-1.0-SNAPSHOT-jar-with-dependencies.jar -Xbootclasspath/a:jacocoagent.jar -javaagent:jacocoagent.jar com.github.tongxin97.tandoop.Main -src ../commons-codec/src/main/java -prj ../commons-codec -limit 900
+
 ```
 
 ### install Maven and prepare target repo
