@@ -1,0 +1,35 @@
+basic:prjDir: ../commons-collections, numTests: 500
+      instruction: covered 6682, total 57022, coverage 11.718284
+      branch: covered 388, total 5973, coverage 6.495898
+      line: covered 1845, total 13586, coverage 13.580156
+      method: covered 778, total 4358, coverage 17.852226
+
+all:prjDir: ../commons-collections, numTests: 500
+    instruction: covered 6179, total 57022, coverage 10.836168
+    branch: covered 406, total 5973, coverage 6.797254
+    line: covered 1674, total 13586, coverage 12.321507
+    method: covered 699, total 4358, coverage 16.039468
+
+basic:prjDir: ../joda-time, numTests: 500
+      instruction: covered 25764, total 65933, coverage 39.076032
+      branch: covered 1935, total 6634, coverage 29.167923
+      line: covered 6121, total 14919, coverage 41.028219
+      method: covered 1669, total 3970, coverage 42.040302
+
+all:prjDir: ../joda-time, numTests: 500
+    instruction: covered 27166, total 65933, coverage 41.202433
+    branch: covered 2109, total 6634, coverage 31.790775
+    line: covered 6435, total 14919, coverage 43.132918
+    method: covered 1706, total 3970, coverage 42.972292
+
+basic:prjDir: ../commons-codec, numTests: 500
+      instruction: covered 35316, total 49272, coverage 71.675597
+      branch: covered 717, total 2318, coverage 30.931838
+      line: covered 2057, total 4500, coverage 45.711111
+      method: covered 458, total 923, coverage 49.620802
+
+all:prjDir: ../commons-codec, numTests: 500
+    instruction: covered 35355, total 49272, coverage 71.754749
+    branch: covered 710, total 2318, coverage 30.629853
+    line: covered 2020, total 4500, coverage 44.888889
+    method: covered 444, total 923, coverage 48.104009
