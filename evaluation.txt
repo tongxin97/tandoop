@@ -70,3 +70,11 @@ all:prjDir: ../commons-compress, numTests: 500
     line: covered 2589, total 14393, coverage 17.987911
     method: covered 717, total 2595, coverage 27.630058
 
+
+
+all:prjDir: ../jsoup, numTests: 500
+    instruction: covered 15125, total 35086, coverage 43.108362
+    branch: covered 971, total 3917, coverage 24.789380
+    line: covered 2858, total 7650, coverage 37.359477
+    method: covered 827, total 1498, coverage 55.206943
+
