@@ -24,6 +24,7 @@ mvn compile assembly:single && java -cp ../commons-cli/target/commons-cli-1.5-SN
 
 mvn compile assembly:single && java -cp ../commons-csv/target/commons-csv-1.9-SNAPSHOT.jar:target/tandoop-1.0-SNAPSHOT-jar-with-dependencies.jar -Xbootclasspath/a:jacocoagent.jar -javaagent:jacocoagent.jar com.github.tongxin97.tandoop.Main -src ../commons-csv/src/main/java -prj ../commons-csv -limit 900 -numTests 500
 
+mvn compile assembly:single && java -cp ../jsoup/target/jsoup-1.14.1-SNAPSHOT.jar:target/tandoop-1.0-SNAPSHOT-jar-with-dependencies.jar -Xbootclasspath/a:jacocoagent.jar -javaagent:jacocoagent.jar com.github.tongxin97.tandoop.Main -src ../jsoup/src/main/java -prj ../jsoup -limit 900 -numTests 500
 ```
 
 ### install Maven and prepare target repo
