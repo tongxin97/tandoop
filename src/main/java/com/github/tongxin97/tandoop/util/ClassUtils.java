@@ -174,7 +174,7 @@ public class ClassUtils {
                 } else {
                     System.err.println("[Error] collectInheritanceInfo: " + e1.getMessage());
                 }
-            } catch (Exception e2) {
+            } catch (Exception | NoClassDefFoundError e2) {
                 System.err.println("[Error] collectInheritanceInfo: " + e2.getMessage());
             }
 

@@ -136,7 +136,7 @@ public class Tandoop {
 
   private void setExtensibleFlag(MethodInfo method, VarInfo var, Object result) {
     // if runtime value is null, set extensible to false and return
-    if (result.toString().startsWith("[Tandoop] F: ")) {
+    if (result == null || result.toString().startsWith("[Tandoop] F: ")) {
       var.Extensible = false;
       return;
     }
@@ -535,7 +535,9 @@ public class Tandoop {
 
       newSeq.generateTest();
       Object result = newSeq.runTest(this.prjDir, this.coverageAnalyzer);
-      if (result.toString().startsWith("[Tandoop] E: ") || result.toString().startsWith("[Tandoop] C: ")) {
+//      System.out.printf("result: %s, ", result);
+//      System.out.printf("resultStr: %s\n", result.toString());
+      if (result != null && result.toString().startsWith("[Tandoop] E: ") || result.toString().startsWith("[Tandoop] C: ")) {
         newSeq.generateJUnitTest(
             String.format("%s/src/test/java/", this.prjDir),
             String.format("TandoopErrTest%d", errorSeqs.size())
