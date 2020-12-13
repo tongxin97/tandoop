@@ -18,6 +18,8 @@ mvn compile assembly:single && java -cp ../commons-collections/target/commons-co
 
 mvn compile assembly:single && java -cp ../commons-codec/target/commons-codec-1.16-SNAPSHOT.jar:target/tandoop-1.0-SNAPSHOT-jar-with-dependencies.jar -Xbootclasspath/a:jacocoagent.jar -javaagent:jacocoagent.jar com.github.tongxin97.tandoop.Main -src ../commons-codec/src/main/java -prj ../commons-codec -limit 900
 
+mvn compile assembly:single && java -cp ../commons-compress/target/commons-compress-1.21-SNAPSHOT.jar:target/tandoop-1.0-SNAPSHOT-jar-with-dependencies.jar:"../commons-compress/target/dependency/*" -Xbootclasspath/a:jacocoagent.jar -javaagent:jacocoagent.jar com.github.tongxin97.tandoop.Main -src ../commons-compress/src/main/java -prj ../commons-compress -limit 900
+
 ```
 
 ### install Maven and prepare target repo
