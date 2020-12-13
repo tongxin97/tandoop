@@ -89,6 +89,11 @@ public class ClassUtils {
         boolean.class.getName()
     ));
 
+    private static final Set<String> CHARACTER_TYPES = new HashSet<>(Arrays.asList(
+        Character.class.getName(),
+        char.class.getName()
+    ));
+
     public static boolean isPrimitiveType(String c) {
         return PRIMITIVE_TYPES.contains(c);
     }
@@ -103,6 +108,10 @@ public class ClassUtils {
 
     public static boolean isBooleanOrWrapper(String c) {
         return BOOLEAN_TYPES.contains(c);
+    }
+
+    public static boolean isCharacterOrWrapper(String c) {
+        return CHARACTER_TYPES.contains(c);
     }
 
     /**
