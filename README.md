@@ -55,7 +55,13 @@ mvn dependency:copy-dependencies
     * [DONE] Select method according to its probability
     * [DONE] Update method selection probability according coverageInfo
 * [DONE] Debug extensible flag
-* Debug classloader and method invoke errors
+
+### Future Work
+* Avoid using deprecated APIs:
+```
+Note: src/test/java/com/github/tongxin97/tandoop/TandoopTest.java uses or overrides a deprecated API.
+```
+* Upgrade to >= JDK 9 
 
 ## Related works:
 https://people.kth.se/~artho/papers/lei-ase2015.pdf

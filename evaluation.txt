@@ -33,3 +33,28 @@ all:prjDir: ../commons-codec, numTests: 500
     branch: covered 710, total 2318, coverage 30.629853
     line: covered 2020, total 4500, coverage 44.888889
     method: covered 444, total 923, coverage 48.104009
+
+basic:prjDir: ../commons-cli, numTests: 500
+      instruction: covered 1541, total 5110, coverage 30.156556
+      branch: covered 161, total 718, coverage 22.423398
+      line: covered 399, total 1208, coverage 33.029801
+      method: covered 135, total 276, coverage 48.913043
+
+all:prjDir: ../commons-cli, numTests: 500
+    instruction: covered 1646, total 5110, coverage 32.211350
+    branch: covered 152, total 718, coverage 21.169916
+    line: covered 428, total 1208, coverage 35.430464
+    method: covered 144, total 276, coverage 52.173913
+
+basic:prjDir: ../jfreechart, numTests: 500
+      instruction: covered 24534, total 205976, coverage 11.911096
+      branch: covered 1308, total 21187, coverage 6.173597
+      line: covered 5753, total 50982, coverage 11.284375
+      method: covered 1156, total 8107, coverage 14.259282
+
+all:prjDir: ../jfreechart, numTests: 500
+      instruction: covered 25812, total 205976, coverage 12.531557
+      branch: covered 1450, total 21187, coverage 6.843819
+      line: covered 6090, total 50982, coverage 11.945392
+      method: covered 1242, total 8107, coverage 15.320094
+
