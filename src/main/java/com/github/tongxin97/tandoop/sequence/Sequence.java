@@ -236,15 +236,15 @@ public class Sequence {
 			// System.out.println(cmd);
 			Process p = Runtime.getRuntime().exec(new String[] {"bash", "-c", cmd});
 
-//			String s;
-//			BufferedReader out = new BufferedReader(new InputStreamReader(p.getInputStream()));
-//           	while ((s = out.readLine()) != null) {
-//				System.out.println("line: " + s);
-//			}
-//			BufferedReader err = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-//           	while ((s = err.readLine()) != null) {
-//				System.out.println("line: " + s);
-//			}
+			String s;
+			BufferedReader out = new BufferedReader(new InputStreamReader(p.getInputStream()));
+          	while ((s = out.readLine()) != null) {
+				System.out.println("line: " + s);
+			}
+			BufferedReader err = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+          	while ((s = err.readLine()) != null) {
+				System.out.println("line: " + s);
+			}
 
 			int cmdReturnValue = p.waitFor();
 //			System.out.println("javacompile: " + cmdReturnValue);
