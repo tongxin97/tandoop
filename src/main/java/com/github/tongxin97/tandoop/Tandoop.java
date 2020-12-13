@@ -551,8 +551,9 @@ public class Tandoop {
         if (var.Extensible) {
           String returnType = method.getReturnType();
           newSeq.addVal(returnType, var);
-          if (ClassUtils.isPrimitiveOrWrapper(returnType) && !ClassUtils.isBooleanOrWrapper(returnType) && !var.Val.toString().isEmpty()) {
-              this.valuePool.get("primitive").addValue(Double.valueOf(var.Val.toString()).doubleValue());
+          String valStr = var.Val.toString().trim();
+          if (ClassUtils.isPrimitiveOrWrapper(returnType) && !ClassUtils.isBooleanOrWrapper(returnType) && !valStr.isEmpty()) {
+              this.valuePool.get("primitive").addValue(Double.valueOf(valStr).doubleValue());
           } else {
             if (this.valuePool.containsKey(returnType)) {
               this.valuePool.get(returnType).addValue(var.Val);
