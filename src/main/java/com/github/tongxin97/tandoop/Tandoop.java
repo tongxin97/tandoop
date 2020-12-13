@@ -537,7 +537,7 @@ public class Tandoop {
       Object result = newSeq.runTest(this.prjDir, this.coverageAnalyzer);
 //      System.out.printf("result: %s, ", result);
 //      System.out.printf("resultStr: %s\n", result.toString());
-      if (result != null && (result.toString().startsWith("[Tandoop] E: ") || result.toString().startsWith("[Tandoop] C: "))) {
+      if (result.toString() != null && (result.toString().startsWith("[Tandoop] E: ") || result.toString().startsWith("[Tandoop] C: "))) {
         newSeq.generateJUnitTest(
             String.format("%s/src/test/java/", this.prjDir),
             String.format("TandoopErrTest%d", errorSeqs.size())
