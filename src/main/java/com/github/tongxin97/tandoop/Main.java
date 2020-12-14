@@ -22,7 +22,7 @@ public class Main {
     options.addOption("noMI", "noMethodInheritance", false, "If Tandoop should use method inheritance.");
     options.addOption("noCI", "noClassInheritance", false, "If Tandoop should use class inheritance.");
     options.addOption("cg", "coverageGuided", false, "If Tandoop uses coverage-guided method selection.");
-    options.addOption("cs", "constructorSelection", false, "If Tandoop uses constructor selection preference.");
+    options.addOption("cp", "constructorPreference", false, "If Tandoop uses constructor selection preference.");
     options.addOption("odc", "onDemandConstruction", false, "If Tandoop uses on-demand construction of external types.");
 
     try {
@@ -83,7 +83,7 @@ public class Main {
       tandoop.useMethodInheritance = cmd.hasOption("basic") || !cmd.hasOption("noMI");
       tandoop.useClassInheritance = cmd.hasOption("basic") || !cmd.hasOption("noCI");
       tandoop.useCovGuide = cmd.hasOption("all") || cmd.hasOption("cg");
-      tandoop.useConstructorSelection = cmd.hasOption("all") || cmd.hasOption("cs");
+      tandoop.useConstructorSelection = cmd.hasOption("all") || cmd.hasOption("cp");
       tandoop.useODConstruction = cmd.hasOption("all") || cmd.hasOption("odc");
 
       int numTests = cmd.hasOption("numTests")? Integer.parseInt(cmd.getOptionValue("numTests")): 0;

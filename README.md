@@ -62,6 +62,7 @@ mvn dependency:copy-dependencies
     * [DONE] Select method according to its probability
     * [DONE] Update method selection probability according coverageInfo
 * [DONE] Debug extensible flag
+* Output all regression test methods in one class
 
 ### Future Work
 * Avoid using deprecated APIs:
@@ -69,6 +70,7 @@ mvn dependency:copy-dependencies
 Note: src/test/java/com/github/tongxin97/tandoop/TandoopTest.java uses or overrides a deprecated API.
 ```
 * Upgrade to >= JDK 9 
+* Do reduction on regression tests
 
 ## Related works:
 https://people.kth.se/~artho/papers/lei-ase2015.pdf

@@ -78,3 +78,14 @@ all:prjDir: ../jsoup, numTests: 500
     line: covered 2858, total 7650, coverage 37.359477
     method: covered 827, total 1498, coverage 55.206943
 
+basic:prjDir: ../commons-csv, numTests: 500
+      instruction: covered 3263, total 5031, coverage 64.857881
+      branch: covered 288, total 616, coverage 46.753247
+      line: covered 593, total 971, coverage 61.071061
+      method: covered 140, total 194, coverage 72.164948
+
+all:prjDir: ../commons-csv, numTests: 500
+    instruction: covered 3237, total 5031, coverage 64.341085
+    branch: covered 280, total 616, coverage 45.454545
+    line: covered 594, total 971, coverage 61.174047
+    method: covered 139, total 194, coverage 71.649485
