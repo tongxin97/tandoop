@@ -247,7 +247,7 @@ public class Sequence {
 
 	public void writeMethodToJUnitTest(String testDir, String testClass, String testMethod) {
 		StringBuilder testString = new StringBuilder();
-		testString.append("\n  @Test\n  public void").append(testMethod).append("() {\n    try {\n");
+		testString.append("\n  @Test\n  public void ").append(testMethod).append("() {\n    try {\n");
 		testString.append(this.ExcSeq);
 		String newVarContent = NewVar == null? "": NewVar.getContent();
 		if (!newVarContent.isEmpty() && !NewVar.hasPrimitiveType()) {
