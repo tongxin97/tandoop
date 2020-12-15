@@ -16,7 +16,6 @@ public class Main {
     options.addOption("prj", "projectDir", true, "Project directory");
     options.addOption("limit", "timeLimit", true, "Time limit to run Tandoop for in seconds");
     options.addOption("numTests", "numTests", true, "Limit the number of generated tests.");
-    options.addOption("basic", "basicFeatures", false, "If Tandoop should use all basic features.");
     options.addOption("all", "allFeatures", false, "If Tandoop should use all features.");
     options.addOption("noGT", "noGenericTypes", false, "If Tandoop should allow for generics types in generated test classes.");
     options.addOption("noMI", "noMethodInheritance", false, "If Tandoop should use method inheritance.");
@@ -65,7 +64,7 @@ public class Main {
       File testClassDir = new File("target/test-classes");
       testClassDir.mkdir();
 
-      // remove previously genereated error tests
+      // remove previously generated error tests
       File testOutputDir = new File(String.format("%s/src/test/java/", prjDir));
       File[] files = testOutputDir.listFiles((dir, name) -> name.matches("^TandoopErrTest*\\.java"));
       if (files != null) {
@@ -79,9 +78,9 @@ public class Main {
 
       Tandoop tandoop = new Tandoop(cmd.getOptionValue("src"), prjDir);
 
-      tandoop.allowGenerics = cmd.hasOption("basic") || !cmd.hasOption("noGT");
-      tandoop.useMethodInheritance = cmd.hasOption("basic") || !cmd.hasOption("noMI");
-      tandoop.useClassInheritance = cmd.hasOption("basic") || !cmd.hasOption("noCI");
+      tandoop.allowGenerics = !cmd.hasOption("noGT");
+      tandoop.useMethodInheritance = !cmd.hasOption("noMI");
+      tandoop.useClassInheritance = !cmd.hasOption("noCI");
       tandoop.useCovGuide = cmd.hasOption("all") || cmd.hasOption("cg");
       tandoop.useConstructorSelection = cmd.hasOption("all") || cmd.hasOption("cp");
       tandoop.useODConstruction = cmd.hasOption("all") || cmd.hasOption("odc");
