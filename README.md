@@ -62,7 +62,7 @@ mvn dependency:copy-dependencies
     * [DONE] Select method according to its probability
     * [DONE] Update method selection probability according coverageInfo
 * [DONE] Debug extensible flag
-* Output all regression test methods in one class
+* [DONE] Output all regression test methods in one class
 
 ### Future Work
 * Avoid using deprecated APIs:
