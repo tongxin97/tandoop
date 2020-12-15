@@ -24,6 +24,8 @@ public class Main {
     options.addOption("cp", "constructorPreference", false, "If Tandoop uses constructor selection preference.");
     options.addOption("odc", "onDemandConstruction", false, "If Tandoop uses on-demand construction of external types.");
 
+    options.addOption("reg", "outputRegressionTest", false, "If Tandoop should output regression test file.");
+
     try {
       // parse cmdline arguments
       CommandLine cmd = parser.parse(options, args);
@@ -84,6 +86,7 @@ public class Main {
       tandoop.useCovGuide = cmd.hasOption("all") || cmd.hasOption("cg");
       tandoop.useConstructorSelection = cmd.hasOption("all") || cmd.hasOption("cp");
       tandoop.useODConstruction = cmd.hasOption("all") || cmd.hasOption("odc");
+      tandoop.outputRegressionTest = cmd.hasOption("reg");
 
       int numTests = cmd.hasOption("numTests")? Integer.parseInt(cmd.getOptionValue("numTests")): 0;
       int timeLimit = cmd.hasOption("limit")? Integer.parseInt(cmd.getOptionValue("limit")): 0;

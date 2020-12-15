@@ -139,11 +139,11 @@ public class Sequence {
 	}
 
 	private void appendTestClassHeader(StringBuilder testString, String testClassName) {
-		testString.append("\npublic class " +  testClassName);
+		testString.append("\npublic class ").append(testClassName);
 		if (hasGenericTypes()) {
 			testString.append("<");
 			for (String g: genericTypes) {
-				testString.append(g + ",");
+				testString.append(g).append(",");
 			}
 			testString.replace(testString.length()-1, testString.length(), ">");
 		}
@@ -201,13 +201,13 @@ public class Sequence {
 		testString.append("  @Test\n  public void test() {\n    try {\n");
 		testString.append(this.ExcSeq);
 		String newVarContent = NewVar == null? "": NewVar.getContent();
-		if (newVarContent != "" && !NewVar.hasPrimitiveType()) {
-			testString.append("      if (" + newVarContent + " == null) { System.out.println(\"" + newVarContent + " is " +
-					"null.\\n\"); return; }\n");
+		if (!newVarContent.isEmpty() && !NewVar.hasPrimitiveType()) {
+			testString.append("      if (").append(newVarContent).append(" == null) { System.out.println(\"")
+					.append(newVarContent).append(" is ").append("null.\\n\"); return; }\n");
 			testString.append("      try {\n");
-			testString.append("      	assertTrue(" + newVarContent + ".equals(" + newVarContent + "));\n");
-			testString.append("      	" + newVarContent + ".hashCode();\n");
-			testString.append("      	" + newVarContent + ".toString();\n");
+			testString.append("      	assertTrue(").append(newVarContent).append(".equals(").append(newVarContent).append("));\n");
+			testString.append("      	").append(newVarContent).append(".hashCode();\n");
+			testString.append("      	").append(newVarContent).append(".toString();\n");
 			testString.append("      } catch (Exception e) { e.printStackTrace(); fail(e.getMessage()); } \n");
 		}
 		testString.append("   }\n");
@@ -229,6 +229,62 @@ public class Sequence {
 			e.printStackTrace();
 		}
 	}
+
+	public static void writeJUnitTestHeader(String testDir, String testClass) {
+		StringBuilder testString = new StringBuilder();
+		testString.append("import org.junit.Test;\n");
+		testString.append("import static org.junit.Assert.assertTrue;\n");
+		testString.append("import static org.junit.Assert.fail;\n");
+		testString.append("\npublic class ").append(testClass).append("{\n");
+		try {
+			BufferedWriter writer = new BufferedWriter(new FileWriter(testDir + testClass + ".java"));
+			writer.write(testString.toString());
+			writer.close();
+		} catch (IOException e) {
+			System.err.println("writeJUnitTestHeader: " + e.getMessage());
+		}
+	}
+
+	public void writeMethodToJUnitTest(String testDir, String testClass, String testMethod) {
+		StringBuilder testString = new StringBuilder();
+		testString.append("\n  @Test\n  public void").append(testMethod).append("() {\n    try {\n");
+		testString.append(this.ExcSeq);
+		String newVarContent = NewVar == null? "": NewVar.getContent();
+		if (!newVarContent.isEmpty() && !NewVar.hasPrimitiveType()) {
+			testString.append("      if (").append(newVarContent).append(" == null) { System.out.println(\"")
+					.append(newVarContent).append(" is ").append("null.\\n\"); return; }\n");
+			testString.append("      try {\n");
+			testString.append("      	assertTrue(").append(newVarContent).append(".equals(").append(newVarContent).append("));\n");
+			testString.append("      	").append(newVarContent).append(".hashCode();\n");
+			testString.append("      	").append(newVarContent).append(".toString();\n");
+			testString.append("      } catch (Exception e) { e.printStackTrace(); fail(e.getMessage()); } \n");
+		}
+		testString.append("   }\n");
+		testString.append("    catch (AssertionError e) { e.printStackTrace(); fail(e.getMessage()); }\n");
+		if (!this.InputParamsWithNull) {
+			testString.append("    catch (NullPointerException e) { e.printStackTrace(); fail(e.getMessage()); }\n");
+		}
+		testString.append("    catch (Exception e) { e.printStackTrace(); }\n");
+		testString.append("  }\n");
+		try {
+			BufferedWriter writer = new BufferedWriter(new FileWriter(testDir + testClass + ".java", true));
+			writer.write(testString.toString());
+			writer.close();
+		} catch (IOException e) {
+			System.err.println("addMethodToJUnitTest: " + e.getMessage());
+		}
+	}
+
+	public static void endJUnitTest(String testDir, String testClass) {
+		try {
+			FileWriter writer = new FileWriter(testDir + testClass + ".java", true);
+			writer.write("}");
+			writer.close();
+		} catch (IOException e) {
+			System.err.println("endJUnitTest: " + e.getMessage());
+		}
+	}
+
 
 	public Object runTest(String prjDir, CoverageAnalyzer coverageAnalyzer) throws Exception {
 		try {

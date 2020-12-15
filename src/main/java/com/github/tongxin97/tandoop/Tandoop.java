@@ -44,6 +44,7 @@ public class Tandoop {
   private final double weightP = 0.5;
 
   private String prjDir;
+  private String testDir;
   public boolean allowGenerics;
   public boolean useMethodInheritance;
   public boolean useClassInheritance;
@@ -51,10 +52,13 @@ public class Tandoop {
   public boolean useConstructorSelection;
   public boolean useODConstruction;
 
+  public boolean outputRegressionTest;
+
   public CoverageAnalyzer coverageAnalyzer;
   public PrintStream coverageInfoOut;
 
   final public static String tandoopTestFile = "src/test/java/com/github/tongxin97/tandoop/TandoopTest.java";
+  final static String regTestClass = "TandoopRegTest";
 
   public Tandoop(String srcDir, String prjDir) throws Exception {
     if (srcDir == null || prjDir == null) {
@@ -71,10 +75,12 @@ public class Tandoop {
     pkgs = new HashSet<>();
 
     this.prjDir = prjDir;
+    testDir = prjDir + "/src/test/java/";
 
     // load target project dependencies
     File dir = new File(prjDir + "/target/dependency");
     File[] dirListing = dir.listFiles();
+    assert(dirListing != null);
     URL[] urls = new URL[dirListing.length + 1];
     for (int i = 0; i < dirListing.length; ++i) {
       urls[i] = dirListing[i].toURI().toURL();
@@ -476,6 +482,11 @@ public class Tandoop {
       this.coverageInfoOut.printf("timeLimit: %d s, ", timeLimit);
       timeLimit *= 1000;
     }
+
+    if (outputRegressionTest && !allowGenerics) {
+      Sequence.writeJUnitTestHeader(testDir, regTestClass);
+    }
+
     long startTime = System.currentTimeMillis();
     long elapsedTime = 0L;
     int numIterations = 0;
@@ -565,8 +576,11 @@ public class Tandoop {
               this.valuePool.put(returnType, new TypedValuePool(returnType, false, Arrays.asList(var.Val)));
             }
           }
+          if (outputRegressionTest && !allowGenerics) {
+            newSeq.writeMethodToJUnitTest(testDir, regTestClass, String.format("test%d", numIterations));
+          }
           // System.out.println("Added extensible val:" + var.Val);
-        } else {
+//        } else {
           // System.out.printf("Non-extensible val: %s\n ", var.Val);
         }
       }
@@ -581,6 +595,9 @@ public class Tandoop {
     }
     if (timeLimit != 0) {
       coverageInfoOut.printf("generated tests: %d\n", numIterations);
+    }
+    if (outputRegressionTest && !allowGenerics) {
+      Sequence.endJUnitTest(testDir, regTestClass);
     }
 //    writeSeqsToFile();
     // remove TandoopTest.java
