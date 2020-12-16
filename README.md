@@ -1,6 +1,6 @@
 # Tandoop
 
-This repo includes a custom implementation of the basic algorithm described in [the original Randoop paper](https://homes.cs.washington.edu/~mernst/pubs/feedback-testgen-icse2007.pdf), some Java-language-specific improvements and several static/dynamic heuristics mentioned in [the GRT paper](http://www.understandingrequirements.com/resources/2.11%20%20Program-Analysis-Guided%20Random%20Testing.pdf).
+This project is a custom implementation of the automated random test generation algorithm described in [Randoop](https://homes.cs.washington.edu/~mernst/pubs/feedback-testgen-icse2007.pdf), some Java-language-specific improvements and several static/dynamic heuristics mentioned in [GRT](http://www.understandingrequirements.com/resources/2.11%20%20Program-Analysis-Guided%20Random%20Testing.pdf).
 
 ## Usage
 
@@ -27,7 +27,7 @@ usage: java -cp path/to/test_project/target/target_project_jar:target/tandoop-1.
  -reg,--outputRegressionTest   If Tandoop should output regression test file
  -src,--srcDir <arg>           Project src directory
  -limit,--timeLimit <arg>      Time limit to run Tandoop for in seconds
-  -numTests,--numTests <arg>    Limit the number of generated tests
+ -numTests,--numTests <arg>    Limit the number of generated tests
 ```
 
 An example of usage on [Joda-time]():
