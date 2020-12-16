@@ -8,7 +8,7 @@ This project is a custom implementation of the automated random test generation 
 2. Compile Tandoop using `cd path/to/tandoop; mvn compile assembly:single`
 3. Run Tandoop on test project using 
 ```bash
-java -cp path/to/test_project/target/target_project_jar:target/tandoop-1.0-SNAPSHOT-jar-with-dependencies.jar -Xbootclasspath/a:jacocoagent.jar -javaagent:jacocoagent.jar com.github.tongxin97.tandoop.Main -src path/to/test_project/src/main/java -prj path/to/test_project -numTests
+java -cp path/to/test_project/target/target_project_jar:target/tandoop-1.0-SNAPSHOT-jar-with-dependencies.jar -Xbootclasspath/a:jacocoagent.jar -javaagent:jacocoagent.jar com.github.tongxin97.tandoop.Main -src path/to/test_project/src/main/java -prj path/to/test_project
 ```
 
 Additional arguments are listed as follows:
