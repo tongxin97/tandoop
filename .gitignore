@@ -23,6 +23,7 @@ joda-time
 
 # test output
 failed_test_classes
+*.txt
 
 # Jacoco
 jacoco.exec

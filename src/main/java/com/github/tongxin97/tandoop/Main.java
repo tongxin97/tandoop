@@ -4,6 +4,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import java.io.*;
 
@@ -26,9 +27,16 @@ public class Main {
 
     options.addOption("reg", "outputRegressionTest", false, "If Tandoop should output regression test file.");
 
+    CommandLine cmd = null;
     try {
       // parse cmdline arguments
-      CommandLine cmd = parser.parse(options, args);
+      cmd = parser.parse(options, args);
+    } catch (ParseException e) {
+      HelpFormatter formatter = new HelpFormatter();
+      formatter.printHelp("java -cp path/to/test_project/target/target_project_jar:target/tandoop-1.0-SNAPSHOT-jar-with-dependencies.jar -Xbootclasspath/a:jacocoagent.jar -javaagent:jacocoagent.jar com.github.tongxin97.tandoop.Main", options);
+    }
+    
+    try {
       if (!cmd.hasOption("src")) {
         System.err.println("Project src directory not provided.");
         return;
