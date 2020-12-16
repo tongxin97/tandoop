@@ -6,32 +6,31 @@ This repo includes a custom implementation of the basic algorithm described in [
 
 1. Compile test project using `cd path/to/test_project; mvn install -DskipTests; mvn dependency:copy-dependencies`
 2. Compile Tandoop using `cd path/to/tandoop; mvn compile assembly:single`
-3. Run Tandoop on test project using `java -cp path/to/test_project/target/target_project_jar:target/tandoop-1.0-SNAPSHOT-jar-with-dependencies.jar -Xbootclasspath/a:jacocoagent.jar -javaagent:jacocoagent.jar com.github.tongxin97.tandoop.Main -src path/to/test_project/src/main/java -prj path/to/test_project`
+3. Run Tandoop on test project using 
+```bash
+java -cp path/to/test_project/target/target_project_jar:target/tandoop-1.0-SNAPSHOT-jar-with-dependencies.jar -Xbootclasspath/a:jacocoagent.jar -javaagent:jacocoagent.jar com.github.tongxin97.tandoop.Main -src path/to/test_project/src/main/java -prj path/to/test_project
+```
 
-Additional arguments are listed as follow:
+Additional arguments are listed as follows:
 
 ```
 usage: java -cp path/to/test_project/target/target_project_jar:target/tandoop-1.0-SNAPSHOT-jar-with-dependencies.jar -Xbootclasspath/a:jacocoagent.jar -javaagent:jacocoagent.jar com.github.tongxin97.tandoop.Main
- -all,--allFeatures            If Tandoop should use all features.
- -cg,--coverageGuided          If Tandoop uses coverage-guided method
-                               selection.
- -cp,--constructorPreference   If Tandoop uses constructor selection
-                               preference.
- -limit,--timeLimit <arg>      Time limit to run Tandoop for in seconds
- -noCI,--noClassInheritance    If Tandoop should use class inheritance.
+ -all,--allFeatures            If Tandoop should use all features
+ -cg,--coverageGuided          If Tandoop uses coverage-guided method selection
+ -cp,--constructorPreference   If Tandoop uses constructor selection preference
+ -noCI,--noClassInheritance    If Tandoop should use class inheritance
  -noGT,--noGenericTypes        If Tandoop should allow for generics types
-                               in generated test classes.
- -noMI,--noMethodInheritance   If Tandoop should use method inheritance.
- -numTests,--numTests <arg>    Limit the number of generated tests.
- -odc,--onDemandConstruction   If Tandoop uses on-demand construction of
-                               external types.
+                               in generated test classes
+ -noMI,--noMethodInheritance   If Tandoop should use method inheritance
+ -odc,--onDemandConstruction   If Tandoop uses on-demand construction of external types
  -prj,--projectDir <arg>       Project directory
- -reg,--outputRegressionTest   If Tandoop should output regression test
-                               file.
+ -reg,--outputRegressionTest   If Tandoop should output regression test file
  -src,--srcDir <arg>           Project src directory
+ -limit,--timeLimit <arg>      Time limit to run Tandoop for in seconds
+  -numTests,--numTests <arg>    Limit the number of generated tests
 ```
 
-An example of usage on Joda-time:
+An example of usage on [Joda-time]():
 
 ```
 mvn compile assembly:single && java -cp ../joda-time/target/joda-time-2.10.9-SNAPSHOT.jar:target/tandoop-1.0-SNAPSHOT-jar-with-dependencies.jar -Xbootclasspath/a:jacocoagent.jar -javaagent:jacocoagent.jar com.github.tongxin97.tandoop.Main -src ../joda-time/src/main/java -prj ../joda-time -limit 900
