@@ -8,7 +8,7 @@ This project is a custom implementation of the automated random test generation 
 2. Compile Tandoop using `cd path/to/tandoop; mvn compile assembly:single`
 3. Run Tandoop on test project using 
 ```bash
-java -cp path/to/test_project/target/target_project_jar:target/tandoop-1.0-SNAPSHOT-jar-with-dependencies.jar -Xbootclasspath/a:jacocoagent.jar -javaagent:jacocoagent.jar com.github.tongxin97.tandoop.Main -src path/to/test_project/src/main/java -prj path/to/test_project
+java -cp path/to/test_project/target/target_project_jar:target/tandoop-1.0-SNAPSHOT-jar-with-dependencies.jar -Xbootclasspath/a:jacocoagent.jar -javaagent:jacocoagent.jar com.github.tongxin97.tandoop.Main -src path/to/test_project/src/main/java -prj path/to/test_project -numTests
 ```
 
 Additional arguments are listed as follows:
@@ -30,7 +30,7 @@ usage: java -cp path/to/test_project/target/target_project_jar:target/tandoop-1.
  -numTests,--numTests <arg>    Limit the number of generated tests
 ```
 
-An example of usage on [Joda-time]():
+An example of usage on [Joda-time](https://github.com/JodaOrg/joda-time):
 
 ```
 mvn compile assembly:single && java -cp ../joda-time/target/joda-time-2.10.9-SNAPSHOT.jar:target/tandoop-1.0-SNAPSHOT-jar-with-dependencies.jar -Xbootclasspath/a:jacocoagent.jar -javaagent:jacocoagent.jar com.github.tongxin97.tandoop.Main -src ../joda-time/src/main/java -prj ../joda-time -limit 900
